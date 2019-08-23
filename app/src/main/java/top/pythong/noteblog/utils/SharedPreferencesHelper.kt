@@ -2,6 +2,7 @@ package top.pythong.noteblog.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import top.pythong.noteblog.data.Pairs
 import top.pythong.noteblog.exc.ClassNotSupportedException
 
 /**
@@ -86,8 +87,8 @@ class SharedPreferencesHelper(context: Context, domain: String = CONFIG) {
          * 以参数类型存入
          * @throws ClassNotSupportedException
          */
-        fun put(makePairs: ParamPairs.() -> Unit): EditorHelper {
-            val paramPairs = ParamPairs()
+        fun put(makePairs: Pairs<Any>.() -> Unit): EditorHelper {
+            val paramPairs = Pairs<Any>()
             paramPairs.makePairs()
             paramPairs.pairs.forEach {
                 put(it.key, it.value)
@@ -95,14 +96,6 @@ class SharedPreferencesHelper(context: Context, domain: String = CONFIG) {
             return this
         }
 
-        class ParamPairs {
-            var pairs: MutableMap<String, Any> = HashMap()
-            operator fun String.minus(value: Any) {
-                when (value) {
-                    is String, Int, Long, Float, Boolean -> pairs[this] = value
-                }
-            }
-        }
 
         /**
          * 提交到硬盘

@@ -1,21 +1,24 @@
-package top.pythong.noteblog.ui.login
+package top.pythong.noteblog.app.login.ui
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
-import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import org.jetbrains.anko.startActivity
 
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.main.MainActivity
 
 /**
  * 登录页面
@@ -36,7 +39,10 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
+        loginViewModel = ViewModelProviders.of(
+            this,
+            LoginViewModelFactory(applicationContext)
+        )
             .get(LoginViewModel::class.java)
 
         // 登录表单状态回调
@@ -44,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
 
-            // disable login button unless both username / password is valid
+            // 禁用登录按钮，除非用户名/密码都有效
             login.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
@@ -60,16 +66,16 @@ class LoginActivity : AppCompatActivity() {
             val loginResult = it ?: return@Observer
 
             loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
+            if (!loginResult.isOk) {
+                showLoginFailed(loginResult.msg)
+            } else {
+                updateUiWithUser(loginResult.viewData!!)
+                // 开启主页
+                startActivity<MainActivity>()
+                // 成功完成并销毁登录活动
+                finish()
             }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
 
-            //Complete and destroy login activity once successful
-            finish()
         })
 
         username.afterTextChanged {
@@ -87,13 +93,17 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
-            setOnEditorActionListener { _, actionId, _ ->
+            setOnEditorActionListener { v , actionId, _ ->
                 when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
+                    EditorInfo.IME_ACTION_DONE -> {
+                        // 隐藏软键盘
+                        val imm: InputMethodManager = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(v.windowToken, 0)
                         loginViewModel.login(
                             username.text.toString(),
                             password.text.toString()
                         )
+                    }
                 }
                 false
             }
@@ -101,6 +111,9 @@ class LoginActivity : AppCompatActivity() {
             // 登录
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
+                // 隐藏软键盘
+                val imm: InputMethodManager = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(it.windowToken, 0)
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
@@ -117,13 +130,13 @@ class LoginActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
+    private fun showLoginFailed(errorString: String) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
 }
 
 /**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
+ * 扩展函数，用于简化将afterTextChanged操作设置为EditText组件。
  */
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {

@@ -1,4 +1,4 @@
-package top.pythong.noteblog.ui.main
+package top.pythong.noteblog.app.main
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle

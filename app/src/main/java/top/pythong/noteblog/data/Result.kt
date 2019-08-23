@@ -1,18 +1,24 @@
 package top.pythong.noteblog.data
 
+
 /**
- * A generic class that holds a value with its loading status.
- * @param <T>
+ * 返回视图层的泛型类
  */
-sealed class Result<out T : Any> {
+class Result<out T: Any> private constructor(
+    val isOk: Boolean = false,
+    val viewData: T? = null,
+    val msg: String = ""
+) {
 
-    data class Success<out T : Any>(val data: T) : Result<T>()
-    data class Error(val exception: Exception) : Result<Nothing>()
+    companion object {
+        fun ok() =
+            Result(true, null)
 
-    override fun toString(): String {
-        return when (this) {
-            is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[exception=$exception]"
-        }
+        fun <T : Any> ok(viewData: T) =
+            Result<T>(true, viewData)
+
+        fun <T : Any> fail(msg: String) =
+            Result<T>(false, viewData = null, msg = msg)
     }
+
 }

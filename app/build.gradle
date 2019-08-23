@@ -55,6 +55,13 @@ dependencies {
 
 //    implementation 'org.springframework.android:spring-android-rest-template:1.0.0.RELEASE'
 
+    // 网络请求包
+    implementation "com.squareup.okhttp3:okhttp:4.1.0"
+    // json 解析包
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //java组件
+    implementation 'org.apache.commons:commons-lang3:3.5'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

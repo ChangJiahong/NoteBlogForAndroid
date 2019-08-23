@@ -2,9 +2,11 @@ package top.pythong.noteblog.data;
 
 
 /**
-* @author ChangJiahong
-* @date 2019/7/16
-*/
+ * 返回viewModel层的数据类
+ *
+ * @author ChangJiahong
+ * @date 2019/7/16
+ */
 public class RestResponse<T> {
 
     // 响应业务状态
@@ -23,29 +25,21 @@ public class RestResponse<T> {
      */
     private long timestamp;
 
-    /**
-     * 两个参数
-     * status、msg
-     * @param status
-     * @param msg
-     */
-    private RestResponse(int status, String msg){
-        this(status, msg, null);
-    }
-
-    /**
-     * 三个参数
-     * @param status
-     * @param msg
-     * @param data
-     */
-    private RestResponse(int status, String msg, T data) {
+    private RestResponse(Boolean ok, int status, String msg, T data) {
+        this.ok = ok;
         this.status = status;
         this.msg = msg;
         this.data = data;
-        this.timestamp = System.currentTimeMillis() / 1000;
     }
 
+
+    public static <T> RestResponse<T> fail(int status, String msg) {
+        return new RestResponse<T>(false, status, msg, null);
+    }
+
+    public Boolean isOk() {
+        return ok;
+    }
 
     public Boolean getOk() {
         return ok;
@@ -88,5 +82,14 @@ public class RestResponse<T> {
     }
 
 
-
+    @Override
+    public String toString() {
+        return "RestResponse{" +
+                "status=" + status +
+                ", msg='" + msg + '\'' +
+                ", data=" + data +
+                ", ok=" + ok +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

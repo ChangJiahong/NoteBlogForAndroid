@@ -8,6 +8,7 @@ import kotlinx.coroutines.*
 
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.login.service.ILoginService
+import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.Result
 import java.util.regex.Pattern
 
@@ -24,13 +25,13 @@ class LoginViewModel(private val loginSercice: ILoginService) : ViewModel(), Cor
      */
     fun login(username: String, password: String) = launch(Dispatchers.IO) {
 
-        val result = loginSercice.login(username, password)
+        val restResponse = loginSercice.login(username, password)
 
         withContext(Dispatchers.Main) {
-            if (result.isOk) {
-                _loginResult.value = Result.ok(LoggedInUserView(result.data.username))
+            if (restResponse.isOk) {
+                _loginResult.value = Result.ok(LoggedInUserView(restResponse.data.username))
             } else {
-                _loginResult.value = Result.fail("${result.msg}:${result.data?:""}")
+                _loginResult.value = Result.fail(restResponse.convertTo(LoggedInUserView::class.java))
             }
         }
     }

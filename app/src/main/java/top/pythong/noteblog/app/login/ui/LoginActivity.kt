@@ -1,6 +1,5 @@
 package top.pythong.noteblog.app.login.ui
 
-import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -18,7 +17,7 @@ import android.widget.Toast
 import org.jetbrains.anko.startActivity
 
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.main.MainActivity
+import top.pythong.noteblog.app.main.ui.MainActivity
 
 /**
  * 登录页面
@@ -39,11 +38,9 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
-        loginViewModel = ViewModelProviders.of(
-            this,
-            LoginViewModelFactory(applicationContext)
-        )
-            .get(LoginViewModel::class.java)
+        loginViewModel = ViewModelProviders.of(this,
+            LoginViewModelFactory(this)
+        ).get(LoginViewModel::class.java)
 
         // 登录表单状态回调
         // 参数验证回调
@@ -67,11 +64,12 @@ class LoginActivity : AppCompatActivity() {
 
             loading.visibility = View.GONE
             if (!loginResult.isOk) {
-                showLoginFailed(loginResult.msg)
+                showLoginFailed(loginResult.msgCode.msg)
             } else {
                 updateUiWithUser(loginResult.viewData!!)
                 // 开启主页
                 startActivity<MainActivity>()
+                setResult(0)
                 // 成功完成并销毁登录活动
                 finish()
             }

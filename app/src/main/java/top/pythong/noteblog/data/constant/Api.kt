@@ -28,4 +28,10 @@ object Api {
      * 注册
      */
     const val register = "$root/register"
+
+
+    /**
+     * 用户信息
+     */
+    const val user = "$root/user"
 }

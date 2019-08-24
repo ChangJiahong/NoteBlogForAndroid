@@ -32,6 +32,16 @@ public class RestResponse<T> {
         this.data = data;
     }
 
+    private RestResponse(RestResponse restResponse) {
+        this.ok = restResponse.ok;
+        this.status = restResponse.status;
+        this.msg = restResponse.msg;
+        this.data = (T) restResponse.data;
+    }
+
+    public <T> RestResponse<T> convertTo(Class<T> tClass){
+        return new RestResponse<T>(this);
+    }
 
     public static <T> RestResponse<T> fail(int status, String msg) {
         return new RestResponse<T>(false, status, msg, null);

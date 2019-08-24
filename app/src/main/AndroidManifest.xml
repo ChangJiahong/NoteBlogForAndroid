@@ -3,6 +3,7 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="top.pythong.noteblog">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="false"
@@ -13,7 +14,7 @@
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="top.pythong.noteblog.app.main.MainActivity">
+        <activity android:name="top.pythong.noteblog.app.main.ui.MainActivity">
         </activity>
         <activity
             android:name=".app.index.ui.IndexActivity"

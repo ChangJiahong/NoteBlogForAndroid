@@ -1,13 +1,12 @@
 package top.pythong.noteblog
 
-import com.google.gson.Gson
+import android.content.Context
 import org.junit.Test
 
 import org.junit.Assert.*
-import top.pythong.noteblog.data.RestResponse
-import top.pythong.noteblog.data.RestResponseType
-import top.pythong.noteblog.app.login.model.LoggedInUser
-import kotlin.reflect.KClass
+import top.pythong.noteblog.app.main.service.IMainService
+import top.pythong.noteblog.app.main.ui.MainActivity
+import top.pythong.noteblog.app.main.ui.MainViewModel
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -18,38 +17,49 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
-        var json = "{\n" +
-                "    \"status\": 201,\n" +
-                "    \"msg\": \"你的账户已登录!不用重新登录！\",\n" +
-                "    \"data\": {\n" +
-                "        \"uid\": 1,\n" +
-                "        \"username\": \"admin\",\n" +
-                "        \"email\": \"2327085154@qq.com\",\n" +
-                "        \"imgUrl\": \"https://avatars1.githubusercontent.com/u/24603481?s=400&u=4523152ed09d679775b3175e1581f05357d2b3b4&v=4\",\n" +
-                "        \"sex\": true,\n" +
-                "        \"age\": 22,\n" +
-                "        \"created\": \"2019-07-17 10:28:18\",\n" +
-                "        \"roles\": [\n" +
-                "            \"user\"\n" +
-                "        ]\n" +
-                "    },\n" +
-                "    \"timestamp\": 1566542112,\n" +
-                "    \"ok\": true\n" +
-                "}"
-        var restResponse = restResponse(json, LoggedInUser::class)
-//        val type = object : TypeToken<RestResponse<LoggedInUser>>() {}.type
-//
-//        println(type.toString())
-//        var restResponse: RestResponse<LoggedInUser> = Gson().fromJson(json, type)
-//
-        println(restResponse.data.created)
-
-
     }
 
-    private inline fun <reified T : Any> restResponse(json: String, kClass: KClass<T>): RestResponse<T>{
-        println(T::class.java.simpleName)
-        val type = RestResponseType(kClass.java)
-        return Gson().fromJson(json, type)
+
+    /**
+     * viewModel 反射测试
+     */
+    @Test
+    fun factory(){
+        reflex(MainViewModel::class.java).autoLogin()
+    }
+
+    fun <T> reflex(modelClass: Class<T>): T{
+
+        val modelSimpleName = modelClass.name
+//        println(modelSimpleName)
+        val modelName = modelSimpleName.substringAfterLast(".")
+//        println(modelName)
+        val packageName = modelSimpleName.substringBeforeLast(".ui")
+//        println(packageName)
+        val name = modelName.substringBefore("ViewModel")
+//        println(name)
+        val serviceName = "$packageName.service.impl.${name}ServiceImpl"
+        val iServiceName = "$packageName.service.I${name}Service"
+//        println(serviceName)
+        val dataSourceName = "$packageName.dao.impl.${name}DataSourceImpl"
+        val iDataSourceName = "$packageName.dao.I${name}DataSource"
+//        println(dataSourceName)
+
+        val constructor = Class.forName(dataSourceName).getConstructor()
+        val dataSourceClass = Class.forName(dataSourceName)
+        val dataSource = constructor.newInstance()
+
+        val serviceClass = Class.forName(serviceName)
+        val serviceConstructor = serviceClass.getConstructor(Context::class.java, Class.forName(iDataSourceName))
+        val service = serviceConstructor.newInstance(MainActivity(), dataSource)
+
+        val modelConstructor = modelClass.getConstructor(Class.forName(iServiceName))
+        val model = modelConstructor.newInstance(service)
+
+        return model
+
+
+
+
     }
 }

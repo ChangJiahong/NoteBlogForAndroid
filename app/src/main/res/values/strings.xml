@@ -16,4 +16,11 @@
     <string name="server_error" translatable="true">服务器飞走了</string>
     <string name="no_network" translatable="true">网络开小差了</string>
     <string name="request_timed_out" translatable="true">请求超时</string>
+
+    <!--tab图标有关-->
+    <string name="home" translatable="true">发现</string>
+    <string name="archives" translatable="true">归档</string>
+    <string name="msg" translatable="true">消息</string>
+    <string name="about_me" translatable="true">我</string>
+
 </resources>

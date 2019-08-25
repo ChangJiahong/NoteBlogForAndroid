@@ -4,6 +4,16 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
+    <!--按下后的菜单栏颜色-->
     <color name="tabDark">#D5D3D3</color>
+    <!--菜单栏默认颜色-->
     <color name="tabLight">#FFFFFF</color>
+    <!--黑色-->
+    <color name="black">#000000</color>
+    <!--统一背景颜色-->
+    <color name="bg">#dedcdc</color>
+    <!--卡片填充色-->
+    <color name="crad">#ffffff</color>
+    <!--卡片按下后的颜色-->
+    <color name="card_pressed">#acd6f7</color>
 </resources>

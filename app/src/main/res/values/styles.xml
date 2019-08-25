@@ -20,4 +20,9 @@
 
     </style>
 
+    <!--卡片风格-->
+    <style name="card_bg">
+        <item name="android:background">@drawable/crad_bg_ripple</item>
+        <item name="android:layout_margin">3dp</item>
+    </style>
 </resources>

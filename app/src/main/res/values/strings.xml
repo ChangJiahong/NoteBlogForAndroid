@@ -22,5 +22,10 @@
     <string name="archives" translatable="true">归档</string>
     <string name="msg" translatable="true">消息</string>
     <string name="about_me" translatable="true">我</string>
+    <string name="tag">标签</string>
+    <string name="username">用户名</string>
+    <string name="comment">评论</string>
+    <string name="share">分享</string>
+    <string name="like">点赞</string>
 
 </resources>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/like"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/like_bg_ripple"
+        android:padding="10dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/likeIcon"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/like_0"/>
+
+        <TextView
+            android:id="@+id/mLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/like"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/comment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/comment_bg_ripple"
+        android:padding="10dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/commentIcon"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/comment"/>
+
+        <TextView
+            android:id="@+id/mComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/comment"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/share"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/share_bg_ripple"
+        android:padding="10dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/shareIcon"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/share"/>
+
+        <TextView
+            android:id="@+id/mShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/share"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

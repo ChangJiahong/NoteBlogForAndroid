@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import top.pythong.noteblog.app.main.service.IMainService
 import top.pythong.noteblog.data.Result
-import top.pythong.noteblog.data.constant.MsgCode
 
 /**
  *

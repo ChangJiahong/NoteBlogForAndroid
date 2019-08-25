@@ -22,6 +22,7 @@
     <string name="archives" translatable="true">归档</string>
     <string name="msg" translatable="true">消息</string>
     <string name="about_me" translatable="true">我</string>
+    <!--发现页有关-->
     <string name="tag">标签</string>
     <string name="username">用户名</string>
     <string name="comment">评论</string>

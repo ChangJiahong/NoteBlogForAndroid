@@ -85,8 +85,10 @@ class MainActivity : AppCompatActivity() {
                                 put(Constant.TOKEN, "")
                             }
                             // 启动登录
-                            startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java),
-                                LOGIN_REQUEST)
+                            startActivityForResult(
+                                Intent(this@MainActivity, LoginActivity::class.java),
+                                LOGIN_REQUEST
+                            )
                         }
                     }.show()
                 } else {
@@ -123,6 +125,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        tabMode.tabWidget.getChildAt(0).setOnClickListener {
+            if (viewPager.currentItem == tabMode.currentTab && tabMode.currentTab == 0) {
+                (fragments[0] as HomeFragment).refresh()
+            }
+            viewPager.currentItem = 0
+        }
+
         // 监听菜单tab点击
         tabMode.setOnTabChangedListener {
             viewPager.currentItem = tabMode.currentTab
@@ -144,7 +153,7 @@ class MainActivity : AppCompatActivity() {
      * 登录回调
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == LOGIN_REQUEST){
+        if (requestCode == LOGIN_REQUEST) {
 
         }
     }

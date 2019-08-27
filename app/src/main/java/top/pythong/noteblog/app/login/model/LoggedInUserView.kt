@@ -1,4 +1,4 @@
-package top.pythong.noteblog.app.login.ui
+package top.pythong.noteblog.app.login.model
 
 /**
  * LoggedInUser详细说明了向UI公开的身份验证

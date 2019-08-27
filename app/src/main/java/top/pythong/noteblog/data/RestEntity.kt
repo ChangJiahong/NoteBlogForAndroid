@@ -33,9 +33,13 @@ class RestEntity<T> private constructor(
             return RestEntity(false, response.code, response.message, response.headers, null)
         }
 
-        fun <T> fail(msg: String): RestEntity<T> {
-            return RestEntity(false, 0, msg, null, null)
+        fun <T> fail(code: Int, msg: String): RestEntity<T> {
+            return RestEntity(false, code, msg, null, null)
         }
+
     }
 
+    fun toFailRestResponse(): RestResponse<T> {
+        return RestResponse.fail(this.code, this.msg)
+    }
 }

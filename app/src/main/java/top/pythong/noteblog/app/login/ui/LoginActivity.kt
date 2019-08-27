@@ -1,81 +1,45 @@
 package top.pythong.noteblog.app.login.ui
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.login.model.LoggedInUserView
 import top.pythong.noteblog.app.main.ui.MainActivity
+import top.pythong.noteblog.base.activity.BaseActivity
+import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.base.factory.ViewModelFactory
+import top.pythong.noteblog.data.constant.MsgCode
 
 /**
  * 登录页面
  * @author ChangJiahong
  * @date 2019/8/22
  */
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_login)
+    override fun getViewModel(): BaseViewModel {
+        loginViewModel = ViewModelFactory.createViewModel(this, LoginViewModel::class)
+        return loginViewModel
+    }
 
-        val username = findViewById<EditText>(R.id.username)
-        val password = findViewById<EditText>(R.id.password)
-        val login = findViewById<Button>(R.id.login)
-        val loading = findViewById<ProgressBar>(R.id.loading)
+    override fun getContentView(): Int {
+        return R.layout.activity_login
+    }
 
-        loginViewModel = ViewModelProviders.of(this,
-            LoginViewModelFactory(this)
-        ).get(LoginViewModel::class.java)
-
-        // 登录表单状态回调
-        // 参数验证回调
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
-
-            // 禁用登录按钮，除非用户名/密码都有效
-            login.isEnabled = loginState.isDataValid
-
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
-            }
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        })
-
-        // 登录结果回调
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
-
-            loading.visibility = View.GONE
-            if (!loginResult.isOk) {
-                showLoginFailed(loginResult.msgCode.msg)
-            } else {
-                updateUiWithUser(loginResult.viewData!!)
-                // 开启主页
-                startActivity<MainActivity>()
-                setResult(0)
-                // 成功完成并销毁登录活动
-                finish()
-            }
-
-        })
-
+    override fun initView() {
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
                 username.text.toString(),
@@ -91,11 +55,12 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
-            setOnEditorActionListener { v , actionId, _ ->
+            setOnEditorActionListener { v, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         // 隐藏软键盘
-                        val imm: InputMethodManager = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        val imm: InputMethodManager =
+                            v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(v.windowToken, 0)
                         loginViewModel.login(
                             username.text.toString(),
@@ -110,26 +75,78 @@ class LoginActivity : AppCompatActivity() {
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 // 隐藏软键盘
-                val imm: InputMethodManager = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm: InputMethodManager =
+                    it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(it.windowToken, 0)
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
     }
 
+    override fun initData() {
+        // 登录表单状态回调
+        // 参数验证回调
+        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
+            val loginState = it ?: return@Observer
+
+            // 禁用登录按钮，除非用户名/密码都有效
+            login.isEnabled = loginState.isDataValid
+
+            if (loginState.usernameError != null) {
+                username.error = getString(loginState.usernameError)
+            }
+            if (loginState.passwordError != null) {
+                password.error = getString(loginState.passwordError)
+            }
+        })
+        // 登录结果回调
+        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
+            val user = it ?: return@Observer
+
+            loading.visibility = View.GONE
+
+            updateUiWithUser(user)
+
+
+        })
+
+
+    }
+
+    /**
+     * 错误回调
+     */
+    override fun onErrorResult(error: MsgCode) {
+        loading.visibility = View.GONE
+        when (error) {
+            MsgCode.UsersDonTExist -> {
+                username.requestFocus()
+                username.error = error.msg
+            }
+            MsgCode.PasswordMistake -> {
+                password.requestFocus()
+                password.error = error.msg
+            }
+            else -> showLoginFailed(error.msg)
+        }
+
+    }
+
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
-        // TODO : initiate successful logged in experience
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
+        toast("$welcome $displayName")
+
+        // 开启主页
+        startActivity<MainActivity>()
+        setResult(0)
+        // 成功完成并销毁登录活动
+        finish()
+
     }
 
     private fun showLoginFailed(errorString: String) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+        toast(errorString)
     }
 }
 

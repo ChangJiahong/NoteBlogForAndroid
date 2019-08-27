@@ -2,36 +2,37 @@ package top.pythong.noteblog.app.login.ui
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.util.Patterns
 import kotlinx.coroutines.*
 
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.login.model.LoggedInUserView
+import top.pythong.noteblog.app.login.model.LoginFormState
 import top.pythong.noteblog.app.login.service.ILoginService
-import top.pythong.noteblog.data.RestResponse
-import top.pythong.noteblog.data.Result
+import top.pythong.noteblog.base.viewModel.BaseViewModel
 import java.util.regex.Pattern
 
-class LoginViewModel(private val loginSercice: ILoginService) : ViewModel(), CoroutineScope by MainScope() {
+class LoginViewModel(private val loginSercice: ILoginService) : BaseViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<Result<LoggedInUserView>>()
-    val loginResult: LiveData<Result<LoggedInUserView>> = _loginResult
+    private val _loginResult = MutableLiveData<LoggedInUserView>()
+    val loginResult: LiveData<LoggedInUserView> = _loginResult
 
     /**
      * 登录，开启协程
      */
     fun login(username: String, password: String) = launch(Dispatchers.IO) {
 
-        val restResponse = loginSercice.login(username, password)
+        val result = loginSercice.login(username, password)
 
         withContext(Dispatchers.Main) {
-            if (restResponse.isOk) {
-                _loginResult.value = Result.ok(LoggedInUserView(restResponse.data.username))
+            if (result.isOk) {
+                _loginResult.value = LoggedInUserView(result.viewData!!.username)
             } else {
-                _loginResult.value = Result.fail(restResponse.convertTo(LoggedInUserView::class.java))
+                // 错误回调
+                _error.value = result.msgCode
             }
         }
     }

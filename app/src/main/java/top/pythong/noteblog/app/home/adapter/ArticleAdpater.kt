@@ -1,5 +1,6 @@
 package top.pythong.noteblog.app.home.adapter
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,15 +13,14 @@ import org.jetbrains.anko.toast
 import org.w3c.dom.Text
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.home.model.Article
+import top.pythong.noteblog.app.home.model.ArticleView
 
 /**
  *
  * @author ChangJiahong
  * @date 2019/8/25
  */
-class ArticleAdpater(val articleList: List<Article>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    var itemClick: (v: View, positon: Int) -> Unit = { _, _ -> }
+class ArticleAdpater(val articleList: List<ArticleView>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(p0.context).inflate(R.layout.article_item, p0, false)
@@ -29,25 +29,33 @@ class ArticleAdpater(val articleList: List<Article>) : RecyclerView.Adapter<Recy
 
     override fun getItemCount() = articleList.size
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         val item = articleList[position]
         viewHolder as ViewHolder
-        viewHolder.title.text = item.title
-        viewHolder.v.setOnClickListener {
-            it.context.toast("点击")
-        }
-        viewHolder.like.setOnClickListener {
-            viewHolder.liked = !viewHolder.liked
-            viewHolder.likeIcon.setImageResource(if (viewHolder.liked) R.drawable.like_1 else R.drawable.like_0)
-            it.context.toast("点赞")
-        }
-
-        viewHolder.comment.setOnClickListener {
-            it.context.toast("评论")
-        }
-
-        viewHolder.share.setOnClickListener {
-            it.context.toast("分享")
+        viewHolder.apply {
+            author.text = item.author
+            timeAgo.text = " · ${item.timeAgo}"
+            tags.text = item.tags
+            title.text = item.title
+            info.text = item.info
+            v.setOnClickListener {
+                it.context.toast("点击")
+            }
+            like.setOnClickListener {
+                viewHolder.liked = !viewHolder.liked
+                viewHolder.likeIcon.setImageResource(
+                    if (viewHolder.liked)
+                        R.drawable.like_1 else R.drawable.like_0
+                )
+                it.context.toast("点赞")
+            }
+            comment.setOnClickListener {
+                it.context.toast("评论")
+            }
+            share.setOnClickListener {
+                it.context.toast("分享")
+            }
         }
     }
 
@@ -55,7 +63,10 @@ class ArticleAdpater(val articleList: List<Article>) : RecyclerView.Adapter<Recy
 
         var liked = false
         val title = v.find<TextView>(R.id.title)
-
+        val author = v.find<TextView>(R.id.author)
+        val timeAgo = v.find<TextView>(R.id.timeAgo)
+        val tags = v.find<TextView>(R.id.tags)
+        val info = v.find<TextView>(R.id.info)
         val likeIcon = v.find<ImageView>(R.id.likeIcon)
         val like = v.find<View>(R.id.like)
 
@@ -65,12 +76,5 @@ class ArticleAdpater(val articleList: List<Article>) : RecyclerView.Adapter<Recy
         val share = v.find<View>(R.id.share)
 
 
-    }
-
-    /**
-     * 点击事件监听
-     */
-    fun setOnItemClickListener(click: (v: View, positon: Int) -> Unit) {
-        itemClick = click
     }
 }

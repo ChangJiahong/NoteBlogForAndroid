@@ -5,8 +5,8 @@ import com.google.gson.Gson
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.app.main.dao.IMainDataSource
 import top.pythong.noteblog.app.main.service.IMainService
-import top.pythong.noteblog.data.RestEntity
 import top.pythong.noteblog.data.RestResponse
+import top.pythong.noteblog.data.Result
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.NetworkUtils
@@ -23,16 +23,14 @@ class MainServiceImpl(private val context: Context, private val mainDataSource: 
     /**
      * 自动登录
      */
-    override fun autoLogin(): RestResponse<LoggedInUser> {
-        if (NetworkUtils.isNetworkAvailable(context)) {
+    override fun autoLogin(): Result<LoggedInUser> {
             val token = context.getStringFromSharedPreferences(Constant.TOKEN)
             val response = mainDataSource.autoLogin(token)
-            if (response.isOk) {
+        if (response.isOk()) {
                 setLoggedInUser(response)
+            return Result.ok(restResponse = response)
             }
-            return response
-        }
-        return RestResponse.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
+        return Result.fail(response)
     }
 
     /**

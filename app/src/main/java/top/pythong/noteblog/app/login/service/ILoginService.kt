@@ -2,6 +2,7 @@ package top.pythong.noteblog.app.login.service
 
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.data.RestResponse
+import top.pythong.noteblog.data.Result
 
 /**
  *
@@ -10,7 +11,7 @@ import top.pythong.noteblog.data.RestResponse
  */
 interface ILoginService {
 
-    fun login(username: String, password: String): RestResponse<LoggedInUser>
+    fun login(username: String, password: String): Result<LoggedInUser>
 
     fun logout()
 }

@@ -2,6 +2,7 @@ package top.pythong.noteblog.app.main.service
 
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.data.RestResponse
+import top.pythong.noteblog.data.Result
 
 /**
  *
@@ -13,6 +14,6 @@ interface IMainService {
     /**
      * 自动登录
      */
-    fun autoLogin():RestResponse<LoggedInUser>
+    fun autoLogin(): Result<LoggedInUser>
 
 }

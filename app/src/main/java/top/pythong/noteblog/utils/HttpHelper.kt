@@ -1,27 +1,30 @@
 package top.pythong.noteblog.utils
 
+import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import okhttp3.*
-import top.pythong.noteblog.app.login.model.LoggedInUser
-import top.pythong.noteblog.data.Pairs
-import top.pythong.noteblog.data.RestEntity
-import top.pythong.noteblog.data.RestResponse
+import top.pythong.noteblog.app.home.model.Article
+import top.pythong.noteblog.app.home.model.PageInfo
+import top.pythong.noteblog.data.*
 import kotlin.reflect.KClass
-import top.pythong.noteblog.data.RestResponseType
 import top.pythong.noteblog.data.constant.MsgCode
 import java.io.IOException
 import java.net.SocketTimeoutException
 
 
 /**
- *
+ * 网络请求助手
  * @author ChangJiahong
  * @date 2019/8/23
  */
-object HttpHelper {
+class HttpHelper(val context: Context) {
 
     val TAG = "HttpHelper"
+
+    private val GET = "GET"
+
+    private val POST = "POST"
 
     private val mOkHttpClient by lazy {
         OkHttpClient()
@@ -31,14 +34,14 @@ object HttpHelper {
 
     private var mHeaders: Headers.Builder = Headers.Builder()
 
-    private var mParams: MutableMap<String, String> = HashMap()
-
     private var mRequestBody: RequestBody = FormBody.Builder().build()
+
+    private fun <K, V> Map<K, V>.toQueryString(): String = this.map { "${it.key}=${it.value}" }.joinToString("&")
 
     fun params(makePairs: Pairs<String>.() -> Unit): HttpHelper {
         val requestPairs = Pairs<String>()
         requestPairs.makePairs()
-        mParams.putAll(requestPairs.pairs)
+        url += "?${requestPairs.pairs.toQueryString()}"
         return this
     }
 
@@ -70,82 +73,185 @@ object HttpHelper {
         return this
     }
 
+    private fun getClinet(): OkHttpClient {
+        return mOkHttpClient
+    }
+
+    fun post() = method(POST)
+
+    fun get() = method(GET)
+
+    /**
+     * GET方法Response 分页
+     */
+    fun <T : Any> getForRestResponsePage(kClass: KClass<T>): RestResponse<PageInfo<T>> {
+
+        return forRestResponsePage(kClass, GET)
+    }
+
+    /**
+     * GET方法Response
+     */
+    fun <T : Any> getForRestResponse(kClass: KClass<T>): RestResponse<T> {
+
+        return forRestResponse(kClass, GET)
+    }
+
+    /**
+     * GET方法Entity 分页
+     */
+    fun <T : Any> getForEntityPage(kClass: KClass<T>): RestEntity<PageInfo<T>> {
+
+        return forRestEntityPage(kClass, GET)
+    }
+
+    /**
+     * GET方法Entity
+     */
+    fun <T : Any> getForEntity(kClass: KClass<T>): RestEntity<T> {
+
+        return forRestEntity(kClass, GET)
+    }
+
+
+    /**
+     * POST方法Response 分页
+     */
+    fun <T : Any> postForRestResponsePage(kClass: KClass<T>): RestResponse<PageInfo<T>> {
+        return forRestResponsePage(kClass, POST)
+    }
+
+    /**
+     * POST方法Response
+     */
     fun <T : Any> postForRestResponse(kClass: KClass<T>): RestResponse<T> {
-        try {
-            val response = post()
-            if (response.isSuccessful) {
-                val json = response.body!!.string()
-                val type = RestResponseType(kClass.java)
-                return Gson().fromJson(json, type)
-            }
-            er(response.code, response.message)
-            return RestResponse.fail(response.code, response.message)
-        } catch (e: IOException) {
-            // io错误
-            return RestResponse.fail(0, "网络开小差了")
+        return forRestResponse(kClass, POST)
+    }
+
+    /**
+     * POST方法Entity
+     */
+    fun <T : Any> postForEntity(kClass: KClass<T>): RestEntity<T> {
+        return forRestEntity(kClass, POST)
+    }
+
+    /**
+     * POST方法Entity 分页
+     */
+    fun <T : Any> postForEntityPage(kClass: KClass<T>): RestEntity<PageInfo<T>> {
+        return forRestEntityPage(kClass, POST)
+    }
+
+    /**
+     * 获取Response对象
+     */
+    private fun <T : Any> forRestResponse(kClass: KClass<T>, method: String): RestResponse<T> {
+        val restEntity = forRestEntity(kClass, method)
+        if (restEntity.isSuccessful) {
+            return restEntity.restResponse!!
+        }
+        return RestResponse.fail(restEntity.code, restEntity.msg)
+    }
+
+    /**
+     * 获取Response对象 分页
+     */
+    private fun <T : Any> forRestResponsePage(kClass: KClass<T>, method: String): RestResponse<PageInfo<T>> {
+        val restEntity = forRestEntityPage(kClass, method)
+        if (restEntity.isSuccessful) {
+            return restEntity.restResponse!!
+        }
+        return restEntity.toFailRestResponse()
+    }
+
+    /**
+     * 分页请求
+     */
+    private fun <T : Any> forRestEntityPage(kClass: KClass<T>, method: String): RestEntity<PageInfo<T>> {
+
+        return forRestEntityAsJsonAnalyze(method) {
+            val infoType = PageInfoType(kClass.java)
+            val restResponseType = RestResponseType(infoType)
+            val restResponse: RestResponse<PageInfo<T>> = Gson().fromJson(it, restResponseType)
+            restResponse
         }
     }
 
-    fun <T : Any> postForEntity(kClass: KClass<T>): RestEntity<T> {
+
+    /**
+     * 正常请求
+     */
+    private fun <T : Any> forRestEntity(kClass: KClass<T>, method: String): RestEntity<T> {
+
+        return forRestEntityAsJsonAnalyze(method) {
+            val type = RestResponseType(kClass.java)
+            val restResponse: RestResponse<T> = Gson().fromJson(it, type)
+            restResponse
+        }
+
+    }
+
+    /**
+     * 获取entity对象
+     * @param method 请求类型
+     * @param jsonAnalyze json解析
+     * @param T 返回类型
+     */
+    private fun <T : Any> forRestEntityAsJsonAnalyze(
+        method: String,
+        jsonAnalyze: (json: String) -> RestResponse<T>
+    ): RestEntity<T> {
+        if (!NetworkUtils.isNetworkAvailable(context)) {
+            // 网络错误
+            return RestEntity.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
+        }
         try {
-            val response = post()
+            val response = method(method)
             if (response.isSuccessful) {
                 val json = response.body!!.string()
                 Log.d(TAG, "[$url - post]: $json")
-                val type = RestResponseType(kClass.java)
-                val restResponse: RestResponse<T> = Gson().fromJson(json, type)
+
+                // 自定义json解析方法
+                val restResponse: RestResponse<T> = jsonAnalyze(json)
+
                 Log.d(TAG, "json -> RestResponse: $restResponse")
                 return RestEntity.ok(response, restResponse)
             }
             er(response.code, response.message)
             return RestEntity.fail(response)
+        } catch (e: SocketTimeoutException) {
+            Log.d(TAG, e.message)
+            er(MsgCode.ServerError.code, MsgCode.ServerError.msg)
+            // 服务器请求超时
+            return RestEntity.fail(MsgCode.ServerError.code, MsgCode.ServerError.msg)
         } catch (e: IOException) {
-            // io错误
-            return RestEntity.fail("网络开小差了")
+            e.printStackTrace()
+            er(MsgCode.ServerError.code, MsgCode.ServerError.msg)
+            // 未知IO错误
+            return RestEntity.fail(MsgCode.UnknownMistake.code, MsgCode.UnknownMistake.msg)
         }
     }
 
-    fun post() = method("post")
-
-
-    fun get() = method("get")
-
-    fun method(action: String): Response {
+    /**
+     * 统一获取
+     */
+    private fun method(action: String): Response {
 
         val okHttpClient = getClinet()
         val requestBuilder = Request.Builder()
             .url(url)
             .headers(mHeaders.build())
-        when(action){
-            "post" -> requestBuilder.post(mRequestBody)
-            "get" -> requestBuilder.get()
+
+        when (action) {
+            GET -> requestBuilder.method(action, null)
+            POST -> requestBuilder.method(action, mRequestBody)
         }
+
         val request = requestBuilder.build()
+
         val call = okHttpClient.newCall(request)
         return call.execute()
     }
 
-    private fun getClinet(): OkHttpClient {
-        return mOkHttpClient
-    }
-
-    fun getForRestResponse(kClass: KClass<LoggedInUser>): RestResponse<LoggedInUser> {
-        try {
-            val response = get()
-            if (response.isSuccessful) {
-                val json = response.body!!.string()
-                val type = RestResponseType(kClass.java)
-                return Gson().fromJson(json, type)
-            }
-            er(response.code, response.message)
-            return RestResponse.fail(response.code, response.message)
-        } catch (e: SocketTimeoutException) {
-            Log.d(TAG, e.message)
-            return RestResponse.fail(MsgCode.ServerError.code, MsgCode.ServerError.msg)
-        }catch (e:IOException){
-            e.printStackTrace()
-            return RestResponse.fail(MsgCode.UnknownMistake.code, MsgCode.UnknownMistake.msg)
-        }
-    }
-
 }
+

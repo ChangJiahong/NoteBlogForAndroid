@@ -1,4 +1,4 @@
-package top.pythong.noteblog.app.login.ui
+package top.pythong.noteblog.app.login.model
 
 /**
  * Data validation state of the login form.

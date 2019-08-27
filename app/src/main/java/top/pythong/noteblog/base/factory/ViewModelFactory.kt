@@ -1,11 +1,12 @@
-package top.pythong.noteblog.data
+package top.pythong.noteblog.base.factory
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
-import top.pythong.noteblog.app.main.ui.MainActivity
+import kotlin.reflect.KClass
 
 /**
  *
@@ -14,11 +15,18 @@ import top.pythong.noteblog.app.main.ui.MainActivity
  */
 object ViewModelFactory {
 
-    fun <T : ViewModel> createViewModel(activity: FragmentActivity, clazz: Class<T>): T{
+    fun <T : ViewModel> createViewModel(activity: FragmentActivity, clazz: KClass<T>): T {
         return ViewModelProviders.of(
             activity,
-            Factory(activity, clazz)
-        ).get(clazz)
+            Factory(activity, clazz.java)
+        ).get(clazz.java)
+    }
+
+    fun <T : ViewModel> createViewModel(fragment: Fragment, clazz: KClass<T>): T {
+        return ViewModelProviders.of(
+            fragment,
+            Factory(fragment.context!!, clazz.java)
+        ).get(clazz.java)
     }
 
     private class Factory<T: ViewModel>(val context: Context, clazz: Class<T>): ViewModelProvider.Factory{
@@ -44,7 +52,9 @@ object ViewModelFactory {
             // 数据源接口类对象
             val iDataSourceClass =  Class.forName(iDataSourceName)
             // 数据源对象
-            val dataSource = Class.forName(dataSourceName).getConstructor().newInstance()
+            val dataSource = Class.forName(dataSourceName)
+                .getConstructor(Context::class.java)
+                .newInstance(context)
             // 数据源接口类对象
             val iServiceClass = Class.forName(iServiceName)
             // 数据源对象

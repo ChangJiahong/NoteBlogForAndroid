@@ -6,7 +6,9 @@ import top.pythong.noteblog.app.main.dao.IMainDataSource
 import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.constant.Api
 import top.pythong.noteblog.data.constant.Constant
+import top.pythong.noteblog.data.constant.Constant.TOKEN
 import top.pythong.noteblog.utils.HttpHelper
+import top.pythong.noteblog.utils.getStringFromSharedPreferences
 
 /**
  *
@@ -15,7 +17,8 @@ import top.pythong.noteblog.utils.HttpHelper
  */
 class MainDataSourceImpl(val context: Context) : IMainDataSource {
 
-    override fun autoLogin(token: String) = HttpHelper(context).apply {
+    override fun autoLogin() = HttpHelper(context).apply {
+        val token = context.getStringFromSharedPreferences(TOKEN)
         url = Api.user
         headers {
             Constant.TOKEN - token

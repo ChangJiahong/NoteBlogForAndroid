@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.home_fragment.*
 
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.home.adapter.ArticleAdpater
-import top.pythong.noteblog.app.home.model.ArticleView
+import top.pythong.noteblog.app.home.model.CardItem
 import top.pythong.noteblog.app.home.utils.SmoothScrollLayoutManager
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
@@ -33,7 +33,7 @@ class HomeFragment : BaseFragment() {
 
     private lateinit var viewModel: HomeViewModel
 
-    private val articleList = ArrayList<ArticleView>()
+    private val articleList = ArrayList<CardItem>()
 
     private lateinit var adapter: ArticleAdpater
 

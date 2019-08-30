@@ -245,4 +245,14 @@ class ExampleUnitTest {
 
         println(ass)
     }
+
+    @Test
+    fun string() {
+        ",".split(",1").forEach {
+            if (it.isBlank()) {
+                return@forEach
+            }
+            println(1)
+        }
+    }
 }

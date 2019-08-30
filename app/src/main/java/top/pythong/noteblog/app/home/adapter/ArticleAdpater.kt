@@ -2,25 +2,30 @@ package top.pythong.noteblog.app.home.adapter
 
 import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import com.bumptech.glide.Glide
+import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.find
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
-import org.w3c.dom.Text
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.home.model.Article
-import top.pythong.noteblog.app.home.model.ArticleView
+import top.pythong.noteblog.app.article.ui.ArticleActivity
+import top.pythong.noteblog.app.home.model.CardItem
+import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 
 /**
  *
  * @author ChangJiahong
  * @date 2019/8/25
  */
-class ArticleAdpater(val articleList: List<ArticleView>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ArticleAdpater(val articleList: List<CardItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    val TAG = ArticleActivity::class.java.simpleName
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(p0.context).inflate(R.layout.article_item, p0, false)
@@ -39,8 +44,10 @@ class ArticleAdpater(val articleList: List<ArticleView>) : RecyclerView.Adapter<
             tags.text = item.tags
             title.text = item.title
             info.text = item.info
+            Glide.with(v.context).load(item.authorImgUrl).into(authorIcon)
+            Glide.with(v.context).load(item.frontCoverImgUrl).into(articleIcon)
             v.setOnClickListener {
-                it.context.toast("点击")
+                it.context.startActivity<ArticleActivity>(ARTICLE_ID to item.id.toString())
             }
             like.setOnClickListener {
                 viewHolder.liked = !viewHolder.liked
@@ -64,6 +71,7 @@ class ArticleAdpater(val articleList: List<ArticleView>) : RecyclerView.Adapter<
         var liked = false
         val title = v.find<TextView>(R.id.title)
         val author = v.find<TextView>(R.id.author)
+        val authorIcon = v.find<CircleImageView>(R.id.authorIcon)
         val timeAgo = v.find<TextView>(R.id.timeAgo)
         val tags = v.find<TextView>(R.id.tags)
         val info = v.find<TextView>(R.id.info)
@@ -74,6 +82,8 @@ class ArticleAdpater(val articleList: List<ArticleView>) : RecyclerView.Adapter<
         val mComment = v.find<TextView>(R.id.mComment)
 
         val share = v.find<View>(R.id.share)
+
+        val articleIcon = v.find<ImageView>(R.id.articleIcon)
 
 
     }

@@ -13,5 +13,8 @@ object Constant {
 
     const val LOGGED_IN_USER = "loggedInUser"
 
+    const val ARTICLE_ID = "articleId"
+
+    const val ARTICLE_TYPE = "article-type"
 
 }

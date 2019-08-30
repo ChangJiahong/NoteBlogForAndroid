@@ -8,7 +8,7 @@ import top.pythong.noteblog.utils.DateKit
  * @author ChangJiahong
  * @date 2019/8/25
  */
-data class ArticleView(
+data class CardItem(
 
     /**
      * 文章id
@@ -24,6 +24,7 @@ data class ArticleView(
      * 作者 username
      */
     val author: String,
+    val authorImgUrl: String,
 
     val tags: String,
 
@@ -42,30 +43,19 @@ data class ArticleView(
     /**
      * 创建时间
      */
-    val timeAgo: String
+    val timeAgo: String,
+    val frontCoverImgUrl: String
 ) {
     constructor(article: Article) : this(
         id = article.id,
         title = article.title,
         author = article.author,
-        tags = kotlin.run {
-            val tags = article.types.filter {
-                it.type == Type.TAG
-            }
-            tags.joinToString(separator = "/", limit = 3) {
-                it.name
-            }
-        },
-        categorys = kotlin.run {
-            val tags = article.types.filter {
-                it.type == Type.CATEGORY
-            }
-            tags.joinToString(separator = "/", limit = 3) {
-                it.name
-            }
-        },
+        authorImgUrl = article.authorImgUrl,
+        tags = article.tags,
+        categorys = article.categorys,
         info = article.info,
         hits = article.hits,
-        timeAgo = DateKit.timesAgo(article.created, "yyyy-MM-dd HH:mm:ss")
+        timeAgo = DateKit.timesAgo(article.created, "yyyy-MM-dd HH:mm:ss"),
+        frontCoverImgUrl = article.frontCoverImgUrl
     )
 }

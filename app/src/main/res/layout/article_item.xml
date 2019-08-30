@@ -13,17 +13,17 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
 
-        <ImageView
-            android:id="@+id/userIcon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/authorIcon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:src="@drawable/icon"/>
 
         <TextView
             android:id="@+id/author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/userIcon"
+            android:layout_toEndOf="@id/authorIcon"
             android:layout_marginStart="10dp"
             android:textColor="@color/black"
             android:text="@string/username"/>
@@ -77,12 +77,13 @@
 
         <ImageView
             android:id="@+id/articleIcon"
-            android:layout_width="60dp"
+            android:layout_width="70dp"
             android:layout_height="0dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/icon"
-            android:layout_alignTop="@id/content"
-            android:layout_alignBottom="@id/content"
+            android:scaleType="centerCrop"
+            android:layout_alignTop="@id/info"
+            android:layout_alignBottom="@id/info"
             />
 
     </RelativeLayout>

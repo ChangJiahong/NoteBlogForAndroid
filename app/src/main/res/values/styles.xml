@@ -20,9 +20,26 @@
 
     </style>
 
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="actionBarSize">56dp</item>
+    </style>
+
     <!--卡片风格-->
     <style name="card_bg">
         <item name="android:background">@drawable/crad_bg_ripple</item>
         <item name="android:layout_margin">3dp</item>
     </style>
+
+    <style name="type_bg">
+        <item name="android:background">@drawable/type_bg_ripple</item>
+        <item name="android:padding">3dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+    </style>
+
 </resources>

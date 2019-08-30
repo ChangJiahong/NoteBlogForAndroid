@@ -28,5 +28,7 @@
     <string name="comment">评论</string>
     <string name="share">分享</string>
     <string name="like">点赞</string>
+    <string name="copyed">复制成功</string>
+    <string name="editTime">编辑时间</string>
 
 </resources>

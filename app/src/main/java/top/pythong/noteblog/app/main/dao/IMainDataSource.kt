@@ -9,5 +9,5 @@ import top.pythong.noteblog.data.RestResponse
  * @date 2019/8/24
  */
 interface IMainDataSource {
-    fun autoLogin(token: String): RestResponse<LoggedInUser>
+    fun autoLogin(): RestResponse<LoggedInUser>
 }

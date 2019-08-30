@@ -3,6 +3,7 @@ package top.pythong.noteblog.base.activity
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
 import top.pythong.noteblog.app.login.ui.LoginActivity
@@ -17,8 +18,8 @@ import top.pythong.noteblog.utils.putToSharedPreferences
  * @author ChangJiahong
  * @date 2019/8/26
  */
-abstract class BaseActivity : AppCompatActivity(), OnErrorListener {
-    protected lateinit var viewModel: BaseViewModel
+abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
+    private lateinit var viewModel: BaseViewModel
 
     internal abstract fun getViewModel(): BaseViewModel
 

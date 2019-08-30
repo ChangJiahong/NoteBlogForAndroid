@@ -24,8 +24,7 @@ class MainServiceImpl(private val context: Context, private val mainDataSource: 
      * 自动登录
      */
     override fun autoLogin(): Result<LoggedInUser> {
-            val token = context.getStringFromSharedPreferences(Constant.TOKEN)
-            val response = mainDataSource.autoLogin(token)
+        val response = mainDataSource.autoLogin()
         if (response.isOk()) {
                 setLoggedInUser(response)
             return Result.ok(restResponse = response)

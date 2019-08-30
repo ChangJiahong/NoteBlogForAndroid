@@ -2,29 +2,21 @@ package top.pythong.noteblog.app.home.ui
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.util.Log
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.pythong.noteblog.app.home.model.Article
-import top.pythong.noteblog.app.home.model.ArticleView
+import top.pythong.noteblog.app.home.model.CardItem
 import top.pythong.noteblog.app.home.service.IHomeService
-import top.pythong.noteblog.base.ErrorResult
 import top.pythong.noteblog.base.viewModel.BaseViewModel
-import top.pythong.noteblog.data.RestResponse
-import top.pythong.noteblog.data.Result
-import top.pythong.noteblog.data.constant.MsgCode
 
-class HomeViewModel(val homeService: IHomeService) : BaseViewModel() {
+class HomeViewModel(private val homeService: IHomeService) : BaseViewModel() {
 
     val TAG = "HomeViewModel"
 
-    private val _articles = MutableLiveData<ArrayList<ArticleView>>()
+    private val _articles = MutableLiveData<ArrayList<CardItem>>()
 
-    val articles: LiveData<ArrayList<ArticleView>> = _articles
+    val articles: LiveData<ArrayList<CardItem>> = _articles
 
     private var page: Int = 1
     private val size: Int = 20
@@ -38,7 +30,7 @@ class HomeViewModel(val homeService: IHomeService) : BaseViewModel() {
             val pageInfo = result.viewData!!
             val newArticles = pageInfo.list!!
             newArticles.forEach {
-                articleList.add(ArticleView(it))
+                articleList.add(CardItem(it))
             }
             page = pageInfo.nextPage
 
@@ -58,12 +50,12 @@ class HomeViewModel(val homeService: IHomeService) : BaseViewModel() {
     fun refresh(refreshLayout: RefreshLayout) = launch(Dispatchers.IO) {
 
         val result = homeService.getArticles(1, size)
-        val articleList = ArrayList<ArticleView>()
+        val articleList = ArrayList<CardItem>()
         if (result.isOk) {
             val pageInfo = result.viewData!!
             val newArticles = pageInfo.list!!
             newArticles.forEach {
-                articleList.add(ArticleView(it))
+                articleList.add(CardItem(it))
             }
             page = pageInfo.nextPage
 

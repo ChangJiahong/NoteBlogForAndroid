@@ -20,11 +20,14 @@ data class Article(
      * 作者 username
      */
     val author: String,
+    val authorImgUrl: String,
 
     /**
      * 文章标签、种类
      */
-    val types: ArrayList<Type>,
+    val tags: String,
+
+    val categorys: String,
 
     /**
      * 描述信息
@@ -54,7 +57,8 @@ data class Article(
     /**
      * 文章内容
      */
-    val content: String
+    val content: String,
+    val frontCoverImgUrl: String
 ) {
     companion object {
 

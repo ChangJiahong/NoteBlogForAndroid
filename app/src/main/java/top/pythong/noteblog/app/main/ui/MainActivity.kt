@@ -61,6 +61,7 @@ class MainActivity : BaseActivity() {
      * 初始化视图
      */
     override fun initView() {
+        setSwipeBackEnable(false)
         // 设置主视图
         tabMode.setup(this, supportFragmentManager, R.id.fragmentContent)
         // 添加菜单按钮

@@ -101,7 +101,20 @@ enum class MsgCode(
             }
             return RequestMsg
         }
+
+        fun isLoginError(msgCode: MsgCode): Boolean {
+            return when (msgCode) {
+                MsgCode.LogonStateFailure, MsgCode.TokenExpired, MsgCode.TokenIsEmpty, MsgCode.TokenIsNotValid, MsgCode.UserNotLoggedIn -> true
+                else -> false
+            }
+        }
     }
 
+    fun isLoginError(): Boolean {
+        return when (this) {
+            MsgCode.LogonStateFailure, MsgCode.TokenExpired, MsgCode.TokenIsEmpty, MsgCode.TokenIsNotValid, MsgCode.UserNotLoggedIn -> true
+            else -> false
+        }
+    }
 
 }

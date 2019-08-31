@@ -26,9 +26,9 @@ class MainServiceImpl(private val context: Context, private val mainDataSource: 
     override fun autoLogin(): Result<LoggedInUser> {
         val response = mainDataSource.autoLogin()
         if (response.isOk()) {
-                setLoggedInUser(response)
+            setLoggedInUser(response)
             return Result.ok(restResponse = response)
-            }
+        }
         return Result.fail(response)
     }
 

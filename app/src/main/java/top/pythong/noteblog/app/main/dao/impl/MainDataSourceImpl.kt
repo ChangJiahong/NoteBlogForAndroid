@@ -1,12 +1,14 @@
 package top.pythong.noteblog.app.main.dao.impl
 
 import android.content.Context
+import top.pythong.noteblog.R
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.app.main.dao.IMainDataSource
 import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.constant.Api
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.Constant.TOKEN
+import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.HttpHelper
 import top.pythong.noteblog.utils.getStringFromSharedPreferences
 
@@ -19,6 +21,12 @@ class MainDataSourceImpl(val context: Context) : IMainDataSource {
 
     override fun autoLogin() = HttpHelper(context).apply {
         val token = context.getStringFromSharedPreferences(TOKEN)
+        if (token.isBlank()) {
+            return RestResponse.fail<LoggedInUser>(
+                MsgCode.UserNotLoggedIn.code,
+                context.getString(R.string.YouHaveNotLoggedInYet)
+            )
+        }
         url = Api.user
         headers {
             Constant.TOKEN - token

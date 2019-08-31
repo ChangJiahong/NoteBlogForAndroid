@@ -28,19 +28,20 @@ class IndexActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     }
 
-    private fun jump() = launch(Dispatchers.IO) {
+    private fun jump() = launch {
 
         // TODO: 网络请求，初始化，获取app更新等信息
         delay(1000)
 
         // 获取本地token，没有则跳转到login
-        val token = getStringFromSharedPreferences(Constant.TOKEN)
-        if (token.isEmpty()) {
-            goTo(LoginActivity::class)
-        }else{
-            goTo(MainActivity::class)
-        }
+//        val token = getStringFromSharedPreferences(Constant.TOKEN)
+//        if (token.isEmpty()) {
+//            goTo(LoginActivity::class)
+//        }else{
+//            goTo(MainActivity::class)
+//        }
 
+        goTo(MainActivity::class)
 
     }
 

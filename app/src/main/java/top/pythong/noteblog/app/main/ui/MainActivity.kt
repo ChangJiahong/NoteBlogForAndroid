@@ -16,7 +16,9 @@ import top.pythong.noteblog.app.message.ui.MessageFragment
 import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.base.factory.ViewModelFactory
+import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
+import top.pythong.noteblog.utils.getBooleanFromSharedPreferences
 import kotlin.reflect.KClass
 
 
@@ -100,7 +102,10 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onErrorResult(error: MsgCode) {
-        super.onErrorResult(error)
+        val askAboutLogin = getBooleanFromSharedPreferences(Constant.ASK_ABOUT_LOGIN)
+        if (askAboutLogin) {
+            super.onErrorResult(error)
+        }
         toast(error.msg)
     }
 }

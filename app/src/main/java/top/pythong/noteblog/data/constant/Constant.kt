@@ -17,4 +17,6 @@ object Constant {
 
     const val ARTICLE_TYPE = "article-type"
 
+    const val ASK_ABOUT_LOGIN = "askAboutLogin"
+
 }

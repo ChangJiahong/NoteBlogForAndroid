@@ -44,28 +44,29 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
     abstract fun initData()
 
     override fun onErrorResult(error: MsgCode) {
-        when (error) {
-            MsgCode.LogonStateFailure, MsgCode.TokenExpired, MsgCode.TokenIsEmpty, MsgCode.TokenIsNotValid, MsgCode.UserNotLoggedIn -> {
-                alert {
-                    title = "提示"
-                    message = error.msg + ",请重新登录!!!"
-                    isCancelable = false
-                    positiveButton("登录") { i ->
-                        putToSharedPreferences {
-                            put(Constant.TOKEN, "")
-                        }
-                        // 启动登录
-                        startActivity<LoginActivity>()
-                        // 关闭
-                        i.dismiss()
-                        // 关闭
-                        finish()
+        if (error.isLoginError()) {
+            alert {
+                title = "提示"
+                message = error.msg + ",去登陆试试!!!"
+                positiveButton("登录") { i ->
+                    putToSharedPreferences {
+                        put(Constant.TOKEN, "")
                     }
-                }.show()
-            }
-            else -> {
+                    // 启动登录
+                    startActivity<LoginActivity>()
+                }
+                negativeButton("再等等") {
+                    it.dismiss()
+                }
+                neutralPressed("不要来烦我") {
+                    putToSharedPreferences {
+                        // 下次是否询问登录
+                        put(Constant.ASK_ABOUT_LOGIN, false)
+                    }
+                    it.dismiss()
+                }
 
-            }
+            }.show()
         }
     }
 

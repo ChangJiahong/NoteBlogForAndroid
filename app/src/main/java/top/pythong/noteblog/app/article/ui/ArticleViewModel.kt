@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.pythong.noteblog.app.article.ArticleView
+import top.pythong.noteblog.app.article.model.ArticleView
 import top.pythong.noteblog.app.article.service.IArticleService
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.base.viewModel.BaseViewModel

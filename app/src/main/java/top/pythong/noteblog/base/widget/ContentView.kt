@@ -3,19 +3,17 @@ package top.pythong.noteblog.base.widget
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.support.v4.view.NestedScrollingChild
-import android.support.v4.view.NestedScrollingChildHelper
-import android.support.v4.view.ViewCompat
+import android.net.Uri
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
+import android.webkit.*
 import org.apache.commons.lang3.StringUtils
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.utils.HtmlHelper
 import top.pythong.noteblog.R
+import top.pythong.noteblog.base.ContentJavaScriptInterface
 
 /**
  *
@@ -23,6 +21,8 @@ import top.pythong.noteblog.R
  * @date 2019/8/29
  */
 class ContentView : WebView {
+
+    val TAG = ContentView::class.java.simpleName
 
     /**
      * 内容加载回调
@@ -48,7 +48,11 @@ class ContentView : WebView {
     private fun init(context: Context) {
 
         webChromeClient = ChromeClient()
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            webViewClient = WebClientN()
+        } else {
+            webViewClient = WebClient()
+        }
         scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
 
         val settings = settings
@@ -68,8 +72,9 @@ class ContentView : WebView {
             }
             false
         })
+        settings.javaScriptEnabled = true
 
-
+        addJavascriptInterface(ContentJavaScriptInterface(this.context), "listener")
     }
 
     private fun copyToClipboard(str: String?) {
@@ -88,8 +93,21 @@ class ContentView : WebView {
         loadPage(html)
     }
 
+    fun setCodeSourceText(codeSource: String, codeClass: String) {
+        if (StringUtils.isBlank(codeSource)) {
+            return
+        }
+        settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
+        scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
+        settings.setSupportZoom(true)
+        settings.builtInZoomControls = true
+        settings.displayZoomControls = false
+        val html = HtmlHelper.generateCodeHtml(codeSource, codeClass)
+        loadPage(html)
+    }
+
     private fun loadPage(page: String) {
-        loadPageWithBaseUrl("file:///android_asset/css/", page)
+        loadPageWithBaseUrl("file:///android_asset/", page)
     }
 
     private fun loadPageWithBaseUrl(baseUrl: String, page: String) {
@@ -111,5 +129,38 @@ class ContentView : WebView {
                 result.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE
     }
 
+    private inner class WebClientN : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            startActivity(request.url)
+            return true
+        }
+
+        override fun onPageFinished(view: WebView, url: String?) {
+            super.onPageFinished(view, url)
+//            addImageClickListener(view)
+        }
+
+    }
+
+    private inner class WebClient : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            startActivity(Uri.parse(url))
+            return true
+        }
+
+        override fun onPageFinished(view: WebView, url: String?) {
+            super.onPageFinished(view, url)
+//            addImageClickListener(view)
+        }
+
+    }
+
+
+    private fun startActivity(uri: Uri?) {
+        if (uri == null) return
+//        AppOpener.launchUrl(context, uri)
+
+        Log.d(TAG, "跳转链接回调：" + uri.toString())
+    }
 
 }

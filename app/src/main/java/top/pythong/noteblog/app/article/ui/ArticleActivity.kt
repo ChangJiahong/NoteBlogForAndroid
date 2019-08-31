@@ -9,16 +9,13 @@ import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import android.graphics.Rect
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.*
 import org.jetbrains.anko.*
+import top.pythong.noteblog.base.ContentJavaScriptInterface
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 import top.pythong.noteblog.data.constant.MsgCode
 
@@ -146,6 +143,4 @@ class ArticleActivity : BaseActivity() {
             vg.addView(text)
         }
     }
-    // 图片链接
-// (?<=\!\[.*\]\()(.+)(?=\))
 }

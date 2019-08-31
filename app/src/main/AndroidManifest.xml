@@ -16,6 +16,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".app.CodePreviewActivity"
+            android:theme="@style/NoActionBarTheme">
+        </activity>
+        <activity
             android:name=".app.article.ui.ArticleActivity"
             android:theme="@style/NoActionBarTheme">
         </activity>

@@ -1,7 +1,6 @@
-package top.pythong.noteblog.app.article
+package top.pythong.noteblog.app.article.model
 
 import top.pythong.noteblog.app.home.model.Article
-import top.pythong.noteblog.utils.DateKit
 
 /**
  *

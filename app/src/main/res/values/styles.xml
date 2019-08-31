@@ -30,6 +30,12 @@
         <item name="actionBarSize">56dp</item>
     </style>
 
+    <style name="translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/translucent</item>
+        　　　　
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
     <!--卡片风格-->
     <style name="card_bg">
         <item name="android:background">@drawable/crad_bg_ripple</item>

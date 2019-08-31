@@ -3,6 +3,7 @@ package top.pythong.noteblog.base.widget
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
@@ -10,6 +11,8 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import org.apache.commons.lang3.StringUtils
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.utils.HtmlHelper
 import top.pythong.noteblog.R
@@ -24,6 +27,8 @@ class ContentView : WebView {
 
     val TAG = ContentView::class.java.simpleName
 
+    private var mBackgroundColor: Int? = null
+
     /**
      * 内容加载回调
      */
@@ -34,18 +39,31 @@ class ContentView : WebView {
     }
 
     constructor(context: Context) : super(context) {
-        init(context)
+        init(context, null)
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context)
+        init(context, attrs)
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context)
+        init(context, attrs)
     }
 
-    private fun init(context: Context) {
+    private fun init(context: Context, attrs: AttributeSet?) {
+
+        if (attrs != null) {
+            val tp = getContext().obtainStyledAttributes(attrs, R.styleable.ContentView)
+            try {
+                mBackgroundColor = tp.getColor(
+                    R.styleable.ContentView_webview_background, getColorAttr(context, android.R.attr.windowBackground)
+                )
+                setBackgroundColor(mBackgroundColor!!)
+            } finally {
+                tp.recycle()
+            }
+        }
+
 
         webChromeClient = ChromeClient()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -74,6 +92,7 @@ class ContentView : WebView {
         })
         settings.javaScriptEnabled = true
 
+        // javascript 接口
         addJavascriptInterface(ContentJavaScriptInterface(this.context), "listener")
     }
 
@@ -86,7 +105,7 @@ class ContentView : WebView {
 
 
     fun setContentText(content: String) {
-        if (StringUtils.isBlank(content)) {
+        if (content.isBlank()) {
             return
         }
         val html = HtmlHelper.generateArticleContentHtml(content)
@@ -94,7 +113,7 @@ class ContentView : WebView {
     }
 
     fun setCodeSourceText(codeSource: String, codeClass: String) {
-        if (StringUtils.isBlank(codeSource)) {
+        if (codeSource.isBlank()) {
             return
         }
         settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
@@ -104,6 +123,19 @@ class ContentView : WebView {
         settings.displayZoomControls = false
         val html = HtmlHelper.generateCodeHtml(codeSource, codeClass)
         loadPage(html)
+    }
+
+    fun loadImage(imgUrl: String) {
+        if (imgUrl.isBlank()) {
+            return
+        }
+        settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
+        scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
+        settings.setSupportZoom(true)
+        settings.builtInZoomControls = true
+        settings.displayZoomControls = false
+        val html = HtmlHelper.generateImageHtml(imgUrl, getCodeBackgroundColor())
+        loadData(html, "text/html", null)
     }
 
     private fun loadPage(page: String) {
@@ -135,11 +167,6 @@ class ContentView : WebView {
             return true
         }
 
-        override fun onPageFinished(view: WebView, url: String?) {
-            super.onPageFinished(view, url)
-//            addImageClickListener(view)
-        }
-
     }
 
     private inner class WebClient : WebViewClient() {
@@ -148,19 +175,29 @@ class ContentView : WebView {
             return true
         }
 
-        override fun onPageFinished(view: WebView, url: String?) {
-            super.onPageFinished(view, url)
-//            addImageClickListener(view)
-        }
-
     }
 
+    private fun getColorAttr(context: Context, attr: Int): Int {
+        val theme = context.theme
+        val typedArray = theme.obtainStyledAttributes(intArrayOf(attr))
+        val color = typedArray.getColor(0, Color.LTGRAY)
+        typedArray.recycle()
+        return color
+    }
+
+    fun setContentViewBackgroundColor(color: Int){
+        mBackgroundColor = color
+
+    }
+    private fun getCodeBackgroundColor(): String {
+        return "#" + Integer.toHexString(this.mBackgroundColor!!).substring(2).toUpperCase()
+    }
 
     private fun startActivity(uri: Uri?) {
         if (uri == null) return
 //        AppOpener.launchUrl(context, uri)
 
-        Log.d(TAG, "跳转链接回调：" + uri.toString())
+        Log.d(TAG, "跳转链接回调：$uri")
     }
 
 }

@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.webkit.JavascriptInterface
 import org.jetbrains.anko.startActivity
-import top.pythong.noteblog.app.CodePreviewActivity
+import top.pythong.noteblog.app.CodeOrImagePreviewActivity
 
 /**
  *
@@ -16,12 +16,19 @@ class ContentJavaScriptInterface(private val context: Context) {
 
     @JavascriptInterface
     fun openImage(imgUrl: String) {
-        Log.d(TAG, "图片链接：$imgUrl")
+        Log.d(TAG, "图片$imgUrl")
+        context.startActivity<CodeOrImagePreviewActivity>(
+            "mediaType" to "img",
+            "imgUrl" to imgUrl
+        )
     }
 
     @JavascriptInterface
     fun openCode(codeSource: String, codeClass: String) {
-        context.startActivity<CodePreviewActivity>("codeSource" to codeSource, "codeClass" to codeClass)
-
+        context.startActivity<CodeOrImagePreviewActivity>(
+            "mediaType" to "code",
+            "codeSource" to codeSource,
+            "codeClass" to codeClass
+        )
     }
 }

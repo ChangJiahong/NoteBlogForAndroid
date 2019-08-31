@@ -1,5 +1,6 @@
 package top.pythong.noteblog.utils
 
+import android.support.annotation.NonNull
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -92,6 +93,19 @@ object HtmlHelper {
             </html>
 
         """
+    }
+
+    fun generateImageHtml(url: String, backgroundColor: String): String {
+        return """
+            <html>
+                <head>
+                    <style>
+                        img{height: auto; width: 100%;}
+                        body{background: $backgroundColor;}
+                    </style>
+                </head>
+                <body><img src="$url"/></body>
+            </html>"""
     }
 
 

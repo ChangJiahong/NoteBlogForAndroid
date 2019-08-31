@@ -33,5 +33,6 @@
     <string name="copyed">复制成功</string>
     <string name="editTime">编辑时间</string>
     <string name="YouHaveNotLoggedInYet">你还没有登录哦</string>
+    <string name="no_browser_clients">没有浏览器客户端</string>
 
 </resources>

@@ -8,7 +8,7 @@ import top.pythong.noteblog.utils.DateKit
  * @author ChangJiahong
  * @date 2019/8/25
  */
-data class CardItem(
+data class ArticleCardItem(
 
     /**
      * 文章id

@@ -22,6 +22,29 @@ enum class MsgCode(
 ) {
 
     OK(200, "OK", "成功"),
+    /*  参数错误：10001~19999   */
+
+    /**
+     * 参数无效
+     */
+    ParameterIsInvalid(10001, "Parameter Is Invalid", "参数无效"),
+    /**
+     * 参数为空
+     */
+    ParameterIsNull(10002, "Parameter Is Null", "参数为空"),
+    /**
+     * 参数类型错误
+     */
+    ParameterTypeError(10003, "Parameter type Error", "参数类型错误"),
+    /**
+     * 参数缺失
+     */
+    ParametersAreMissing(10004, "Parameters Are Missing", "参数缺失"),
+    /**
+     * 参数验证错误
+     */
+    ParameterVerificationError(10005, "Parameter Verification Error", "参数验证错误"),
+
     /**
      * 账号不存在或密码错误
      */
@@ -77,6 +100,7 @@ enum class MsgCode(
     NetworkError(0, "The Network Is Getting Worse", "网络开小差了"),
 
     UnknownMistake(-1, "Unknown Mistake", "未知错误");
+
 
 
     var msg: String

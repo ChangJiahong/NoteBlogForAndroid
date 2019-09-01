@@ -2,7 +2,6 @@ package top.pythong.noteblog.app.home.adapter
 
 import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.article.ui.ArticleActivity
-import top.pythong.noteblog.app.home.model.CardItem
+import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 
 /**
@@ -23,7 +22,7 @@ import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
  * @author ChangJiahong
  * @date 2019/8/25
  */
-class ArticleAdpater(val articleList: List<CardItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ArticleAdapter(val articleList: List<ArticleCardItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val TAG = ArticleActivity::class.java.simpleName
 

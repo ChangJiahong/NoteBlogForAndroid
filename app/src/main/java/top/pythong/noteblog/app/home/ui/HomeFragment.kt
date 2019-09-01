@@ -12,8 +12,8 @@ import com.scwang.smartrefresh.layout.header.BezierRadarHeader
 import kotlinx.android.synthetic.main.home_fragment.*
 
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.home.adapter.ArticleAdpater
-import top.pythong.noteblog.app.home.model.CardItem
+import top.pythong.noteblog.app.home.adapter.ArticleAdapter
+import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.app.home.utils.SmoothScrollLayoutManager
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
@@ -33,9 +33,9 @@ class HomeFragment : BaseFragment() {
 
     private lateinit var viewModel: HomeViewModel
 
-    private val articleList = ArrayList<CardItem>()
+    private val articleList = ArrayList<ArticleCardItem>()
 
-    private lateinit var adapter: ArticleAdpater
+    private lateinit var adapter: ArticleAdapter
 
     private val TAG = "HomeFragment"
 
@@ -78,7 +78,7 @@ class HomeFragment : BaseFragment() {
             //传入false表示刷新失败
         }
 
-        adapter = ArticleAdpater(articleList)
+        adapter = ArticleAdapter(articleList)
         val smoothScrollLayoutManager = SmoothScrollLayoutManager(this.context)
         smoothScrollLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.layoutManager = smoothScrollLayoutManager

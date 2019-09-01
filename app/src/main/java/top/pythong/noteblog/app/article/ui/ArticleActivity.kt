@@ -15,6 +15,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import org.jetbrains.anko.*
+import org.w3c.dom.Text
+import top.pythong.noteblog.app.home.model.Type
+import top.pythong.noteblog.app.type.ui.TypeActivity
 import top.pythong.noteblog.base.ContentJavaScriptInterface
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 import top.pythong.noteblog.data.constant.MsgCode
@@ -86,10 +89,14 @@ class ArticleActivity : BaseActivity() {
             uNameBar.text = article.author
             uName.text = article.author
             mHitsAndLike.text = "0 赞 · ${article.hits} 浏览"
-            loadTypes(article.tags, mTags)
+            loadTypes(article.tags, mTags) { tv ->
+                startActivity<TypeActivity>("type" to Type.TAG, "name" to tv.text)
+            }
             mTitle.text = article.title
             mContent.setContentText(article.content)
-            loadTypes(article.categorys, mCategorys)
+            loadTypes(article.categorys, mCategorys) { tv ->
+                startActivity<TypeActivity>("type" to Type.CATEGORY, "name" to tv.text)
+            }
             editTime.text = getString(R.string.editTime) + " : " + article.createTime
 
         })
@@ -106,7 +113,7 @@ class ArticleActivity : BaseActivity() {
     }
 
     override fun onErrorResult(error: MsgCode) {
-        super.onErrorResult(error)
+
         loadingView.errorMsg {
             it.text = error.msg
         }
@@ -121,7 +128,7 @@ class ArticleActivity : BaseActivity() {
     }
 
 
-    fun loadTypes(types: String, vg: ViewGroup, typeClick: (v: View) -> Unit = {}) {
+    fun loadTypes(types: String, vg: ViewGroup, typeClick: (v: TextView) -> Unit = {}) {
         types.split(",").forEach {
             if (it.isBlank()) {
                 return@forEach
@@ -137,7 +144,7 @@ class ArticleActivity : BaseActivity() {
                 text = it
                 background = getDrawable(R.drawable.type_bg_ripple)
                 setOnClickListener { v ->
-                    typeClick(v)
+                    typeClick(v as TextView)
                 }
             }
             vg.addView(text)

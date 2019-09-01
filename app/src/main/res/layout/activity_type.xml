@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg"
+    tools:context=".app.type.ui.TypeActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/back_bg_ripple"
+                android:layout_marginStart="20dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/arrow_left"/>
+
+            <TextView
+                android:id="@+id/mTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/backBtn"
+                android:text="文章分类"/>
+
+        </RelativeLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <com.demo.cjh.loadinglayoutlib.InternalLoadingLayout
+        android:id="@+id/loadingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/typeView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </com.demo.cjh.loadinglayoutlib.InternalLoadingLayout>
+
+
+</LinearLayout>

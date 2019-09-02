@@ -18,4 +18,11 @@
     <color name="card_pressed">#acd6f7</color>
 
     <color name="translucent">#00000000</color>
+
+    <color name="green">#00FF00</color>
+    <color name="red">#FF0000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!--点缀色-->
+    <color name="eyes">#ff9813</color>
 </resources>

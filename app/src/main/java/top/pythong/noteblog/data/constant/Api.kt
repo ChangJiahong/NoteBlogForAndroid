@@ -12,7 +12,7 @@ object Api {
     /**
      * 根
      */
-    const val root = "${http}192.168.43.15" //192.168.43.15
+    const val root = "${http}172.16.112.125" //192.168.43.15
 
     /**
      * 登录
@@ -35,5 +35,10 @@ object Api {
     const val user = "$root/user"
 
     const val article = "$root/api/article"
+
+    /**
+     * 归档信息
+     */
+    const val archives = "$article/archives"
 
 }

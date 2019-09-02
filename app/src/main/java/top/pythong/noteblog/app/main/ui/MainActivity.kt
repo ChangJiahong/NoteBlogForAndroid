@@ -83,6 +83,16 @@ class MainActivity : BaseActivity() {
             }
             tabMode.currentTab = 0
         }
+
+        tabMode.tabWidget.getChildAt(1).setOnClickListener {
+            if (tabMode.currentTab == 1) {
+                val secondFragment =
+                    supportFragmentManager.findFragmentByTag(tabs[1].first) as ArchivesFragment
+                secondFragment.refresh()
+                return@setOnClickListener
+            }
+            tabMode.currentTab = 1
+        }
     }
 
     /**

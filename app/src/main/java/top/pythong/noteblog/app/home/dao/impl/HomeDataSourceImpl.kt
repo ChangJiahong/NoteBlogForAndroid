@@ -18,7 +18,7 @@ class HomeDataSourceImpl(val context: Context) : IHomeDataSource {
     /**
      * 获得推荐文章
      */
-    override fun getArticles(page: Int, size: Int, token: String): RestResponse<PageInfo<Article>> =
+    override fun getArticles(page: Int, size: Int): RestResponse<PageInfo<Article>> =
         HttpHelper(context).apply {
             url = Api.article
             params {

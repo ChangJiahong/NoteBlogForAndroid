@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <top.pythong.noteblog.base.widget.TimelineMarker
+        android:id="@+id/timeLineMarker"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:marker_size="20dp"
+        app:line_width="2dp"
+        app:line_color="@color/green"
+        android:paddingLeft="20dp"
+        app:middle_marker="@drawable/time"/>
+
+    <TextView
+        android:id="@+id/mTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/timeLineMarker"
+        android:layout_centerVertical="true"
+        android:text="xxxx年xx月"/>
+
+    <TextView
+        android:id="@+id/mCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/unfoldIcon"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="20dp"
+        android:text="0000篇"/>
+
+    <ImageView
+        android:id="@+id/unfoldIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="20dp"/>
+
+</RelativeLayout>

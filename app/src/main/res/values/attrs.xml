@@ -3,4 +3,19 @@
     <declare-styleable name="ContentView">
         <attr name="webview_background" format="color"/>
     </declare-styleable>
+
+
+    <declare-styleable name="TimelineMarker">
+        <attr name="scheme" format="integer">
+            <enum name="head" value="0"/>
+            <enum name="body" value="1"/>
+            <enum name="foot" value="2"/>
+        </attr>
+        <attr name="middle_marker" format="color|reference"/>
+        <attr name="marker_size" format="dimension"/>
+        <attr name="line_width" format="dimension"/>
+        <attr name="line_color" format="color"/>
+        <attr name="top_line_color" format="color"/>
+        <attr name="bottom_line_color" format="color"/>
+    </declare-styleable>
 </resources>

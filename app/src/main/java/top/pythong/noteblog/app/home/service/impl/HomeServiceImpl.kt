@@ -19,8 +19,7 @@ class HomeServiceImpl(val context: Context, val homeDataSource: IHomeDataSource)
 
     override fun getArticles(page: Int, size: Int): Result<PageInfo<Article>> {
 
-        val token = context.getStringFromSharedPreferences(Constant.TOKEN)
-        val restResponse = homeDataSource.getArticles(page, size, token)
+        val restResponse = homeDataSource.getArticles(page, size)
         if (restResponse.isOk()) {
 
             val pageInfo = restResponse.data!!

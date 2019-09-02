@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="false" >
+
+        <shape>
+
+            <!-- 矩形的圆角弧度 -->
+            <corners android:radius="360dp"/>
+
+            <solid android:color="@color/red"/>
+        </shape>
+
+    </item>
+
+</selector>

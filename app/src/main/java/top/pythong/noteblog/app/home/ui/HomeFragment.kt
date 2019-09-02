@@ -3,6 +3,7 @@ package top.pythong.noteblog.app.home.ui
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,14 +50,18 @@ class HomeFragment : BaseFragment() {
         return viewModel
     }
 
+    override fun onBaseStart() {
+        this.activity!!.title = "发现"
+    }
+
     /**
      * 加载页面
      */
     override fun initView() {
+
         // 初始化loadingView
         loadingView.errorBtn {
             it.setOnClickListener {
-                loadingView.show()
                 refresh()
             }
         }
@@ -93,7 +98,7 @@ class HomeFragment : BaseFragment() {
         // 初始化刷新
         refresh()
         viewModel.articles.observe(this, Observer {
-            loadingView.show()
+
             val articles = it ?: return@Observer
             articleList.clear()
             articleList.addAll(articles)
@@ -106,16 +111,19 @@ class HomeFragment : BaseFragment() {
      * 错误回调
      */
     override fun onErrorResult(error: MsgCode) {
+        if (!error.isLoginError()) {
+            loadingView.errorMsg {
+                it.text = error.msg
+            }
+            loadingView.showError(true)
 
-        loadingView.errorMsg {
-            it.text = error.msg
+            Log.d(TAG, "erroreeee" + error.msg)
         }
-        loadingView.showError(true)
-
     }
 
     fun refresh() {
-        recyclerView.adapter!!.notifyDataSetChanged()
+        loadingView.show()
+
         // 判断是否在顶部
         if (!recyclerView.canScrollVertically(-1)) {
             // 自动刷新

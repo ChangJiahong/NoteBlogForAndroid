@@ -52,18 +52,23 @@ abstract class BaseFragment : Fragment(), OnErrorListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        baseViewModel = getViewModel()
-        baseViewModel.error.observe(this, Observer {
-            onErrorResult(it ?: return@Observer)
-        })
-
+        onBaseStart()
 
         if (!isLoadOver) {
+
             initView()
+
+            baseViewModel = getViewModel()
+            baseViewModel.error.observe(this, Observer {
+                onErrorResult(it ?: return@Observer)
+            })
+
             initData()
             isLoadOver = true
         }
     }
+
+    open fun onBaseStart(){}
 
     /**
      * 创建视图

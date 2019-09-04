@@ -41,6 +41,11 @@
         <item name="android:background">@drawable/crad_bg_ripple</item>
         <item name="android:layout_margin">3dp</item>
     </style>
+    
+    <style name="me_item_bg">
+        <item name="android:background">@drawable/me_item_bg_ripple</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
 
     <style name="type_bg">
         <item name="android:background">@drawable/type_bg_ripple</item>

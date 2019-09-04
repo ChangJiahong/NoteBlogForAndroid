@@ -223,7 +223,7 @@ class ExampleUnitTest {
      */
     @Test
     fun date() {
-        val created = "2018-09-29 14:17:21"
+        val created = "2018-09-29 14:a:21"
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val date = sdf.parse(created)!!
         // 时间差 s

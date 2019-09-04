@@ -34,5 +34,8 @@
     <string name="editTime">编辑时间</string>
     <string name="YouHaveNotLoggedInYet">你还没有登录哦</string>
     <string name="no_browser_clients">没有浏览器客户端</string>
+    <string name="file_manager">文件管理</string>
+    <string name="article">文章</string>
+    <string name="about">关于</string>
 
 </resources>

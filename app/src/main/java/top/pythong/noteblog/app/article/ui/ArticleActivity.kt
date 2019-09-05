@@ -56,7 +56,7 @@ class ArticleActivity : BaseActivity() {
 //
 //        loadingProcess = loadingView.definePage!!.find(R.id.loadingProgress)
 
-        backBtn.setOnClickListener {
+        toolbar.setNavigationOnClickListener {
             finish()
         }
 
@@ -74,10 +74,10 @@ class ArticleActivity : BaseActivity() {
             val scrollRect = Rect()
             srcollView.getHitRect(scrollRect)
             if (titleV.getLocalVisibleRect(scrollRect)) {
-                titleBar.visibility = View.GONE
+                buttonBarLayout.visibility = View.GONE
             } else {
                 ////子控件完全不在可视范围内
-                titleBar.visibility = View.VISIBLE
+                buttonBarLayout.visibility = View.VISIBLE
             }
 
         }

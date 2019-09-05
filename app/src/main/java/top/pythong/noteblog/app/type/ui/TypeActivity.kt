@@ -41,7 +41,7 @@ class TypeActivity : BaseActivity() {
     }
 
     override fun initView() {
-        backBtn.setOnClickListener {
+        toolbar.setNavigationOnClickListener {
             finish()
         }
         loadingView.errorBtn {
@@ -80,13 +80,13 @@ class TypeActivity : BaseActivity() {
         type = intent.getStringExtra("type") ?: ""
         typeName = intent.getStringExtra("name") ?: ""
         var title = "文章"
-        if (Type.TAG == type){
+        if (Type.TAG == type) {
             title += "标签"
-        }else if (Type.CATEGORY == type){
-            title +="分类"
+        } else if (Type.CATEGORY == type) {
+            title += "分类"
         }
         title += " —— $typeName"
-        mTitle.text = title
+        toolbar.title = title
 
         refreshLayout.autoRefresh()
 

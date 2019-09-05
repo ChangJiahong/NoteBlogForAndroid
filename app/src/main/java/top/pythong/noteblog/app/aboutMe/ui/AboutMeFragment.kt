@@ -16,9 +16,13 @@ import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import kotlinx.android.synthetic.main.about_me_fragment.*
 import android.support.v4.widget.NestedScrollView
 import com.scwang.smartrefresh.layout.util.SmartUtil.dp2px
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.toast
+import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
+import top.pythong.noteblog.base.factory.ViewModelFactory
 
 
-class AboutMeFragment : BaseFragment() {
+class AboutMeFragment : BaseFragment(), View.OnClickListener {
 
     val TAG = AboutMeFragment::class.java.simpleName
 
@@ -77,7 +81,42 @@ class AboutMeFragment : BaseFragment() {
                 lastScrollY = sy
             }
         })
+
+        fileManager.setOnClickListener(this)
+
+        article.setOnClickListener(this)
+
+        aboutUs.setOnClickListener(this)
+
+
     }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.fileManager -> {
+                this.activity!!.startActivity<FileManagerActivity>()
+            }
+
+            R.id.article -> {
+//                this.activity!!.startActivity<FileManagerActivity>()
+                toast("文章管理")
+            }
+
+            R.id.aboutUs -> {
+//                this.activity!!.startActivity<FileManagerActivity>()
+                toast("关于我们")
+            }
+
+            else -> {
+            }
+        }
+    }
+
 
     /**
      * 加载数据
@@ -90,7 +129,7 @@ class AboutMeFragment : BaseFragment() {
      * 获得viewModel
      */
     override fun getViewModel(): BaseViewModel {
-        viewModel = ViewModelProviders.of(this).get(AboutMeViewModel::class.java)
+        viewModel = ViewModelFactory.createViewModel(this, AboutMeViewModel::class)
         return viewModel
     }
 }

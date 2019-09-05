@@ -2,58 +2,46 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".app.article.ui.ArticleActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp">
+    <android.support.v7.widget.Toolbar
+        style="@style/AppTheme.Toolbar"
+        android:id="@+id/toolbar"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:layout_collapseMode="pin">
 
-        <LinearLayout
-            android:id="@+id/actionBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
+        <android.support.v7.widget.ButtonBarLayout
+            android:id="@+id/buttonBarLayout"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/backBtn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/back_bg_ripple"
-                android:layout_marginStart="20dp"
-                android:src="@drawable/arrow_left"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/uIconbar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#ffffff"
+                android:background="@drawable/icon"/>
 
-            <LinearLayout
-                android:id="@+id/titleBar"
+            <TextView
+                android:id="@+id/uNameBar"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:visibility="gone"
-                android:layout_marginStart="30dp">
+                android:textSize="16sp"
+                android:text="用户名"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText"/>
+        </android.support.v7.widget.ButtonBarLayout>
+    </android.support.v7.widget.Toolbar>
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/uIconbar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="#ffffff"
-                    android:background="@drawable/icon"/>
-
-                <TextView
-                    android:id="@+id/uNameBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:text="用户名"/>
-            </LinearLayout>
-        </LinearLayout>
-
-    </android.support.design.widget.AppBarLayout>
 
     <com.demo.cjh.loadinglayoutlib.InternalLoadingLayout
         android:layout_width="match_parent"

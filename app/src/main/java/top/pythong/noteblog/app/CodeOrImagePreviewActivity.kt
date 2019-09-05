@@ -5,9 +5,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import kotlinx.android.synthetic.main.activity_code_preview.*
-import kotlinx.android.synthetic.main.activity_code_preview.backBtn
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity
-import org.jetbrains.anko.backgroundColorResource
 import top.pythong.noteblog.R
 
 class CodeOrImagePreviewActivity : SwipeBackActivity() {
@@ -24,29 +22,29 @@ class CodeOrImagePreviewActivity : SwipeBackActivity() {
             codeView.setCodeSourceText(codeSource, codeClass)
 
         } else if (mediaType == "img") {
-            mTitle.text = "图片"
+            toolbar.title = "图片"
             val imgUrl = intent.getStringExtra("imgUrl") ?: ""
             Log.d(TAG, imgUrl)
             codeView.setContentViewBackgroundColor(R.color.black)
             codeView.loadImage(imgUrl)
         }
 
-        backBtn.setOnClickListener {
+        toolbar.setNavigationOnClickListener {
             finish()
         }
 
 
         fullscreen.setOnClickListener {
-            appBarLayout.visibility = View.GONE
+            toolbar.visibility = View.GONE
         }
 
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        when(keyCode){
-            KeyEvent.KEYCODE_BACK ->{
-                if (appBarLayout.visibility == View.GONE){
-                    appBarLayout.visibility = View.VISIBLE
+        when (keyCode) {
+            KeyEvent.KEYCODE_BACK -> {
+                if (toolbar.visibility == View.GONE) {
+                    toolbar.visibility = View.VISIBLE
                     return false
                 }
             }

@@ -15,8 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".app.type.ui.TypeActivity"
-                  android:theme="@style/NoActionBarTheme">
+        <activity
+            android:name=".app.filemanager.ui.FileManagerActivity"
+            android:theme="@style/NoActionBarTheme">
+        </activity>
+        <activity
+            android:name=".app.type.ui.TypeActivity"
+            android:theme="@style/NoActionBarTheme">
         </activity>
         <activity
             android:name=".app.CodeOrImagePreviewActivity"

@@ -10,7 +10,7 @@ package top.pythong.noteblog.data
 data class RestResponse<T>(
     val ok: Boolean,
     val status: Int,
-    val msg: String,
+    val msg: String?,
     val data: T?,
     val timestamp: Long
 ) {
@@ -22,7 +22,7 @@ data class RestResponse<T>(
 
     private constructor(restResponse: RestResponse<*>) : this(
         restResponse.ok, restResponse.status,
-        restResponse.msg, restResponse.data as T
+        restResponse.msg?:"", restResponse.data as T
     )
 
     fun <T> convertTo(tClass: Class<T>): RestResponse<T> {

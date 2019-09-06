@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import okhttp3.*
+import top.pythong.noteblog.app.filemanager.model.FileDir
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.data.*
@@ -11,6 +12,8 @@ import kotlin.reflect.KClass
 import top.pythong.noteblog.data.constant.MsgCode
 import java.io.IOException
 import java.net.SocketTimeoutException
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 
 /**
@@ -36,7 +39,8 @@ class HttpHelper(val context: Context) {
 
     private var mRequestBody: RequestBody = FormBody.Builder().build()
 
-    private fun <K, V> Map<K, V>.toQueryString(): String = this.map { "${it.key}=${it.value}" }.joinToString("&")
+    private fun Map<String, String>.toQueryString(): String =
+        this.map { "${it.key}=${URLEncoder.encode(it.value, "UTF-8")}" }.joinToString("&")
 
     fun params(makePairs: Pairs<String>.() -> Unit): HttpHelper {
         val requestPairs = Pairs<String>()
@@ -81,6 +85,15 @@ class HttpHelper(val context: Context) {
 
     fun get() = method(GET)
 
+    /*****************************************/
+
+    /**
+     * GET方法Response 数组
+     */
+    fun <T : Any> getForRestResponseList(kClass: KClass<T>): RestResponse<List<T>> {
+        return forRestResponseList(kClass, GET)
+    }
+
     /**
      * GET方法Response 分页
      */
@@ -113,6 +126,7 @@ class HttpHelper(val context: Context) {
         return forRestEntity(kClass, GET)
     }
 
+    /*****************************************/
 
     /**
      * POST方法Response 分页
@@ -142,6 +156,8 @@ class HttpHelper(val context: Context) {
         return forRestEntityPage(kClass, POST)
     }
 
+    /*****************************************/
+
     /**
      * 获取Response对象
      */
@@ -162,6 +178,32 @@ class HttpHelper(val context: Context) {
             return restEntity.restResponse!!
         }
         return restEntity.toFailRestResponse()
+    }
+
+    /**
+     * 获取Response对象 数组
+     */
+    private fun <T : Any> forRestResponseList(kClass: KClass<T>, method: String): RestResponse<List<T>> {
+        val restEntity = forRestEntityList(kClass, method)
+        if (restEntity.isSuccessful) {
+            return restEntity.restResponse!!
+        }
+        return restEntity.toFailRestResponse()
+    }
+
+
+    /*****************************************/
+
+    /**
+     * 数组
+     */
+    private fun <T : Any> forRestEntityList(kClass: KClass<T>, method: String): RestEntity<List<T>> {
+        return forRestEntityAsJsonAnalyze(method) {
+            val listType = ListType(kClass.java)
+            val restResponseType = RestResponseType(listType)
+            val restResponse: RestResponse<List<T>> = Gson().fromJson(it, restResponseType)
+            restResponse
+        }
     }
 
     /**
@@ -205,11 +247,12 @@ class HttpHelper(val context: Context) {
             // 网络错误
             return RestEntity.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
         }
+        Log.d(TAG, "[$url - $method]")
         try {
             val response = method(method)
             if (response.isSuccessful) {
                 val json = response.body!!.string()
-                Log.d(TAG, "[$url - post]: $json")
+                Log.d(TAG, json)
 
                 // 自定义json解析方法
                 val restResponse: RestResponse<T> = jsonAnalyze(json)

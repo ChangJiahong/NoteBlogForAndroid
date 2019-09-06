@@ -27,7 +27,7 @@ class Result<out T : Any> private constructor(
 
         fun <T : Any> fail(response: RestResponse<T>) = run {
             val msgCode = MsgCode.valueOf(response.status)
-            msgCode.msg = response.msg
+            msgCode.msg = response.msg ?: msgCode.msg
             if (msgCode == MsgCode.RequestMsg) {
                 if (!response.isOk() && response.data != null && response.data is String) {
                     msgCode.msg += ", ${response.data}"

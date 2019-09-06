@@ -2,6 +2,7 @@ package top.pythong.noteblog.data
 
 import okhttp3.Headers
 import okhttp3.Response
+import top.pythong.noteblog.data.constant.MsgCode
 
 /**
  * 返回viewModel层的数据类
@@ -30,7 +31,8 @@ class RestEntity<T> private constructor(
         }
 
         fun <T> fail(response: Response): RestEntity<T> {
-            return RestEntity(false, response.code, response.message, response.headers, null)
+            return RestEntity(false, MsgCode.ResponseError.code,
+                "Http请求错误：错误码：${response.code},错误信息：${response.message}\n", response.headers, null)
         }
 
         fun <T> fail(code: Int, msg: String): RestEntity<T> {

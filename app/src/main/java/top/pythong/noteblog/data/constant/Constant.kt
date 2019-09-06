@@ -19,4 +19,5 @@ object Constant {
 
     const val ASK_ABOUT_LOGIN = "askAboutLogin"
 
+    const val FOLDER_PATH = "folderPath"
 }

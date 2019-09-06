@@ -99,7 +99,9 @@ enum class MsgCode(
 
     NetworkError(0, "The Network Is Getting Worse", "网络开小差了"),
 
-    UnknownMistake(-1, "Unknown Mistake", "未知错误");
+    UnknownMistake(-1, "Unknown Mistake", "未知错误"),
+    ResponseError(-300, "Response Error", "http请求出错");
+
 
 
 

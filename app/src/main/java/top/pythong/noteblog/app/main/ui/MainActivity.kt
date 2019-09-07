@@ -112,6 +112,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onErrorResult(error: MsgCode) {
+        // 是否询问
         val askAboutLogin = getBooleanFromSharedPreferences(Constant.ASK_ABOUT_LOGIN)
         if (askAboutLogin) {
             super.onErrorResult(error)

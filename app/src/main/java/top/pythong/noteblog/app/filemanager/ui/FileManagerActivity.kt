@@ -11,8 +11,13 @@ import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import android.support.v7.widget.DividerItemDecoration
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
+import top.pythong.noteblog.app.login.ui.LoginActivity
+import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
+import top.pythong.noteblog.utils.putToSharedPreferences
 
 
 class FileManagerActivity : BaseActivity() {
@@ -41,6 +46,15 @@ class FileManagerActivity : BaseActivity() {
             finish()
         }
 
+        loadingView.errorBtn {
+            loadingView.show()
+            refreshLayout.autoRefresh()
+        }
+
+        loadingView.emptyMsg {
+            it.text = "没有文件哦！"
+        }
+
         currentPath = intent.getStringExtra("path") ?: "\\"
 
 
@@ -51,11 +65,20 @@ class FileManagerActivity : BaseActivity() {
             toolbar.title = "$title>"
         }
 
+        refreshLayout.setOnRefreshListener {
+            fileManagerViewModel.loadFileList(currentPath, it)
+        }
+
         fileManagerViewModel.fileDirs.observe(this, Observer {
             val fileDirs = it ?: return@Observer
+            if (fileDirs.isEmpty()) {
+                loadingView.showEmpty(true)
+                return@Observer
+            }
             fileDirList.clear()
             fileDirList.addAll(fileDirs)
             adapter.notifyDataSetChanged()
+            loadingView.show()
         })
 
 
@@ -73,15 +96,31 @@ class FileManagerActivity : BaseActivity() {
 
     override fun initData() {
 
-        // 获取文件
-        fileManagerViewModel.loadFileList(currentPath)
 
     }
 
     override fun onErrorResult(error: MsgCode) {
-        super.onErrorResult(error)
-        if (!error.isLoginError()){
-            toast(error.msg+"。错误码：${error.code}")
+        if (!error.isLoginError()) {
+            loadingView.errorMsg {
+                it.text = error.msg
+            }
+            loadingView.showError(true)
+        } else {
+            alert {
+                title = "提示"
+                message = error.msg + ",去登陆试试!!!"
+                positiveButton("登录") { i ->
+                    putToSharedPreferences {
+                        put(Constant.TOKEN, "")
+                    }
+                    // 启动登录
+                    startActivity<LoginActivity>()
+                }
+                negativeButton("取消") {
+                    finish()
+                }
+
+            }.show()
         }
     }
 }

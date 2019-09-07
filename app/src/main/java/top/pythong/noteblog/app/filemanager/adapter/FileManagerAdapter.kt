@@ -70,6 +70,12 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>) : RecyclerVie
                     locked.text = if (item.protective == "public") "" else "\uD83D\uDD12"
                     val fileIcon = getFileIcon(item.name)
                     icon.setImageResource(fileIcon)
+
+                    isLoad = true
+
+                    if (isLoad){
+                        loaded.text = "✔"
+                    }
                 }
             }
         }
@@ -111,9 +117,12 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>) : RecyclerVie
     }
 
     class FileHolder(val v: View) : RecyclerView.ViewHolder(v) {
+        var isLoad = false
+
         val icon = v.find<ImageView>(R.id.icon)
         val name = v.find<TextView>(R.id.name)
         val created = v.find<TextView>(R.id.created)
         val locked = v.find<TextView>(R.id.locked)
+        val loaded = v.find<TextView>(R.id.loaded)
     }
 }

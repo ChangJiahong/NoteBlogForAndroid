@@ -39,7 +39,7 @@ object Api {
     /**
      * 归档信息
      */
-    const val archives = "$article/archives"
+    const val archives = "$article/u/archives"
 
     const val fileList = "$root/file/list"
 }

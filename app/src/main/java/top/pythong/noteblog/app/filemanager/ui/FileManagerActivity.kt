@@ -11,10 +11,16 @@ import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import android.support.v7.widget.DividerItemDecoration
+import kotlinx.android.synthetic.main.activity_file_manager.loadingView
+import kotlinx.android.synthetic.main.activity_file_manager.refreshLayout
+import kotlinx.android.synthetic.main.archives_fragment.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.app.login.ui.LoginActivity
+import top.pythong.noteblog.clearLoginUser
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.putToSharedPreferences
@@ -106,21 +112,21 @@ class FileManagerActivity : BaseActivity() {
             }
             loadingView.showError(true)
         } else {
-            alert {
-                title = "提示"
-                message = error.msg + ",去登陆试试!!!"
-                positiveButton("登录") { i ->
-                    putToSharedPreferences {
-                        put(Constant.TOKEN, "")
-                    }
-                    // 启动登录
+            toast(error.msg)
+            loadingView.errorBtn {
+                it.text = "去登陆"
+                it.setOnClickListener {
+                    clearLoginUser()
                     startActivity<LoginActivity>()
                 }
-                negativeButton("取消") {
-                    finish()
-                }
-
-            }.show()
+            }
+            loadingView.errorImg {
+                it.setImageResource(R.drawable.squint_eyed)
+            }
+            loadingView.errorMsg {
+                it.text = "登录才给看哟"
+            }
+            loadingView.showError(true)
         }
     }
 }

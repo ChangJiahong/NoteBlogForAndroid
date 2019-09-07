@@ -16,6 +16,8 @@ import android.content.Context
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader
+import top.pythong.noteblog.data.constant.Constant
+import top.pythong.noteblog.utils.putToSharedPreferences
 
 
 /**
@@ -36,4 +38,14 @@ class App : Application() {
         }
     }
 
+}
+
+/**
+ * 清除登录信息
+ */
+fun Context.clearLoginUser(){
+    putToSharedPreferences {
+        put(Constant.TOKEN, "")
+        put(Constant.LOGGED_IN_USER, "")
+    }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.anko.startActivity
 import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.base.errorListener.OnErrorListener
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.clearLoginUser
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.putToSharedPreferences
@@ -49,9 +50,7 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
                 title = "提示"
                 message = error.msg + ",去登陆试试!!!"
                 positiveButton("登录") { i ->
-                    putToSharedPreferences {
-                        put(Constant.TOKEN, "")
-                    }
+                    clearLoginUser()
                     // 启动登录
                     startActivity<LoginActivity>()
                 }

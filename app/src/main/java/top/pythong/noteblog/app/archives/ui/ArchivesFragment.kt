@@ -11,16 +11,25 @@ import kotlinx.android.synthetic.main.activity_type.refreshLayout
 import kotlinx.android.synthetic.main.archives_fragment.*
 import kotlinx.android.synthetic.main.archives_fragment.loadingView
 import kotlinx.android.synthetic.main.home_fragment.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.toast
 
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.archives.adapter.ArchivesAdapter
 import top.pythong.noteblog.app.archives.model.ArchiveHolder
 import top.pythong.noteblog.app.archives.model.ArchiveView
 import top.pythong.noteblog.app.home.utils.SmoothScrollLayoutManager
+import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.clearLoginUser
+import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
+import top.pythong.noteblog.utils.putToSharedPreferences
 
 class ArchivesFragment : BaseFragment() {
 
@@ -48,13 +57,6 @@ class ArchivesFragment : BaseFragment() {
      */
     override fun initView() {
 
-        // 初始化loadingView
-        loadingView.errorBtn {
-            it.setOnClickListener {
-                refresh()
-            }
-        }
-
         // 刷新监听
         refreshLayout.setOnRefreshListener {
             viewModel.loadArchives(it)
@@ -73,7 +75,6 @@ class ArchivesFragment : BaseFragment() {
         archivesView.adapter = adapter
 
 
-
     }
 
     /**
@@ -87,7 +88,7 @@ class ArchivesFragment : BaseFragment() {
 
             val archives = it ?: return@Observer
             archiveList.clear()
-            archives.forEach {archive ->
+            archives.forEach { archive ->
                 archiveList.add(ArchiveHolder(ArchiveHolder.ARCHIVE, archive))
             }
             adapter.notifyDataSetChanged()
@@ -109,12 +110,35 @@ class ArchivesFragment : BaseFragment() {
      */
     override fun onErrorResult(error: MsgCode) {
         if (!error.isLoginError()) {
+
+            // 初始化loadingView
+            loadingView.errorBtn {
+                it.setOnClickListener {
+                    refresh()
+                }
+            }
             loadingView.errorMsg {
                 it.text = error.msg
             }
             loadingView.showError(true)
 
-            Log.d(TAG, "erroreeee"+error.msg)
+        } else {
+            toast(error.msg)
+            loadingView.errorBtn {
+                it.text = "去登陆"
+                it.setOnClickListener {
+                    context!!.clearLoginUser()
+                    startActivity<LoginActivity>()
+                }
+            }
+            loadingView.errorImg {
+                it.setImageResource(R.drawable.squint_eyed)
+            }
+            loadingView.errorMsg {
+                it.text = "登录才给看哟"
+            }
+            loadingView.showError(true)
+
         }
     }
 

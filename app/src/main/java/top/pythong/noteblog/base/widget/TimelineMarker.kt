@@ -22,6 +22,7 @@ class TimelineMarker : View {
         const val HEAD = 0
         const val BODY = 1
         const val FOOT = 2
+        const val ONLY_ONE = 3
     }
 
     /**
@@ -171,7 +172,7 @@ class TimelineMarker : View {
 
 
     fun setScheme(scheme: Int) {
-        if (TimelineMarker.BODY == scheme || TimelineMarker.HEAD == scheme || TimelineMarker.FOOT == scheme) {
+        if (TimelineMarker.BODY == scheme || TimelineMarker.HEAD == scheme || TimelineMarker.FOOT == scheme || TimelineMarker.ONLY_ONE == scheme) {
             mScheme = scheme
             invalidate()
         }

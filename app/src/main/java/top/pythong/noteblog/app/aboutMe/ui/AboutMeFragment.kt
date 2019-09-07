@@ -15,11 +15,19 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import kotlinx.android.synthetic.main.about_me_fragment.*
 import android.support.v4.widget.NestedScrollView
+import android.util.Log
+import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.util.SmartUtil.dp2px
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
+import top.pythong.noteblog.app.login.model.LoggedInUser
+import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
+import top.pythong.noteblog.data.constant.Constant
+import top.pythong.noteblog.utils.getStringFromSharedPreferences
 
 
 class AboutMeFragment : BaseFragment(), View.OnClickListener {
@@ -122,6 +130,24 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
      * 加载数据
      */
     override fun initData() {
+        // 加载头像，用户名，说明
+        val userJson = this.context!!.getStringFromSharedPreferences(Constant.LOGGED_IN_USER)
+        val user = Gson().fromJson<LoggedInUser>(userJson, LoggedInUser::class.java)
+        if (user!=null){
+            Glide.with(this).load(user.imgUrl).into(userIcon)
+            username.text = user.username
+            perStatement.text = "个人说明"
+        }else{
+            username.text = "未登录,点击登录"
+            username.setOnClickListener {
+                startActivity<LoginActivity>()
+            }
+            userIcon.setOnClickListener {
+                startActivity<LoginActivity>()
+            }
+            perStatement.text = ""
+        }
+
 
     }
 

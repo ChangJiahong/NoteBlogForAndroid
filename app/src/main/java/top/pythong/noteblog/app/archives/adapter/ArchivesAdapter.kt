@@ -76,10 +76,14 @@ class ArchivesAdapter(private val archiveHolders: ArrayList<ArchiveHolder>) :
                 val archiveView = item.data as ArchiveView
                 val archiveViewHolder = viewHolder as ArchiveViewHolder
                 archiveViewHolder.apply {
-                    when (position) {
-                        0 -> timeLineMarker.setScheme(TimelineMarker.HEAD)
-                        archiveHolders.size - 1 -> timeLineMarker.setScheme(TimelineMarker.FOOT)
-                        else -> timeLineMarker.setScheme(TimelineMarker.BODY)
+                    if (itemCount == 1){
+                        timeLineMarker.setScheme(TimelineMarker.ONLY_ONE)
+                    }else {
+                        when (position) {
+                            0 -> timeLineMarker.setScheme(TimelineMarker.HEAD)
+                            archiveHolders.size - 1 -> timeLineMarker.setScheme(TimelineMarker.FOOT)
+                            else -> timeLineMarker.setScheme(TimelineMarker.BODY)
+                        }
                     }
 
                     mTime.text = archiveView.date

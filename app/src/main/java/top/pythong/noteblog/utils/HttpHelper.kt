@@ -10,6 +10,8 @@ import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.data.*
 import kotlin.reflect.KClass
 import top.pythong.noteblog.data.constant.MsgCode
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.URLDecoder
@@ -32,6 +34,8 @@ class HttpHelper(val context: Context) {
     private val mOkHttpClient by lazy {
         OkHttpClient()
     }
+
+    lateinit var mCall: Call
 
     var url = ""
 
@@ -79,6 +83,10 @@ class HttpHelper(val context: Context) {
 
     private fun getClinet(): OkHttpClient {
         return mOkHttpClient
+    }
+
+    fun cancel(){
+        mCall.cancel()
     }
 
     fun post() = method(POST)
@@ -275,6 +283,52 @@ class HttpHelper(val context: Context) {
         }
     }
 
+    var downloadLength = 0L //已经下载好的长度
+    var contentLength = 0L//文件的总长度
+
+    /**
+     * 下载到临时文件
+     */
+    fun downloadToTemp(tempFile: File, progress: (len: Long, progress: Long) -> Unit): RestResponse<Any> {
+        if (!NetworkUtils.isNetworkAvailable(context)) {
+            // 网络错误
+            return RestResponse.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
+        }
+        val response = method(GET)
+        if (response.isSuccessful) {
+
+            if (response.headers["Content-Type"] == "application/json;charset=UTF-8") {
+                // restResponse
+                val json = response.body!!.string()
+                Log.d(TAG, json)
+                val restResponse: RestResponse<*> = Gson().fromJson(json, RestResponse::class.java)
+                return restResponse as RestResponse<Any>
+            }
+
+            contentLength = response.headers["Content-Range"]!!.split("/")[1].toLong()
+
+            val bys = response.body!!.byteStream()
+
+            val fileOutputStream = FileOutputStream(tempFile, true)
+            val buffer = ByteArray(2048) //缓冲数组2kB
+
+            var len: Int
+            bys.use { input ->
+                fileOutputStream.use {
+                    while (input.read(buffer).also { len = it } != -1) {
+                        it.write(buffer, 0, len)
+                        downloadLength += len
+                        // 更新进度
+                        progress(contentLength, downloadLength)
+                    }
+                }
+            }
+            return RestResponse(true, 200, "下载成功", null)
+        }
+        er(response.code, response.message)
+        return RestResponse.fail(MsgCode.ResponseError.code, "Http请求错误：错误码：${response.code},错误信息：${response.message}\n")
+    }
+
     /**
      * 统一获取
      */
@@ -292,8 +346,8 @@ class HttpHelper(val context: Context) {
 
         val request = requestBuilder.build()
 
-        val call = okHttpClient.newCall(request)
-        return call.execute()
+        mCall = okHttpClient.newCall(request)
+        return mCall.execute()
     }
 
 }

@@ -1,5 +1,8 @@
 package top.pythong.noteblog.app.filemanager.model
 
+import top.pythong.noteblog.app.download.model.DownloadResource
+import top.pythong.noteblog.data.constant.Api
+
 data class FileDir(
     /**
      * 文件名
@@ -38,7 +41,7 @@ data class FileDir(
 
     val created: String
 ) {
-    constructor(name: String):this(
+    constructor(name: String) : this(
         name = name,
         type = "dir",
         currentPath = "\\$name",
@@ -50,8 +53,15 @@ data class FileDir(
         created = "2019/09/04 12:00:00"
     )
 
-    companion object{
+    companion object {
         const val DIR = "dir"
+    }
+
+    fun toDownloadResource(toPath: String): DownloadResource? {
+        if (type != DIR) {
+            return DownloadResource(name = this.name, url = "${Api.download}/${this.fileId}", toPath = toPath)
+        }
+        return null
     }
 
 }

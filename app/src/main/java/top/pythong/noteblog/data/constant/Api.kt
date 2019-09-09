@@ -41,5 +41,10 @@ object Api {
      */
     const val archives = "$article/u/archives"
 
+    /**
+     * 文件列表
+     */
     const val fileList = "$root/file/list"
+
+    const val download = "$root/file/download"
 }

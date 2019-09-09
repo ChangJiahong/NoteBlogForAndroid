@@ -17,7 +17,12 @@ object Constant {
 
     const val ARTICLE_TYPE = "article-type"
 
+    const val ACCEPT_RANGES = "Accept-Ranges"
+
     const val ASK_ABOUT_LOGIN = "askAboutLogin"
 
     const val FOLDER_PATH = "folderPath"
+
+
+    const val CHANNEL_ID_DOWNLOAD: String = "download"
 }

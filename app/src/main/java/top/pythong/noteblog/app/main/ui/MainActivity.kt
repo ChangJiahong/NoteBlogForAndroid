@@ -1,5 +1,6 @@
 package top.pythong.noteblog.app.main.ui
 
+import android.content.Intent
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.widget.ImageView
@@ -7,10 +8,14 @@ import android.widget.LinearLayout
 import android.widget.TabHost
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
 import top.pythong.noteblog.app.archives.ui.ArchivesFragment
+import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.home.ui.HomeFragment
 import top.pythong.noteblog.app.message.ui.MessageFragment
 import top.pythong.noteblog.base.activity.BaseActivity

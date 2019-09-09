@@ -13,6 +13,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import org.w3c.dom.Text
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.filemanager.model.FileDir
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
 
@@ -21,7 +22,7 @@ import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
  * @author ChangJiahong
  * @date 2019/9/6
  */
-class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val contextPath: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val DIR = 0
     val FILE = 1
@@ -64,6 +65,7 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>) : RecyclerVie
                     v.setOnClickListener {
                         // TODO: 下载文件 Or 打开文件
                         v.context.toast(item.name)
+                        DownloadService.addDownload(v.context, item.toDownloadResource(contextPath))
                     }
                     name.text = item.name
                     created.text = "${item.created} \uD83D\uDD57"

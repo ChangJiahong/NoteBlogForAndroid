@@ -52,11 +52,6 @@ class FileManagerActivity : BaseActivity() {
             finish()
         }
 
-        loadingView.errorBtn {
-            loadingView.show()
-            refreshLayout.autoRefresh()
-        }
-
         loadingView.emptyMsg {
             it.text = "没有文件哦！"
         }
@@ -92,7 +87,7 @@ class FileManagerActivity : BaseActivity() {
 //            fileDirList.add(FileDir("文件夹$i"))
 //        }
 
-        adapter = FileManagerAdapter(fileDirList)
+        adapter = FileManagerAdapter(fileDirList, currentPath)
         val smoothScrollLayoutManager = SmoothScrollLayoutManager(this)
         recyclerView.layoutManager = smoothScrollLayoutManager
         //添加Android自带的分割线
@@ -109,6 +104,10 @@ class FileManagerActivity : BaseActivity() {
         if (!error.isLoginError()) {
             loadingView.errorMsg {
                 it.text = error.msg
+            }
+            loadingView.errorBtn {
+                loadingView.show()
+                refreshLayout.autoRefresh()
             }
             loadingView.showError(true)
         } else {

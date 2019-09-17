@@ -16,6 +16,7 @@ import top.pythong.noteblog.R
 import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.filemanager.model.FileDir
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
+import top.pythong.noteblog.data.getResourceFile
 
 /**
  * 文件夹管理适配器
@@ -72,11 +73,9 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val c
                     val fileIcon = getFileIcon(item.name)
                     icon.setImageResource(fileIcon)
 
-                    isLoad = true
+                    isLoad = v.context.getResourceFile(item.toDownloadResource(contextPath)!!).exists()
 
-                    if (isLoad) {
-                        loaded.text = "✔"
-                    }
+                    loaded.text = if (isLoad) "✔" else ""
                 }
             }
         }
@@ -84,7 +83,7 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val c
 
     var fileOnClickListener = { v: View, file: FileDir -> }
 
-    fun fileOnClickListener(click: (View,FileDir) -> Unit) {
+    fun fileOnClickListener(click: (View, FileDir) -> Unit) {
         fileOnClickListener = click
     }
 

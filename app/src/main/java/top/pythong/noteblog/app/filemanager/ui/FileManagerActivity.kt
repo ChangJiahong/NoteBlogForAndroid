@@ -20,6 +20,7 @@ import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.app.download.DownloadService
+import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.clearLoginUser
 import top.pythong.noteblog.data.constant.Constant
@@ -52,6 +53,12 @@ class FileManagerActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        toolbar.inflateMenu(R.menu.download)
+        toolbar.setOnMenuItemClickListener {
+            startActivity<DownloadTaskActivity>()
+            true
+        }
+
 
         loadingView.emptyMsg {
             it.text = "没有文件哦！"

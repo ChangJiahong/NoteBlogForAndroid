@@ -2,7 +2,6 @@ package top.pythong.noteblog.app.download.ui
 
 import android.content.IntentFilter
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_download_task.*
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.download.DownloadReceiver
@@ -12,6 +11,9 @@ import top.pythong.noteblog.app.home.utils.SmoothScrollLayoutManager
 import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import android.support.v7.widget.DividerItemDecoration
+import android.view.Menu
+
 
 /**
  * 下载任务页面
@@ -56,7 +58,8 @@ class DownloadTaskActivity : BaseActivity() {
         recyclerView.layoutManager = smoothScrollLayoutManager
 
         recyclerView.adapter = adapter
-
+        //添加Android自带的分割线
+        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         downloadReceiver.downloadCallback { resource ->
             adapter.notifyChanged(resource)
@@ -66,8 +69,15 @@ class DownloadTaskActivity : BaseActivity() {
     override fun initData() {
 
         downloadTasks.addAll(taskModel.getTasks())
-        adapter.sort()
-        adapter.notifyDataSetChanged()
+        if (downloadTasks.isEmpty()){
+            loadingView.emptyMsg {
+                it.text = "还没有下载的任务"
+            }
+            loadingView.showEmpty(true)
+        }else {
+            adapter.sort()
+            adapter.notifyDataSetChanged()
+        }
     }
 
     override fun onDestroy() {

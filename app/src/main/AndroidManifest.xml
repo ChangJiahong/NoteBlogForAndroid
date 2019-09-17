@@ -30,6 +30,7 @@
         </activity>
         <activity
             android:name=".app.download.ui.DownloadTaskActivity"
+            android:launchMode="singleTop"
             android:theme="@style/NoActionBarTheme">
         </activity>
 
@@ -55,7 +56,8 @@
             android:name=".app.article.ui.ArticleActivity"
             android:theme="@style/NoActionBarTheme">
         </activity>
-        <activity android:name=".app.main.ui.MainActivity">
+        <activity android:name=".app.main.ui.MainActivity"
+            android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".app.index.ui.IndexActivity"

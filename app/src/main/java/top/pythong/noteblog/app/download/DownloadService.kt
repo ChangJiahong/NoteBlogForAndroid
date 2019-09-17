@@ -68,8 +68,6 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
 
     private var downloadService = ServiceFactory.getSimpleService(this, IDownloadTaskService::class)
 
-    private var downloadReceiver = DownloadReceiver()
-
     /**
      * 添加下载任务
      */
@@ -227,9 +225,6 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "启动服务")
-        // 注册广播
-        val filter = IntentFilter(DownloadReceiver.DOWNLOADING_ACTION)
-        registerReceiver(downloadReceiver, filter)
 
         launch(Dispatchers.IO) {
             // 处理下载程序
@@ -339,13 +334,6 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
 
 
     private fun getNotificationBuilderAddAction(resource: DownloadResource) = kotlin.run {
-        val suspendAction = Intent(this, DownloadReceiver::class.java).apply {
-            action = DownloadReceiver.SUSPEND_DOWNLOAD_ACTION
-            putExtra("download", resource)
-        }
-        val suspendIntent: PendingIntent =
-            PendingIntent.getBroadcast(this, 0, suspendAction, PendingIntent.FLAG_ONE_SHOT)
-
         // 去下载页面
         val downIntent = Intent(
             this.baseContext,
@@ -365,8 +353,6 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // 注销广播
-        unregisterReceiver(downloadReceiver)
         Log.d(TAG, "关闭服务")
     }
 }

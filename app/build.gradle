@@ -80,7 +80,11 @@ dependencies {
     // 圆形图片
     implementation 'de.hdodenhof:circleimageview:3.0.1'
 
+    // 左滑退出
     implementation 'me.imid.swipebacklayout.lib:library:1.1.0'
+
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
+
 
     implementation 'com.android.support:support-v4:28.0.0'
     testImplementation 'junit:junit:4.12'

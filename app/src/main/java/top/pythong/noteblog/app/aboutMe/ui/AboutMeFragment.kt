@@ -22,6 +22,7 @@ import com.scwang.smartrefresh.layout.util.SmartUtil.dp2px
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
+import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.app.login.ui.LoginActivity
@@ -94,6 +95,8 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
 
         article.setOnClickListener(this)
 
+        downloadTask.setOnClickListener(this)
+
         aboutUs.setOnClickListener(this)
 
 
@@ -113,6 +116,10 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
             R.id.article -> {
 //                this.activity!!.startActivity<FileManagerActivity>()
                 toast("文章管理")
+            }
+
+            R.id.downloadTask ->{
+                this.activity!!.startActivity<DownloadTaskActivity>()
             }
 
             R.id.aboutUs -> {

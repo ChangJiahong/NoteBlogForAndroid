@@ -1,56 +1,81 @@
 package top.pythong.noteblog.app.download
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import org.jetbrains.anko.notificationManager
-import org.jetbrains.anko.startService
+import org.jetbrains.anko.*
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.download.model.DownloadResource
-import top.pythong.noteblog.data.FileManager
+import top.pythong.noteblog.app.download.service.IDownloadTaskService
+import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
+import top.pythong.noteblog.base.factory.ServiceFactory
+import top.pythong.noteblog.data.*
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.Constant.CHANNEL_ID_DOWNLOAD
-import top.pythong.noteblog.data.fileDirectoryPath
-import top.pythong.noteblog.data.tempDirectoryPath
 import top.pythong.noteblog.utils.HttpHelper
 import top.pythong.noteblog.utils.getLongFromSharedPreferences
 import top.pythong.noteblog.utils.getStringFromSharedPreferences
 import top.pythong.noteblog.utils.putToSharedPreferences
 import java.io.File
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+
 
 class DownloadService : Service(), CoroutineScope by MainScope() {
 
-    val TAG = DownloadService::class.java.simpleName
 
     companion object {
-        fun addDownload(context: Context, resource: DownloadResource?) {
-            if (resource != null) {
-                context.startService<DownloadService>("download" to resource)
-            }
+
+        val TAG = DownloadService::class.java.simpleName
+
+        const val START_DOWNLOAD = "startDownload"
+        const val SUSPEND_DOWNLOAD = "suspendDownload"
+
+        fun addDownload(context: Context, resource: DownloadResource) {
+            context.startService<DownloadService>(
+                "action" to START_DOWNLOAD,
+                "download" to resource
+            )
         }
+
+        /**
+         * 暂停下载
+         */
+        fun suspendDownload(context: Context, resource: DownloadResource) {
+            Log.d(TAG, "开启暂停")
+            context.startService<DownloadService>(
+                "action" to SUSPEND_DOWNLOAD,
+                "download" to resource
+            )
+        }
+
     }
 
     /**
-     * 下载通道
+     * 下载队列
      */
-    private val channel = Channel<DownloadResource>()
+    private val downloadQueue = Channel<DownloadResource>()
 
     private val notifys = ConcurrentHashMap<Int, NotificationCompat.Builder>()
 
     private val https = ConcurrentHashMap<Int, HttpHelper>()
 
+    private var downloadService = ServiceFactory.getSimpleService(this, IDownloadTaskService::class)
+
+    private var downloadReceiver = DownloadReceiver()
+
     /**
      * 添加下载任务
      */
     private suspend fun addDownloadTask(down: DownloadResource) {
-        channel.send(down)
+        downloadQueue.send(down)
     }
 
     /**
@@ -58,8 +83,8 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
      */
     @ExperimentalCoroutinesApi
     suspend fun processingDownloadTasks() {
-        while (!channel.isEmpty) {
-            val down = channel.receive()
+        while (!downloadQueue.isEmpty) {
+            val down = downloadQueue.receive()
             // 开启下载
             startDownload(down)
 
@@ -67,10 +92,11 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
         waitingToStop()
     }
 
+    /**
+     * 开始下载
+     */
     private fun startDownload(resource: DownloadResource) {
-        val tempFilePath = "$tempDirectoryPath/${resource.name}.ntbg"
-
-        val tempFile = File(tempFilePath)
+        val tempFile = getResourceTempFile(resource)
         if (!tempFile.exists()) {
             // 临时下载文件不存在，可能被删除或者第一次下载,重置下载进度
             tempFile.createNewFile()
@@ -78,8 +104,10 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
         } else {
             // 不为空，获取下载进度
             // 断点续传
-            val downloadLen = getLongFromSharedPreferences("downLoad-${resource.name}-dLen", 0L)
-            resource.downloadLen = downloadLen + 1
+            val spdownloadLen = getLongFromSharedPreferences("downLoad-${resource.id}-dLen", 0L)
+            val downloadLen = tempFile.length()
+            Log.d(TAG, "续传文件：保存进度：${resource.downloadLen}, 缓存文件进度：${downloadLen},sp文件进度：$spdownloadLen")
+            resource.downloadLen = downloadLen
             Log.d(TAG, "续传文件：开始进度：${resource.downloadLen}")
         }
 
@@ -93,46 +121,54 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             }
         }
 
-        https[resource.id] = httpHelper
+        https.put(resource.id, httpHelper)
 
+        // 下载进度回调
         val restResponse = httpHelper.downloadToTemp(tempFile) { clen, dlen ->
             resource.contentLen = clen
             resource.downloadLen = dlen
             // 保存下载进度
             this.putToSharedPreferences {
-                put("downLoad-${resource.name}-dLen", dlen)
+                put("downLoad-${resource.id}-dLen", dlen)
+                put("downLoad-${resource.id}-cLen", clen)
             }
+            // 更新下载进度，下载状态
+            downloadService.saveDownloadResource(resource, DownloadResource.DOWNLOADING)
+
             // 更新通知
             val builder = notifys[resource.id]!!
             val progress: String = String.format("%.2f", ((dlen * 1.0 / clen) * 100))
             builder.setContentText("下载进度：$progress%")
             builder.setProgress(clen.toInt(), dlen.toInt(), false)
             notificationManager.notify(resource.id, builder.build())
+
+            // 发送广播，下载中
+            sendBroadcast(resource, DownloadReceiver.DOWNLOADING)
         }
 
         if (restResponse.isOk()) {
             // 下载成功
             https.remove(resource.id)
-            // 更新通知
+            // 下载成功，准备拷贝到下载目录
             val build1 = getNotificationBuilder(resource.name)
             build1.setContentText("进度：100%")
             build1.setProgress(0, 0, true)
             notificationManager.notify(resource.id, build1.build())
             Log.d(TAG, "下载成功")
-            // 更新广播
-            // TODO:
+
+            // 更新广播 下载完成,copy
+            sendBroadcast(resource, DownloadReceiver.MERGE)
+            // 更新下载状态
+            downloadService.saveDownloadResource(resource, DownloadResource.MERGE)
+
+            val refile = getResourceFileOrCreate(resource)
             // 拷贝临时文件到下载目录
-            val refile = File("$fileDirectoryPath/${resource.name}")
-            if (!refile.exists()) {
-                // 创建文件
-                refile.createNewFile()
-            }
 
             FileManager.copyFiletoFile(tempFile, refile)
             tempFile.delete()
             // 删除sp
             putToSharedPreferences {
-                put("downLoad-${resource.name}-dLen", "")
+                put("downLoad-${resource.name}-dLen", 0L)
             }
 
             // 拷贝完成，更新通知,
@@ -141,13 +177,23 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             val build2 = getNotificationBuilder(resource.name)
             build2.setContentText("下载完成")
             notificationManager.notify(resource.id, build2.build())
-            // 更新广播
-            // TODO:
+
+
+            // 更新广播 下载完成
+            sendBroadcast(resource, DownloadReceiver.COMPLETE)
+            // 更新下载状态，完成
+            downloadService.saveDownloadResource(resource, DownloadResource.COMPLETE)
+
 
         } else {
             // 下载失败
-            // TODO:
+            // TODO: 下载失败
             Log.d(TAG, "下载失败：${restResponse.msg}")
+            // TODO：发送通知
+
+            // 发送广播
+            sendBroadcast(resource, DownloadReceiver.FAILED)
+            downloadService.saveDownloadResource(resource, DownloadResource.FAILED)
         }
 
     }
@@ -157,16 +203,16 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
      */
     @ExperimentalCoroutinesApi
     suspend fun waitingToStop() {
-        Log.d(TAG, "等待...${channel.isEmpty}")
-        delay(11000)
-        Log.d(TAG, "每11s检查是否有下载任务,当前任务：${channel.isEmpty}")
-        if (channel.isEmpty) {
-            Log.d(TAG, "没有下载任务，最后5s到底有没有,当前任务：${channel.isEmpty}")
-            delay(5000)
-            Log.d(TAG, "延迟，当前任务：${channel.isEmpty}")
-            if (channel.isEmpty) {
+        Log.d(TAG, "等待...${downloadQueue.isEmpty}")
+        delay(7000)
+        Log.d(TAG, "每11s检查是否有下载任务,当前任务：${downloadQueue.isEmpty}")
+        if (downloadQueue.isEmpty) {
+            Log.d(TAG, "没有下载任务，最后5s到底有没有,当前任务：${downloadQueue.isEmpty}")
+            delay(3000)
+            Log.d(TAG, "延迟，当前任务：${downloadQueue.isEmpty}")
+            if (downloadQueue.isEmpty) {
                 Log.d(TAG, "真的没有下载任务，我要关闭了")
-                channel.cancel()
+                downloadQueue.cancel()
                 // 停止
                 stopSelf()
                 return
@@ -183,6 +229,9 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "启动服务")
+        // 注册广播
+        val filter = IntentFilter(DownloadReceiver.DOWNLOADING_ACTION)
+        registerReceiver(downloadReceiver, filter)
 
         launch(Dispatchers.IO) {
             // 处理下载程序
@@ -190,51 +239,136 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
         }
     }
 
-    // 任务数量
-    var count = 0
-
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL"
 
+        val action = intent.getStringExtra("action") ?: START_DOWNLOAD
         val downloadResource: DownloadResource? = intent.getSerializableExtra("download") as DownloadResource
 
         launch {
             if (downloadResource != null) {
-                count++
-                downloadResource.id = count
-                // 显示通知
-                // TODO：通知不需关闭
-                // TODO: 取消按钮
-                showNotification(downloadResource)
-                // 添加下载任务
-                addDownloadTask(downloadResource)
+                when (action) {
+                    START_DOWNLOAD -> {
+                        startDownLoadTask(downloadResource)
+                    }
+                    SUSPEND_DOWNLOAD -> {
+                        suspendDownloadTask(downloadResource)
+                    }
+                }
             }
         }
-
-
 
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun showNotification(downloadResource: DownloadResource) {
-        notifys
-        val builder = getNotificationBuilder(downloadResource.name)
-        builder.setProgress(0, 0, true)
-        notifys[downloadResource.id] = builder
-        notificationManager.notify(downloadResource.id, builder.build())
+    /**
+     * 暂停下载任务
+     */
+    private suspend fun suspendDownloadTask(downloadResource: DownloadResource) {
+        val http = https[downloadResource.id]
+        http?.apply {
+            // 关闭连接
+            cancel()
+            // 移除http引用
+            https.remove(downloadResource.id)
+            // 关闭通知
+            // 我也不知道为啥要延迟，反正加上就正确了
+            delay(10)
+            notificationManager.cancel(downloadResource.id)
+            delay(10)
+            val builder = getNotificationBuilder(downloadResource.name)
+            builder.setContentText("下载已暂停")
+            notificationManager.notify(downloadResource.id, builder.build())
+            // 更新下载状态，暂停
+            downloadService.saveDownloadResource(downloadResource, DownloadResource.SUSPEND)
+            Log.d(TAG, "暂停下载")
+        }
     }
 
-    private fun getNotificationBuilder(title: String) =
+    /**
+     * 开启一个下载任务
+     */
+    private suspend fun startDownLoadTask(downloadResource: DownloadResource) {
+
+        val down = downloadService.selectById(downloadResource) ?: downloadResource
+
+        if (down.id == -1) {
+            // 最新下载的资源
+            // 添加到下载列表
+            downloadService.saveDownloadResource(down, DownloadResource.START)
+            // 发送广播
+            sendBroadcast(down, DownloadReceiver.START)
+            Log.d(TAG, "最新下载")
+        }
+
+        // 显示通知
+        putToShowNotification(down)
+        // 添加下载任务
+        downloadQueue.send(down)
+    }
+
+    /**
+     * 发送广播
+     */
+    private fun sendBroadcast(downloadResource: DownloadResource, state: Int) {
+        val intent = Intent()
+        intent.action = DownloadReceiver.DOWNLOADING_ACTION
+        intent.putExtra("download", downloadResource)
+        intent.putExtra("state", state)
+        sendBroadcast(intent)
+    }
+
+    /**
+     * 显示下载通知
+     */
+    private fun putToShowNotification(downloadResource: DownloadResource) {
+        val builder = getNotificationBuilderAddAction(downloadResource)
+        builder.setProgress(0, 0, true)
+        notifys[downloadResource.id] = builder
+        val notification = builder.build()
+        notification.flags = Notification.FLAG_NO_CLEAR
+        notificationManager.notify(downloadResource.id, notification)
+    }
+
+    private fun getNotificationBuilder(title: String) = kotlin.run {
+
         NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD).apply {
             setContentTitle(title)
             setContentText("等待下载...")
             setSmallIcon(R.drawable.icon)
             priority = NotificationCompat.PRIORITY_LOW
         }
+    }
+
+
+    private fun getNotificationBuilderAddAction(resource: DownloadResource) = kotlin.run {
+        val suspendAction = Intent(this, DownloadReceiver::class.java).apply {
+            action = DownloadReceiver.SUSPEND_DOWNLOAD_ACTION
+            putExtra("download", resource)
+        }
+        val suspendIntent: PendingIntent =
+            PendingIntent.getBroadcast(this, 0, suspendAction, PendingIntent.FLAG_ONE_SHOT)
+
+        // 去下载页面
+        val downIntent = Intent(
+            this.baseContext,
+            DownloadTaskActivity::class.java
+        )
+
+        val downloadingIntent = PendingIntent.getActivity(
+            this.baseContext, 1, downIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        getNotificationBuilder(resource.name).apply {
+            setContentIntent(downloadingIntent)
+        }
+    }
 
 
     override fun onDestroy() {
         super.onDestroy()
+        // 注销广播
+        unregisterReceiver(downloadReceiver)
         Log.d(TAG, "关闭服务")
     }
 }

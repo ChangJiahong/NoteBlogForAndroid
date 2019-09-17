@@ -79,7 +79,6 @@ class IndexActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 Log.v("Index",perm+"未获取权限")
             }
         }
-        val tmpList = arrayOfNulls<String>(toApplyList.size)
         isp = toApplyList.size
         Log.v("权限注册",""+isp)
         if (!toApplyList.isEmpty()) {

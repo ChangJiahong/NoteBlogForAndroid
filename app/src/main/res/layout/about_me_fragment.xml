@@ -136,7 +136,7 @@
                             android:layout_height="10dp"/>
 
                         <LinearLayout
-                            android:id="@+id/aboutUs"
+                            android:id="@+id/downloadTask"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -150,9 +150,41 @@
                                 android:id="@+id/icon3"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
-                                android:src="@drawable/about"/>
+                                android:src="@drawable/download_manager"/>
                             <TextView
                                 android:id="@+id/text3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="13dp"
+                                android:paddingBottom="13dp"
+                                android:textSize="16sp"
+                                android:textColor="#646161"
+                                android:text="@string/downloadManagement"
+                                android:paddingStart="10dp"/>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/aboutUs"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingStart="15dp"
+                            android:clickable="true"
+                            android:layout_marginTop="10dp"
+                            style="@style/me_item_bg">
+
+                            <ImageView
+                                android:id="@+id/icon4"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/about"/>
+                            <TextView
+                                android:id="@+id/text4"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="13dp"

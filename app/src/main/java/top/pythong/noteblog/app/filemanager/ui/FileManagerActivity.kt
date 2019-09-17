@@ -19,6 +19,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
+import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.clearLoginUser
 import top.pythong.noteblog.data.constant.Constant
@@ -39,7 +40,7 @@ class FileManagerActivity : BaseActivity() {
     private val fileDirList = ArrayList<FileDir>()
 
     override fun getViewModel(): BaseViewModel {
-        fileManagerViewModel = ViewModelFactory.createViewModel(this, FileManagerViewModel::class)
+        fileManagerViewModel = ViewModelFactory.createViewModelWithContext(this, FileManagerViewModel::class)
         return fileManagerViewModel
     }
 
@@ -82,12 +83,12 @@ class FileManagerActivity : BaseActivity() {
             loadingView.show()
         })
 
-
-//        for (i in 0..20) {
-//            fileDirList.add(FileDir("文件夹$i"))
-//        }
-
         adapter = FileManagerAdapter(fileDirList, currentPath)
+
+        adapter.fileOnClickListener { v, file ->
+            fileManagerViewModel.openOrDownloadFile(this,file.toDownloadResource(currentPath))
+        }
+
         val smoothScrollLayoutManager = SmoothScrollLayoutManager(this)
         recyclerView.layoutManager = smoothScrollLayoutManager
         //添加Android自带的分割线
@@ -97,6 +98,7 @@ class FileManagerActivity : BaseActivity() {
 
     override fun initData() {
 
+        refreshLayout.autoRefresh()
 
     }
 

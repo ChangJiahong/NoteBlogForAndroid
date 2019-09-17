@@ -3,6 +3,7 @@ package top.pythong.noteblog.data
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import top.pythong.noteblog.app.download.model.DownloadResource
 import top.pythong.noteblog.data.FileManager.appRoot
 import java.io.File
 
@@ -67,3 +68,27 @@ val Context.imageDirectoryPath: String
 
 val Context.tempDirectoryPath: String
     get() = "$appRootDirectoryPath/temp"
+
+fun Context.getResourceFile(resource: DownloadResource): File{
+    val refileDir = File("$fileDirectoryPath/${resource.toPath}".replace("\\", "/"))
+    val refile = File(refileDir, resource.name)
+    return refile
+}
+
+fun Context.getResourceFileOrCreate(resource: DownloadResource): File{
+    val refileDir = File("$fileDirectoryPath/${resource.toPath}".replace("\\", "/"))
+    val refile = File(refileDir, resource.name)
+    if (!refileDir.exists()) {
+        refileDir.mkdirs()
+    }
+    if (!refile.exists()) {
+        // 创建文件
+        refile.createNewFile()
+    }
+    return refile
+}
+
+fun Context.getResourceTempFile(resource: DownloadResource): File{
+    val tempFilePath = "$tempDirectoryPath/${resource.id}.ntbg"
+    return File(tempFilePath)
+}

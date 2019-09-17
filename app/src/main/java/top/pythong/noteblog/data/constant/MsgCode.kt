@@ -100,9 +100,8 @@ enum class MsgCode(
     NetworkError(0, "The Network Is Getting Worse", "网络开小差了"),
 
     UnknownMistake(-1, "Unknown Mistake", "未知错误"),
-    ResponseError(-300, "Response Error", "http请求出错");
-
-
+    ResponseError(-300, "Response Error", "http请求出错"),
+    SocketClosed(-100, "Socket closed", "连接已断开");
 
 
     var msg: String

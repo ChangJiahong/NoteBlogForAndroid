@@ -59,7 +59,7 @@ data class FileDir(
 
     fun toDownloadResource(toPath: String): DownloadResource? {
         if (type != DIR) {
-            return DownloadResource(name = this.name, url = "${Api.download}/${this.fileId}", toPath = toPath)
+            return DownloadResource.resource(name, fileId, toPath)
         }
         return null
     }

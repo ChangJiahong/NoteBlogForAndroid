@@ -13,6 +13,7 @@ import top.pythong.noteblog.data.constant.MsgCode
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -35,7 +36,7 @@ class HttpHelper(val context: Context) {
         OkHttpClient()
     }
 
-    lateinit var mCall: Call
+    private lateinit var mCall: Call
 
     var url = ""
 
@@ -313,15 +314,21 @@ class HttpHelper(val context: Context) {
             val buffer = ByteArray(2048) //缓冲数组2kB
 
             var len: Int
-            bys.use { input ->
-                fileOutputStream.use {
-                    while (input.read(buffer).also { len = it } != -1) {
-                        it.write(buffer, 0, len)
-                        downloadLength += len
-                        // 更新进度
-                        progress(contentLength, downloadLength)
+            try {
+                bys.use { input ->
+                    fileOutputStream.use {
+                        while (input.read(buffer).also { len = it } != -1) {
+                            it.write(buffer, 0, len)
+                            downloadLength += len
+                            // 更新进度
+                            progress(contentLength, downloadLength)
+                        }
                     }
                 }
+
+            }catch (e: SocketException){
+                Log.d(TAG, "Socket closed; 连接已断开")
+                return RestResponse(false, -100, "下载暂停", null)
             }
             return RestResponse(true, 200, "下载成功", null)
         }

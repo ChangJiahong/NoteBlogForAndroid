@@ -37,5 +37,7 @@
     <string name="file_manager">文件管理</string>
     <string name="article">文章</string>
     <string name="about">关于</string>
+    <string name="downloadManagement">下载管理</string>
+    <string name="suspend">暂停</string>
 
 </resources>

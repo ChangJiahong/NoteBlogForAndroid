@@ -22,7 +22,8 @@ import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
  * @author ChangJiahong
  * @date 2019/9/6
  */
-class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val contextPath: String) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val contextPath: String) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val DIR = 0
     val FILE = 1
@@ -63,9 +64,7 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val c
                 viewHolder as FileHolder
                 viewHolder.apply {
                     v.setOnClickListener {
-                        // TODO: 下载文件 Or 打开文件
-                        v.context.toast(item.name)
-                        DownloadService.addDownload(v.context, item.toDownloadResource(contextPath))
+                        fileOnClickListener(it, item)
                     }
                     name.text = item.name
                     created.text = "${item.created} \uD83D\uDD57"
@@ -75,12 +74,18 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val c
 
                     isLoad = true
 
-                    if (isLoad){
+                    if (isLoad) {
                         loaded.text = "✔"
                     }
                 }
             }
         }
+    }
+
+    var fileOnClickListener = { v: View, file: FileDir -> }
+
+    fun fileOnClickListener(click: (View,FileDir) -> Unit) {
+        fileOnClickListener = click
     }
 
     /**

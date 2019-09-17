@@ -23,33 +23,9 @@ class DownloadReceiver : BroadcastReceiver() {
 
         const val CANCEL_DOWNLOAD_ACTION = "cancelDownload"
 
-        /**
-         * 开始一个下载
-         */
-        const val START = 0
-        /**
-         * 下载中
-         */
-        const val DOWNLOADING = 1
-        /**
-         * 暂停
-         */
-        const val SUSPEND = 2
-        /**
-         * 下载完成，copy中
-         */
-        const val MERGE = 3
-        /**
-         * 下载完成
-         */
-        const val COMPLETE = 4
-        /**
-         * 下载失败
-         */
-        const val FAILED = 5
     }
 
-    private var callback: (resource: DownloadResource, state: Int) -> Unit = { _, _ ->
+    private var callback: (resource: DownloadResource) -> Unit = { _ ->
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -57,9 +33,8 @@ class DownloadReceiver : BroadcastReceiver() {
         val downloadResource = intent.getSerializableExtra("download") as DownloadResource? ?: return
         when (action) {
             DOWNLOADING_ACTION -> {
-                val state = intent.getIntExtra("state", 0)
                 // 广播下载回调
-                callback(downloadResource, state)
+                callback(downloadResource)
             }
             SUSPEND_DOWNLOAD_ACTION -> {
                 // 暂停
@@ -69,7 +44,7 @@ class DownloadReceiver : BroadcastReceiver() {
 
     }
 
-    fun downloadCallback(callback: (resource: DownloadResource, state: Int) -> Unit) {
+    fun downloadCallback(callback: (resource: DownloadResource) -> Unit) {
         this.callback = callback
     }
 }

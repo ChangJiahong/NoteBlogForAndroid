@@ -8,6 +8,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.app.download.DownloadService
@@ -65,19 +66,29 @@ class FileManagerViewModel(context: Context, private val fileManagerService: IFi
         }
 
         val downs = downloadTaskService.selectByUrl(resource.url)
+
         val picks = ArrayList<DownloadResource>(downs)
         if (downs.isEmpty()) {
             // 未下载，开启下载
             // 下载
             DownloadService.addDownload(context, resource)
-            picks.add(resource)
             context.toast("已加入下载列表")
-        }else {
-            // 有未下载完成的
-            // 跳转下载页面
-            // 继续下载
-            context.startActivity<DownloadTaskActivity>("picks" to picks)
+            return
         }
+
+        if (downs.all { it.state == DownloadResource.COMPLETE }){
+            // 下载完成的,重新下载
+            resource.id = downs[0].id
+            DownloadService.addDownload(context, resource)
+            context.toast("已加入下载列表.")
+            return
+        }
+
+        // 有未下载完成的
+        // 跳转下载页面
+        // 继续下载
+        context.startActivity<DownloadTaskActivity>("picks" to picks)
+
 
     }
 

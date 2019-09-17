@@ -18,7 +18,7 @@ import top.pythong.noteblog.app.filemanager.model.FileDir
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
 
 /**
- *
+ * 文件夹管理适配器
  * @author ChangJiahong
  * @date 2019/9/6
  */

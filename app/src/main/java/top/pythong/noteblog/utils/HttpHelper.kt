@@ -40,6 +40,8 @@ class HttpHelper(val context: Context) {
 
     var url = ""
 
+    private var isStop = false
+
     private var mHeaders: Headers.Builder = Headers.Builder()
 
     private var mRequestBody: RequestBody = FormBody.Builder().build()
@@ -88,6 +90,10 @@ class HttpHelper(val context: Context) {
 
     fun cancel(){
         mCall.cancel()
+    }
+
+    fun stop(){
+        isStop = true
     }
 
     fun post() = method(POST)
@@ -322,13 +328,16 @@ class HttpHelper(val context: Context) {
                             downloadLength += len
                             // 更新进度
                             progress(contentLength, downloadLength)
+                            if (isStop){
+                                return@downloadToTemp RestResponse(false, -400, "下载暂停", null)
+                            }
                         }
                     }
                 }
 
             }catch (e: SocketException){
                 Log.d(TAG, "Socket closed; 连接已断开")
-                return RestResponse(false, -100, "下载暂停", null)
+                return RestResponse(false, -100, "连接已断开", null)
             }
             return RestResponse(true, 200, "下载成功", null)
         }

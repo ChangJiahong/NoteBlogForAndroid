@@ -20,13 +20,13 @@ class DownloadTaskDataSourceImpl(private val context: Context) : IDownloadTaskDa
     /**
      * 插入下载任务
      */
-    override fun insert(resource: DownloadResource, state: Int) {
+    override fun insert(resource: DownloadResource) {
         val writeDataBase = MyDbOpenHelper.writeDb(context)
         val cv = ContentValues()
         cv.put("name", resource.name)
         cv.put("fileId", resource.fileId())
         cv.put("toPath", resource.toPath)
-        cv.put("state", state)
+        cv.put("state", resource.state)
         cv.put("contentLen", resource.contentLen)
         cv.put("downloadLen", resource.downloadLen)
         val id = writeDataBase.insert(TABLE, null, cv)
@@ -71,13 +71,13 @@ class DownloadTaskDataSourceImpl(private val context: Context) : IDownloadTaskDa
         var sql = "SELECT * From $TABLE Where 1=1 "
         resource.apply {
             if (name.isNotBlank()) {
-                sql += " and name = ${resource.name}"
+                sql += " and name = '${resource.name}'"
             }
             if (fileId().isNotBlank()) {
-                sql += " and fileId = ${resource.fileId()}"
+                sql += " and fileId = '${resource.fileId()}'"
             }
             if (toPath.isNotBlank()) {
-                sql += " and toPath = ${resource.toPath}"
+                sql += " and toPath = '${resource.toPath}'"
             }
             if (state >= 0) {
                 sql += " and state = ${resource.state}"
@@ -120,27 +120,27 @@ class DownloadTaskDataSourceImpl(private val context: Context) : IDownloadTaskDa
         return tasks
     }
 
-    override fun update(resource: DownloadResource, state: Int) {
+    override fun update(resource: DownloadResource) {
         val writeDataBase = MyDbOpenHelper.writeDb(context)
         val cv = ContentValues()
         resource.apply {
             if (name.isNotBlank()) {
-                cv.put("name", resource.name)
+                cv.put("name", name)
             }
             if (fileId().isNotBlank()) {
-                cv.put("fileId", resource.fileId())
+                cv.put("fileId", fileId())
             }
             if (toPath.isNotBlank()) {
-                cv.put("toPath", resource.toPath)
+                cv.put("toPath", toPath)
             }
             if (state >= 0) {
                 cv.put("state", state)
             }
             if (contentLen >= 0) {
-                cv.put("contentLen", resource.contentLen)
+                cv.put("contentLen", contentLen)
             }
             if (downloadLen >= 0) {
-                cv.put("downloadLen", resource.downloadLen)
+                cv.put("downloadLen", downloadLen)
             }
         }
         writeDataBase.update(TABLE, cv, "id = ?", arrayOf(resource.id.toString()))

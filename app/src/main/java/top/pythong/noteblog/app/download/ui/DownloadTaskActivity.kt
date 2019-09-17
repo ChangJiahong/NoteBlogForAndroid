@@ -2,6 +2,7 @@ package top.pythong.noteblog.app.download.ui
 
 import android.content.IntentFilter
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_download_task.*
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.download.DownloadReceiver
@@ -16,6 +17,8 @@ import top.pythong.noteblog.base.viewModel.BaseViewModel
  * 下载任务页面
  */
 class DownloadTaskActivity : BaseActivity() {
+
+    val TAG = DownloadTaskActivity::class.java.simpleName
 
     lateinit var taskModel: DownloadTaskViewModel
 
@@ -55,32 +58,15 @@ class DownloadTaskActivity : BaseActivity() {
         recyclerView.adapter = adapter
 
 
-        downloadReceiver.downloadCallback { resource, state ->
-            when (state) {
-                DownloadReceiver.START -> {
-                    // 保存一个下载任务
-                    downloadTasks.add(resource)
-                    adapter.notifyDataSetChanged()
-                }
-                DownloadReceiver.DOWNLOADING -> {
-                    // 正在下载
-
-                }
-                DownloadReceiver.MERGE -> {
-                    // copying
-
-                }
-                DownloadReceiver.COMPLETE -> {
-                    taskModel.removeTask(resource)
-                }
-            }
+        downloadReceiver.downloadCallback { resource ->
+            adapter.notifyChanged(resource)
         }
     }
 
     override fun initData() {
 
         downloadTasks.addAll(taskModel.getTasks())
-
+        adapter.sort()
         adapter.notifyDataSetChanged()
     }
 

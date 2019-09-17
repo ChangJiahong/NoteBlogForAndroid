@@ -20,12 +20,13 @@ class DownloadTaskServiceImpl(
      * 保存下载任务
      */
     override fun saveDownloadResource(resource: DownloadResource, state: Int) {
+        resource.state = state
         val res = selectById(resource)
         if (res == null) {
-            downloadTaskDataSource.insert(resource, state)
+            downloadTaskDataSource.insert(resource)
 
         } else {
-            downloadTaskDataSource.update(resource, state)
+            downloadTaskDataSource.update(resource)
         }
     }
 
@@ -35,7 +36,7 @@ class DownloadTaskServiceImpl(
 
     override fun selectByUrl(url: String): List<DownloadResource> {
         val downloadResource = DownloadResource("", url, "")
-        return downloadTaskDataSource.selectNotCompleteByFileId(downloadResource)
+        return downloadTaskDataSource.select(downloadResource)
     }
 
     /**
@@ -43,10 +44,6 @@ class DownloadTaskServiceImpl(
      */
     override fun getTasks(): List<DownloadResource> {
         val tasks = downloadTaskDataSource.selectAll()
-        tasks.forEach {
-            it.downloadLen = context.getLongFromSharedPreferences("downLoad-${it.name}-dLen", 0L)
-            it.contentLen = context.getLongFromSharedPreferences("downLoad-${it.name}-cLen", 0L)
-        }
         return tasks
     }
 

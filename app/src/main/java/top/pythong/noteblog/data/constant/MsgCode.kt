@@ -101,7 +101,8 @@ enum class MsgCode(
 
     UnknownMistake(-1, "Unknown Mistake", "未知错误"),
     ResponseError(-300, "Response Error", "http请求出错"),
-    SocketClosed(-100, "Socket closed", "连接已断开");
+    SocketClosed(-100, "Socket closed", "连接已断开"),
+    Suspension(-400, "Connection Suspension", "连接暂停");
 
 
     var msg: String

@@ -21,30 +21,35 @@ data class DownloadResource(var name: String, val url: String, val toPath: Strin
     var state: Int = -1
 
     companion object {
+
         /**
-         * 开始一个下载
+         * 下载完成
          */
-        const val START = 0
-        /**
-         * 下载中
-         */
-        const val DOWNLOADING = 1
+        const val COMPLETE = 1
         /**
          * 暂停
          */
         const val SUSPEND = 2
         /**
-         * 下载完成，copy中
-         */
-        const val MERGE = 3
-        /**
-         * 下载完成
-         */
-        const val COMPLETE = 4
-        /**
          * 下载失败
          */
-        const val FAILED = 5
+        const val FAILED = 3
+        /**
+         * 下载完成，copy中
+         */
+        const val MERGE = 4
+        /**
+         * 等待下载
+         */
+        const val WAITING = 5
+        /**
+         * 开始一个下载
+         */
+        const val START = 6
+        /**
+         * 下载中
+         */
+        const val DOWNLOADING = 7
 
 
         fun resource(name: String, fileId: String, toPath: String) = DownloadResource(

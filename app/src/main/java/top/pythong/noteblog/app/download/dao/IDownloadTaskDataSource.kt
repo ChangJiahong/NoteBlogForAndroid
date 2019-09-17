@@ -6,7 +6,7 @@ interface IDownloadTaskDataSource {
     /**
      * 插入下载任务
      */
-    fun insert(resource: DownloadResource, state: Int)
+    fun insert(resource: DownloadResource)
 
     fun selectNotCompleteByFileId(resource: DownloadResource): List<DownloadResource>
 
@@ -21,5 +21,5 @@ interface IDownloadTaskDataSource {
 
     fun delete(resource: DownloadResource)
 
-    fun update(resource: DownloadResource, state: Int)
+    fun update(resource: DownloadResource)
 }

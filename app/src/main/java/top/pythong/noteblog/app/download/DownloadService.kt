@@ -20,11 +20,11 @@ import top.pythong.noteblog.base.factory.ServiceFactory
 import top.pythong.noteblog.data.*
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.Constant.CHANNEL_ID_DOWNLOAD
+import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.HttpHelper
 import top.pythong.noteblog.utils.getLongFromSharedPreferences
 import top.pythong.noteblog.utils.getStringFromSharedPreferences
 import top.pythong.noteblog.utils.putToSharedPreferences
-import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -49,7 +49,6 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
          * 暂停下载
          */
         fun suspendDownload(context: Context, resource: DownloadResource) {
-            Log.d(TAG, "开启暂停")
             context.startService<DownloadService>(
                 "action" to SUSPEND_DOWNLOAD,
                 "download" to resource
@@ -143,7 +142,7 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             notificationManager.notify(resource.id, builder.build())
 
             // 发送广播，下载中
-            sendBroadcast(resource, DownloadReceiver.DOWNLOADING)
+            sendBroadcast(resource, DownloadResource.DOWNLOADING)
         }
 
         if (restResponse.isOk()) {
@@ -157,7 +156,7 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             Log.d(TAG, "下载成功")
 
             // 更新广播 下载完成,copy
-            sendBroadcast(resource, DownloadReceiver.MERGE)
+            sendBroadcast(resource, DownloadResource.MERGE)
             // 更新下载状态
             downloadService.saveDownloadResource(resource, DownloadResource.MERGE)
 
@@ -180,20 +179,19 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
 
 
             // 更新广播 下载完成
-            sendBroadcast(resource, DownloadReceiver.COMPLETE)
+            sendBroadcast(resource, DownloadResource.COMPLETE)
             // 更新下载状态，完成
             downloadService.saveDownloadResource(resource, DownloadResource.COMPLETE)
 
 
         } else {
             // 下载失败
-            // TODO: 下载失败
             Log.d(TAG, "下载失败：${restResponse.msg}")
-            // TODO：发送通知
-
-            // 发送广播
-            sendBroadcast(resource, DownloadReceiver.FAILED)
-            downloadService.saveDownloadResource(resource, DownloadResource.FAILED)
+            if (restResponse.status != MsgCode.Suspension.code){
+                // 发送广播
+                sendBroadcast(resource, DownloadResource.FAILED)
+                downloadService.saveDownloadResource(resource, DownloadResource.FAILED)
+            }
         }
 
     }
@@ -267,20 +265,20 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
         val http = https[downloadResource.id]
         http?.apply {
             // 关闭连接
-            cancel()
-            // 移除http引用
-            https.remove(downloadResource.id)
+            stop()
             // 关闭通知
             // 我也不知道为啥要延迟，反正加上就正确了
-            delay(10)
+            delay(100)
             notificationManager.cancel(downloadResource.id)
-            delay(10)
             val builder = getNotificationBuilder(downloadResource.name)
             builder.setContentText("下载已暂停")
             notificationManager.notify(downloadResource.id, builder.build())
             // 更新下载状态，暂停
             downloadService.saveDownloadResource(downloadResource, DownloadResource.SUSPEND)
-            Log.d(TAG, "暂停下载")
+            sendBroadcast(downloadResource, DownloadResource.SUSPEND)
+            // 移除http引用
+            https.remove(downloadResource.id)
+
         }
     }
 
@@ -289,31 +287,31 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
      */
     private suspend fun startDownLoadTask(downloadResource: DownloadResource) {
 
-        val down = downloadService.selectById(downloadResource) ?: downloadResource
+//        val down = downloadService.selectById(downloadResource) ?: downloadResource
 
-        if (down.id == -1) {
+        if (downloadResource.id == -1) {
             // 最新下载的资源
             // 添加到下载列表
-            downloadService.saveDownloadResource(down, DownloadResource.START)
+            downloadService.saveDownloadResource(downloadResource, DownloadResource.START)
             // 发送广播
-            sendBroadcast(down, DownloadReceiver.START)
-            Log.d(TAG, "最新下载")
+            sendBroadcast(downloadResource, DownloadResource.START)
         }
 
+        sendBroadcast(downloadResource, DownloadResource.WAITING)
         // 显示通知
-        putToShowNotification(down)
+        putToShowNotification(downloadResource)
         // 添加下载任务
-        downloadQueue.send(down)
+        downloadQueue.send(downloadResource)
     }
 
     /**
      * 发送广播
      */
     private fun sendBroadcast(downloadResource: DownloadResource, state: Int) {
+        downloadResource.state = state
         val intent = Intent()
         intent.action = DownloadReceiver.DOWNLOADING_ACTION
         intent.putExtra("download", downloadResource)
-        intent.putExtra("state", state)
         sendBroadcast(intent)
     }
 

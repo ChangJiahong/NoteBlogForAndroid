@@ -69,13 +69,6 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
     private var downloadService = ServiceFactory.getSimpleService(this, IDownloadTaskService::class)
 
     /**
-     * 添加下载任务
-     */
-    private suspend fun addDownloadTask(down: DownloadResource) {
-        downloadQueue.send(down)
-    }
-
-    /**
      * 处理下载
      */
     @ExperimentalCoroutinesApi
@@ -186,6 +179,7 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             // 下载失败
             Log.d(TAG, "下载失败：${restResponse.msg}")
             if (restResponse.status != MsgCode.Suspension.code){
+                notificationManager.cancel(resource.id)
                 // 发送广播
                 sendBroadcast(resource, DownloadResource.FAILED)
                 downloadService.saveDownloadResource(resource, DownloadResource.FAILED)

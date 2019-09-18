@@ -114,6 +114,8 @@ class MainActivity : BaseActivity() {
     override fun initData() {
         // 在main页面验证token有效，请求服务器，验证token，失败跳转到login
         mainViewModel.autoLogin()
+
+        mainViewModel.downloadService(this)
     }
 
     override fun onErrorResult(error: MsgCode) {

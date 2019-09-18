@@ -88,11 +88,11 @@ class HttpHelper(val context: Context) {
         return mOkHttpClient
     }
 
-    fun cancel(){
+    fun cancel() {
         mCall.cancel()
     }
 
-    fun stop(){
+    fun stop() {
         isStop = true
     }
 
@@ -301,26 +301,26 @@ class HttpHelper(val context: Context) {
             // 网络错误
             return RestResponse.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
         }
-        val response = method(GET)
-        if (response.isSuccessful) {
+        try {
+            val response = method(GET)
+            if (response.isSuccessful) {
 
-            if (response.headers["Content-Type"] == "application/json;charset=UTF-8") {
-                // restResponse
-                val json = response.body!!.string()
-                Log.d(TAG, json)
-                val restResponse: RestResponse<*> = Gson().fromJson(json, RestResponse::class.java)
-                return restResponse as RestResponse<Any>
-            }
+                if (response.headers["Content-Type"] == "application/json;charset=UTF-8") {
+                    // restResponse
+                    val json = response.body!!.string()
+                    Log.d(TAG, json)
+                    val restResponse: RestResponse<*> = Gson().fromJson(json, RestResponse::class.java)
+                    return restResponse as RestResponse<Any>
+                }
 
-            contentLength = response.headers["Content-Range"]!!.split("/")[1].toLong()
+                contentLength = response.headers["Content-Range"]!!.split("/")[1].toLong()
 
-            val bys = response.body!!.byteStream()
+                val bys = response.body!!.byteStream()
 
-            val fileOutputStream = FileOutputStream(tempFile, true)
-            val buffer = ByteArray(2048) //缓冲数组2kB
+                val fileOutputStream = FileOutputStream(tempFile, true)
+                val buffer = ByteArray(2048) //缓冲数组2kB
 
-            var len: Int
-            try {
+                var len: Int
                 bys.use { input ->
                     fileOutputStream.use {
                         while (input.read(buffer).also { len = it } != -1) {
@@ -328,21 +328,34 @@ class HttpHelper(val context: Context) {
                             downloadLength += len
                             // 更新进度
                             progress(contentLength, downloadLength)
-                            if (isStop){
+                            if (isStop) {
                                 return@downloadToTemp RestResponse(false, -400, "下载暂停", null)
                             }
                         }
                     }
                 }
 
-            }catch (e: SocketException){
-                Log.d(TAG, "Socket closed; 连接已断开")
-                return RestResponse(false, -100, "连接已断开", null)
+                return RestResponse(true, 200, "下载成功", null)
             }
-            return RestResponse(true, 200, "下载成功", null)
+            er(response.code, response.message)
+            return RestResponse.fail(
+                MsgCode.ResponseError.code,
+                "Http请求错误：错误码：${response.code},错误信息：${response.message}\n"
+            )
+        } catch (e: SocketException) {
+            Log.d(TAG, "Socket closed; 连接已断开")
+            return RestResponse(false, -100, "连接已断开", null)
+        } catch (e: SocketTimeoutException) {
+            Log.d(TAG, e.message)
+            er(MsgCode.ServerError.code, MsgCode.ServerError.msg)
+            // 服务器请求超时
+            return RestResponse.fail(MsgCode.ServerError.code, MsgCode.ServerError.msg)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            er(MsgCode.ServerError.code, MsgCode.ServerError.msg)
+            // 未知IO错误
+            return RestResponse.fail(MsgCode.UnknownMistake.code, MsgCode.UnknownMistake.msg)
         }
-        er(response.code, response.message)
-        return RestResponse.fail(MsgCode.ResponseError.code, "Http请求错误：错误码：${response.code},错误信息：${response.message}\n")
     }
 
     /**

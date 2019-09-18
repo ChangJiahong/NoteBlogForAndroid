@@ -258,7 +258,7 @@ class HttpHelper(val context: Context) {
         method: String,
         jsonAnalyze: (json: String) -> RestResponse<T>
     ): RestEntity<T> {
-        if (!NetworkUtils.isNetworkAvailable(context)) {
+        if (!NetworkUtils.isNetworkConnected(context)) {
             // 网络错误
             return RestEntity.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
         }
@@ -297,7 +297,7 @@ class HttpHelper(val context: Context) {
      * 下载到临时文件
      */
     fun downloadToTemp(tempFile: File, progress: (len: Long, progress: Long) -> Unit): RestResponse<Any> {
-        if (!NetworkUtils.isNetworkAvailable(context)) {
+        if (!NetworkUtils.isNetworkConnected(context)) {
             // 网络错误
             return RestResponse.fail(MsgCode.NetworkError.code, MsgCode.NetworkError.msg)
         }

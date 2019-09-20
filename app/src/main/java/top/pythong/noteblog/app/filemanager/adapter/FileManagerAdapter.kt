@@ -107,6 +107,21 @@ class FileManagerAdapter(private val fileDirs: ArrayList<FileDir>, private val c
         }
     }
 
+    private fun sort() {
+        fileDirs.sortWith(Comparator { a, b ->
+            if (a.type != b.type) {
+                if (a.type == FileDir.DIR) 1 else -1
+            } else {
+                a.name.compareTo(b.name)
+            }
+        })
+    }
+
+    fun notifyData() {
+        sort()
+        this.notifyDataSetChanged()
+    }
+
     override fun getItemViewType(position: Int): Int {
         val item = fileDirs[position]
         if (item.type == FileDir.DIR) {

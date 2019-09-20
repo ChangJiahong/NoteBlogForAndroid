@@ -1,5 +1,6 @@
 package top.pythong.noteblog.app.download.adapter
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +8,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import kotlinx.coroutines.*
+import org.jetbrains.anko.backgroundColorResource
+import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.find
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.download.model.DownloadResource
+import top.pythong.noteblog.data.getResourceFile
+import top.pythong.noteblog.data.openFileByThirdPartyApp
+import java.io.File
 
 /**
  * 下载任务管理adapter
@@ -22,8 +29,15 @@ class DownloadTaskAdpater(val downloadTasks: ArrayList<DownloadResource>) :
 
     val TAG = DownloadTaskAdpater::class.java.simpleName
 
+    val selected = ArrayList<Int>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.download_task_item, null)
+        val v: View
+        if (viewType == DownloadResource.COMPLETE) {
+            v = LayoutInflater.from(parent.context).inflate(R.layout.download_task_item_complete, null)
+            return CompleteViewHolder(v)
+        }
+        v = LayoutInflater.from(parent.context).inflate(R.layout.download_task_item, null)
         return ViewHolder(v)
     }
 
@@ -31,9 +45,34 @@ class DownloadTaskAdpater(val downloadTasks: ArrayList<DownloadResource>) :
         return downloadTasks.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return downloadTasks[position].state
+    }
+
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        viewHolder as ViewHolder
+
         val item = downloadTasks[position]
+
+        if (selected.contains(item.id)) {
+            viewHolder.itemView.backgroundColorResource = R.color.card_pressed
+        } else {
+            viewHolder.itemView.backgroundResource = R.drawable.defult_click_bg_ripple
+        }
+
+        if (item.state == DownloadResource.COMPLETE) {
+            viewHolder as CompleteViewHolder
+
+            viewHolder.apply {
+                mName.text = item.name
+                v.setOnClickListener {
+                    val file = context.getResourceFile(item)
+                    context.openFileByThirdPartyApp(file, item.type)
+                }
+            }
+            return
+        }
+
+        viewHolder as ViewHolder
         viewHolder.apply {
             mName.text = item.name
             mDownBtn.setOnClickListener {
@@ -57,14 +96,6 @@ class DownloadTaskAdpater(val downloadTasks: ArrayList<DownloadResource>) :
                     mProgressBar.isIndeterminate = false
                     mProgressBar.max = item.contentLen.toInt()
                     mProgressBar.progress = item.downloadLen.toInt()
-                }
-                DownloadResource.COMPLETE -> {
-                    mProgress.text = ""
-                    // 下载完成
-                    // 隐藏进度条
-                    mProgressBar.visibility = View.GONE
-                    mDownBtn.text = "重新下载"
-                    mDownBtn.isEnabled = true
                 }
                 DownloadResource.MERGE -> {
                     mProgress.text = ""
@@ -138,10 +169,37 @@ class DownloadTaskAdpater(val downloadTasks: ArrayList<DownloadResource>) :
         }
     }
 
-    fun sort() {
+    private fun sort() {
         downloadTasks.sortByDescending {
             it.state
         }
+    }
+
+    fun notifyData() {
+        sort()
+        notifyDataSetChanged()
+    }
+
+    fun selected(selected: List<DownloadResource>, delay: Long) = GlobalScope.launch(Dispatchers.Main) {
+        selected(selected)
+        val job = async(Dispatchers.IO) {
+            delay(delay)
+        }
+        job.await()
+        unSelected()
+    }
+
+
+    fun selected(selected: List<DownloadResource>) {
+        selected.forEach {
+            this.selected.add(it.id)
+        }
+        this.notifyData()
+    }
+
+    fun unSelected() {
+        this.selected.clear()
+        this.notifyData()
     }
 
     class ViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
@@ -150,5 +208,10 @@ class DownloadTaskAdpater(val downloadTasks: ArrayList<DownloadResource>) :
         val mProgress = v.find<TextView>(R.id.mProgress)
         val mProgressBar = v.find<ProgressBar>(R.id.mProgressBar)
         val mDownBtn = v.find<Button>(R.id.downBtn)
+    }
+
+    class CompleteViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
+        val context: Context = v.context
+        val mName = v.find<TextView>(R.id.mName)
     }
 }

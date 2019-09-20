@@ -86,7 +86,7 @@ class FileManagerActivity : BaseActivity() {
             }
             fileDirList.clear()
             fileDirList.addAll(fileDirs)
-            adapter.notifyDataSetChanged()
+            adapter.notifyData()
             loadingView.show()
         })
 

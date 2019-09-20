@@ -75,9 +75,14 @@ class DownloadTaskActivity : BaseActivity() {
             }
             loadingView.showEmpty(true)
         }else {
-            adapter.sort()
-            adapter.notifyDataSetChanged()
+            adapter.notifyData()
         }
+
+        val picks = intent.getSerializableExtra("picks") as ArrayList<DownloadResource>?
+        if (picks!=null && picks.isNotEmpty()){
+            adapter.selected(picks, 1000)
+        }
+
     }
 
     override fun onDestroy() {

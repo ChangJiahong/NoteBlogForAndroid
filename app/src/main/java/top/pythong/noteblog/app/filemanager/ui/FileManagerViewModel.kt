@@ -56,8 +56,7 @@ class FileManagerViewModel(context: Context, private val fileManagerService: IFi
         if (resource == null) {
             return
         }
-        // TODO: 下载文件 Or 打开文件
-        // TODO: 判断是否已下载，
+        // TODO: 判断文件类型，开启预览
 
         val refile = context.getResourceFile(resource)
         if (refile.exists()) {
@@ -76,7 +75,7 @@ class FileManagerViewModel(context: Context, private val fileManagerService: IFi
             return
         }
 
-        if (downs.all { it.state == DownloadResource.COMPLETE }){
+        if (downs.all { it.state == DownloadResource.COMPLETE }) {
             // 下载完成的,重新下载
             resource.id = downs[0].id
             DownloadService.addDownload(context, resource)

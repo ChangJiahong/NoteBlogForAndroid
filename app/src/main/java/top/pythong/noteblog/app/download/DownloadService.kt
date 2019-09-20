@@ -162,9 +162,8 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             }
 
             // 拷贝完成，更新通知,
-            // TODO：链接到打开文件
             notificationManager.cancel(resource.id)
-            val build2 = getNotificationBuilder(resource.name)
+            val build2 = getNotificationBuilderAddAction(resource)
             build2.setContentText("下载完成")
             notificationManager.notify(resource.id, build2.build())
 
@@ -259,7 +258,7 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             // 我也不知道为啥要延迟，反正加上就正确了
             delay(100)
             notificationManager.cancel(downloadResource.id)
-            val builder = getNotificationBuilder(downloadResource.name)
+            val builder = getNotificationBuilderAddAction(downloadResource)
             builder.setContentText("下载已暂停")
             notificationManager.notify(downloadResource.id, builder.build())
             // 更新下载状态，暂停
@@ -333,6 +332,8 @@ class DownloadService : Service(), CoroutineScope by MainScope() {
             this.baseContext,
             DownloadTaskActivity::class.java
         )
+
+        downIntent.putExtra("picks", arrayListOf(resource))
 
         val downloadingIntent = PendingIntent.getActivity(
             this.baseContext, 1, downIntent,

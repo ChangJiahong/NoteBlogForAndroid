@@ -22,6 +22,7 @@ import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
 import top.pythong.noteblog.data.fileDirectoryPath
 import top.pythong.noteblog.data.getResourceFile
+import top.pythong.noteblog.data.openFileByThirdPartyApp
 import java.io.File
 
 class FileManagerViewModel(context: Context, private val fileManagerService: IFileManagerService) : BaseViewModel() {
@@ -60,8 +61,7 @@ class FileManagerViewModel(context: Context, private val fileManagerService: IFi
 
         val refile = context.getResourceFile(resource)
         if (refile.exists()) {
-            // TODO: openFile
-            context.toast("打开文件")
+            context.openFileByThirdPartyApp(refile, resource.type)
             return
         }
 

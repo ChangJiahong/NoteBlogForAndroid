@@ -26,6 +26,7 @@ class DownloadTaskDataSourceImpl(private val context: Context) : IDownloadTaskDa
         cv.put("name", resource.name)
         cv.put("fileId", resource.fileId())
         cv.put("toPath", resource.toPath)
+        cv.put("type", resource.type)
         cv.put("state", resource.state)
         cv.put("contentLen", resource.contentLen)
         cv.put("downloadLen", resource.downloadLen)
@@ -71,22 +72,25 @@ class DownloadTaskDataSourceImpl(private val context: Context) : IDownloadTaskDa
         var sql = "SELECT * From $TABLE Where 1=1 "
         resource.apply {
             if (name.isNotBlank()) {
-                sql += " and name = '${resource.name}'"
+                sql += " and name = '$name'"
             }
             if (fileId().isNotBlank()) {
-                sql += " and fileId = '${resource.fileId()}'"
+                sql += " and fileId = '${fileId()}'"
             }
             if (toPath.isNotBlank()) {
-                sql += " and toPath = '${resource.toPath}'"
+                sql += " and toPath = '$toPath'"
+            }
+            if (type.isNotBlank()) {
+                sql += " and type = '$type"
             }
             if (state >= 0) {
-                sql += " and state = ${resource.state}"
+                sql += " and state = $state"
             }
             if (contentLen >= 0) {
-                sql += " and contentLen = ${resource.contentLen}"
+                sql += " and contentLen = $contentLen"
             }
             if (downloadLen >= 0) {
-                sql += " and downloadLen = ${resource.downloadLen}"
+                sql += " and downloadLen = $downloadLen"
             }
         }
         val readDatabase = MyDbOpenHelper.readDb(context)
@@ -155,7 +159,8 @@ class DownloadTaskDataSourceImpl(private val context: Context) : IDownloadTaskDa
         val res = DownloadResource.resource(
             name = re.getString(re.getColumnIndex("name")),
             fileId = re.getString(re.getColumnIndex("fileId")),
-            toPath = re.getString(re.getColumnIndex("toPath"))
+            toPath = re.getString(re.getColumnIndex("toPath")),
+            type = re.getString(re.getColumnIndex("type"))
         )
         res.id = re.getInt(re.getColumnIndex("id"))
         res.state = re.getInt(re.getColumnIndex("state"))

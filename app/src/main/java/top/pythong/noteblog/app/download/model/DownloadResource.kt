@@ -11,7 +11,7 @@ import java.io.Serializable
  * @author ChangJiahong
  * @date 2019/9/9
  */
-data class DownloadResource(var name: String, val url: String, val toPath: String) : Serializable {
+data class DownloadResource(var name: String, val url: String, val toPath: String, val type: String) : Serializable {
     /**
      * 下载队列id
      */
@@ -52,10 +52,11 @@ data class DownloadResource(var name: String, val url: String, val toPath: Strin
         const val DOWNLOADING = 7
 
 
-        fun resource(name: String, fileId: String, toPath: String) = DownloadResource(
+        fun resource(name: String, fileId: String, toPath: String, type: String) = DownloadResource(
             name = name,
             url = "${Api.download}/$fileId",
-            toPath = toPath
+            toPath = toPath,
+            type = type
         )
     }
 

@@ -35,7 +35,7 @@ class DownloadTaskServiceImpl(
     }
 
     override fun selectByUrl(url: String): List<DownloadResource> {
-        val downloadResource = DownloadResource("", url, "")
+        val downloadResource = DownloadResource("", url, "", "")
         return downloadTaskDataSource.select(downloadResource)
     }
 

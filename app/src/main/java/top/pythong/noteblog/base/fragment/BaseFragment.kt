@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.startActivity
 import top.pythong.noteblog.app.login.ui.LoginActivity
@@ -101,7 +102,7 @@ abstract class BaseFragment : Fragment(), OnErrorListener {
                             put(Constant.TOKEN, "")
                         }
                         // 启动登录
-                        startActivity<LoginActivity>()
+                        startActivityForResult<LoginActivity>(0)
                     }
                     negativeButton("再等等") {
                         it.dismiss()

@@ -23,6 +23,7 @@ import top.pythong.noteblog.app.archives.model.ArchiveHolder
 import top.pythong.noteblog.app.archives.model.ArchiveView
 import top.pythong.noteblog.app.home.utils.SmoothScrollLayoutManager
 import top.pythong.noteblog.app.login.ui.LoginActivity
+import top.pythong.noteblog.app.main.ui.MainActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
@@ -41,6 +42,8 @@ class ArchivesFragment : BaseFragment() {
 
     private lateinit var adapter: ArchivesAdapter
 
+    private lateinit var parentActivity: MainActivity
+
     /**
      * 创建视图
      */
@@ -50,6 +53,7 @@ class ArchivesFragment : BaseFragment() {
 
     override fun onBaseStart() {
         this.activity!!.title = "归档"
+        this.parentActivity = this.activity as MainActivity
     }
 
     /**
@@ -128,7 +132,7 @@ class ArchivesFragment : BaseFragment() {
                 it.text = "去登陆"
                 it.setOnClickListener {
                     context!!.clearLoginUser()
-                    startActivity<LoginActivity>()
+                    this.parentActivity.startLoginActivity()
                 }
             }
             loadingView.errorImg {

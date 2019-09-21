@@ -1,5 +1,6 @@
 package top.pythong.noteblog.app.login.ui
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.text.Editable
@@ -138,8 +139,8 @@ class LoginActivity : BaseActivity() {
         toast("$welcome $displayName")
 
         // 开启主页
-        startActivity<MainActivity>()
-        setResult(0)
+//        startActivity<MainActivity>()
+        setResult(Activity.RESULT_OK)
         // 成功完成并销毁登录活动
         finish()
 

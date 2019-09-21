@@ -1,6 +1,7 @@
 package top.pythong.noteblog.app.filemanager.ui
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_file_manager.*
 import top.pythong.noteblog.R
@@ -22,6 +23,7 @@ import org.jetbrains.anko.toast
 import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.app.login.ui.LoginActivity
+import top.pythong.noteblog.app.main.ui.MainActivity
 import top.pythong.noteblog.clearLoginUser
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
@@ -125,7 +127,7 @@ class FileManagerActivity : BaseActivity() {
                 it.text = "去登陆"
                 it.setOnClickListener {
                     clearLoginUser()
-                    startActivity<LoginActivity>()
+                    startLoginActivity()
                 }
             }
             loadingView.errorImg {
@@ -137,4 +139,10 @@ class FileManagerActivity : BaseActivity() {
             loadingView.showError(true)
         }
     }
+
+    override fun reload() {
+        refreshLayout.autoRefresh()
+        setResult(MainActivity.needToRefresh)
+    }
+
 }

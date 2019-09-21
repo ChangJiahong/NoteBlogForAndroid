@@ -1,7 +1,10 @@
 package top.pythong.noteblog.app.main.ui
 
+import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,18 +15,24 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
+import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.swipeRefreshLayout
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
 import top.pythong.noteblog.app.archives.ui.ArchivesFragment
 import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.home.ui.HomeFragment
+import top.pythong.noteblog.app.login.ui.LoginActivity
+import top.pythong.noteblog.app.main.service.IMainService
 import top.pythong.noteblog.app.message.ui.MessageFragment
 import top.pythong.noteblog.base.activity.BaseActivity
+import top.pythong.noteblog.base.factory.ServiceFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.getBooleanFromSharedPreferences
+import top.pythong.noteblog.utils.getStringFromSharedPreferences
 import kotlin.reflect.KClass
 
 
@@ -38,10 +47,13 @@ class MainActivity : BaseActivity() {
 
     private lateinit var mainViewModel: MainViewModel
 
-    /**
-     * 登录回调码
-     */
-    private val LOGIN_REQUEST = 0
+    companion object {
+
+        const val OtherActivity = 1
+
+        const val needToRefresh = 2
+
+    }
 
     /**
      * 底部菜单栏
@@ -59,15 +71,16 @@ class MainActivity : BaseActivity() {
         return R.layout.activity_main
     }
 
-    override fun getViewModel(): BaseViewModel {
-        mainViewModel = ViewModelFactory.createViewModel(this, MainViewModel::class)
-        return mainViewModel
+    override fun isEnableViewModel(): Boolean {
+        return false
     }
 
     /**
      * 初始化视图
      */
     override fun initView() {
+        mainViewModel = MainViewModel(ServiceFactory.getSimpleService(this, IMainService::class))
+
         setSwipeBackEnable(false)
         // 设置主视图
         tabMode.setup(this, supportFragmentManager, R.id.fragmentContent)
@@ -113,17 +126,25 @@ class MainActivity : BaseActivity() {
 
     override fun initData() {
         // 在main页面验证token有效，请求服务器，验证token，失败跳转到login
-        mainViewModel.autoLogin()
+        mainViewModel.autoLogin(this)
 
         mainViewModel.downloadService(this)
     }
 
     override fun onErrorResult(error: MsgCode) {
         // 是否询问
-        val askAboutLogin = getBooleanFromSharedPreferences(Constant.ASK_ABOUT_LOGIN)
+        val askAboutLogin = getBooleanFromSharedPreferences(Constant.ASK_ABOUT_LOGIN, true)
         if (askAboutLogin) {
             super.onErrorResult(error)
+        } else {
+            toast(error.msg)
         }
-        toast(error.msg)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == OtherActivity && resultCode == needToRefresh) {
+            reload()
+        }
     }
 }

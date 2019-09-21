@@ -1,16 +1,15 @@
 package top.pythong.noteblog.base.activity
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.content.Intent
 import android.net.*
-import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.networkStatsManager
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.base.errorListener.OnErrorListener
 import top.pythong.noteblog.base.viewModel.BaseViewModel
@@ -28,21 +27,30 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
 
     private val TAG = BaseActivity::class.java.simpleName
 
-    private lateinit var viewModel: BaseViewModel
+    /**
+     * 登录回调码
+     */
+    private val LOGIN_REQUEST = 0
 
-    internal abstract fun getViewModel(): BaseViewModel
+    private var viewModel: BaseViewModel? = null
 
     open fun isEnableNetworkChangeListener() = false
+
+    open fun isEnableViewModel() = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getContentView())
 
-        viewModel = getViewModel()
-        viewModel.error.observe(this, Observer {
-            onErrorResult(it ?: return@Observer)
-        })
+        onBaseStart()
+
+        if (isEnableViewModel()) {
+            viewModel = getViewModel()
+            viewModel?.error?.observe(this, Observer {
+                onErrorResult(it ?: return@Observer)
+            })
+        }
 
         initView()
 
@@ -52,6 +60,12 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
             registerNetworkChangeListener()
         }
 
+    }
+
+    open fun onBaseStart() {}
+
+    open fun getViewModel(): BaseViewModel? {
+        return null
     }
 
     private fun registerNetworkChangeListener() {
@@ -100,7 +114,7 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
                 positiveButton("登录") { i ->
                     clearLoginUser()
                     // 启动登录
-                    startActivity<LoginActivity>()
+                    startLoginActivity()
                 }
                 negativeButton("再等等") {
                     it.dismiss()
@@ -115,6 +129,26 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
 
             }.show()
         }
+    }
+
+    fun startLoginActivity() {
+        startActivityForResult<LoginActivity>(LOGIN_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == LOGIN_REQUEST && resultCode == Activity.RESULT_OK) {
+            reload()
+        }
+    }
+
+    open fun reload() {
+//        finish()
+//        overridePendingTransition(0, 0)
+//        startActivity(intent)
+//        overridePendingTransition(0, 0)
+        recreate()
     }
 
 }

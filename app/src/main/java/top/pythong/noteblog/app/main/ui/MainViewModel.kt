@@ -1,8 +1,5 @@
 package top.pythong.noteblog.app.main.ui
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.content.Context
 import kotlinx.coroutines.*
 import top.pythong.noteblog.app.download.DownloadService
@@ -11,7 +8,6 @@ import top.pythong.noteblog.app.download.service.impl.DownloadTaskServiceImpl
 import top.pythong.noteblog.app.main.service.IMainService
 import top.pythong.noteblog.base.factory.ServiceFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
-import top.pythong.noteblog.data.Result
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.utils.NetworkUtils
 import top.pythong.noteblog.utils.getStringFromSharedPreferences
@@ -23,11 +19,12 @@ import top.pythong.noteblog.utils.getStringFromSharedPreferences
  */
 class MainViewModel(private val mainService: IMainService) : BaseViewModel() {
 
-    fun autoLogin() = launch(Dispatchers.IO) {
+    fun autoLogin(mainActivity: MainActivity) = launch(Dispatchers.IO) {
+
         val result = mainService.autoLogin()
         if (!result.isOk) {
             withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
+                mainActivity.onErrorResult(result.msgCode)
             }
         }
     }

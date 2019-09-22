@@ -39,5 +39,6 @@
     <string name="about">关于</string>
     <string name="downloadManagement">下载管理</string>
     <string name="suspend">暂停</string>
+    <string name="articleManager">文章管理</string>
 
 </resources>

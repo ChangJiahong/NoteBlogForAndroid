@@ -21,6 +21,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.support.v4.startActivityForResult
 import org.jetbrains.anko.support.v4.toast
+import top.pythong.noteblog.app.articlemanager.ui.ArticleManagerActivity
 import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
 import top.pythong.noteblog.app.login.model.LoggedInUser
@@ -102,7 +103,7 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
 
         fileManager.setOnClickListener(this)
 
-        article.setOnClickListener(this)
+        articleManager.setOnClickListener(this)
 
         downloadTask.setOnClickListener(this)
 
@@ -122,9 +123,8 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
                 this.activity!!.startActivityForResult<FileManagerActivity>(MainActivity.OTHER_ACTIVITY)
             }
 
-            R.id.article -> {
-//                this.activity!!.startActivity<FileManagerActivity>()
-                toast("文章管理")
+            R.id.articleManager -> {
+                this.activity!!.startActivityForResult<ArticleManagerActivity>(MainActivity.OTHER_ACTIVITY)
             }
 
             R.id.downloadTask -> {

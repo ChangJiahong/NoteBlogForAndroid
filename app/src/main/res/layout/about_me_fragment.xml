@@ -104,7 +104,7 @@
                             android:layout_height="10dp"/>
 
                         <LinearLayout
-                            android:id="@+id/article"
+                            android:id="@+id/articleManager"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                                 android:paddingBottom="13dp"
                                 android:textSize="16sp"
                                 android:textColor="#646161"
-                                android:text="@string/article"
+                                android:text="@string/articleManager"
                                 android:paddingLeft="10dp"/>
                         </LinearLayout>
 

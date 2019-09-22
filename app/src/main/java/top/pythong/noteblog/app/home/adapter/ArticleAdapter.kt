@@ -27,7 +27,7 @@ class ArticleAdapter(val articleList: List<ArticleCardItem>) : RecyclerView.Adap
     val TAG = ArticleActivity::class.java.simpleName
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
-        val v = LayoutInflater.from(p0.context).inflate(R.layout.article_item, p0, false)
+        val v = LayoutInflater.from(p0.context).inflate(R.layout.article_item_crad, p0, false)
         return ViewHolder(v)
     }
 

@@ -26,7 +26,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".app.edituserprofile.ui.EditUserProfileActivity">
+        <activity android:name=".app.edituserprofile.ui.EditUserProfileActivity"
+                  android:theme="@style/NoActionBarTheme">
         </activity>
         <activity
             android:name=".app.userinfo.ui.UserProfileActivity"

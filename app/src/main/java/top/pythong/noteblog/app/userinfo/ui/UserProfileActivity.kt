@@ -1,6 +1,7 @@
 package top.pythong.noteblog.app.userinfo.ui
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_user_info.*
 import top.pythong.noteblog.R
@@ -15,7 +16,9 @@ import android.view.View
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_user_info.recyclerView
 import kotlinx.android.synthetic.main.activity_user_info.refreshLayout
+import org.jetbrains.anko.startActivityForResult
 import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
+import top.pythong.noteblog.app.edituserprofile.ui.EditUserProfileActivity
 import top.pythong.noteblog.app.home.adapter.ArticleAdapter
 import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.base.factory.ViewModelFactory
@@ -60,7 +63,7 @@ class UserProfileActivity : BaseActivity() {
 
         mEdit.visibility = if (isLocalUser) {
             mEdit.setOnClickListener {
-//                startActivityForResult<>(AboutMeFragment.REFRESH_REQUEST)
+                startActivityForResult<EditUserProfileActivity>(AboutMeFragment.REFRESH_REQUEST)
             }
             View.VISIBLE
         } else View.GONE
@@ -111,6 +114,13 @@ class UserProfileActivity : BaseActivity() {
                 it.text = error.msg
             }
             loadingView.showError(true)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AboutMeFragment.REFRESH_REQUEST && resultCode == AboutMeFragment.NEED_TO_REFRESH) {
+            setResult(AboutMeFragment.NEED_TO_REFRESH)
         }
     }
 }

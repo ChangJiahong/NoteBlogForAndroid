@@ -37,6 +37,17 @@
         <item name="android:elevation">3dp</item>
     </style>
 
+    <style name="AboutActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="mal_toolbarPopupTheme">@style/Theme.Mal.Toolbar.Light</item>
+        <item name="mal_toolbarTheme">@style/Theme.Mal.Toolbar.Dark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="mal_color_primary">@color/light_text_color_primary</item>
+        <item name="mal_color_secondary">@color/light_text_color_secondary</item>
+        <item name="mal_card_background">@color/light_card_background</item>
+    </style>
+
     <style name="dialogStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/translucent</item>
         　　　　

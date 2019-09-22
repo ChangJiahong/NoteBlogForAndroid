@@ -27,7 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".app.AboutDevelopersActivity">
+        <activity
+            android:name=".app.AboutDevelopersActivity"
+            android:theme="@style/AboutActivity">
         </activity>
         <activity
             android:name=".app.articlemanager.ui.ArticleManagerActivity"

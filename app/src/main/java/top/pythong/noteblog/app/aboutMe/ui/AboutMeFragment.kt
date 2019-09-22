@@ -20,7 +20,7 @@ import com.scwang.smartrefresh.layout.util.SmartUtil.dp2px
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.support.v4.startActivityForResult
-import org.jetbrains.anko.support.v4.toast
+import top.pythong.noteblog.app.AboutDevelopersActivity
 import top.pythong.noteblog.app.articlemanager.ui.ArticleManagerActivity
 import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
@@ -132,8 +132,7 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
             }
 
             R.id.aboutUs -> {
-//                this.activity!!.startActivity<FileManagerActivity>()
-                toast("关于我们")
+                this.activity!!.startActivity<AboutDevelopersActivity>()
             }
 
             else -> {

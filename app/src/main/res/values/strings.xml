@@ -40,5 +40,20 @@
     <string name="downloadManagement">下载管理</string>
     <string name="suspend">暂停</string>
     <string name="articleManager">文章管理</string>
+    <string name="version">版本</string>
+    <string name="sourceCode">源代码</string>
+    <string name="starToMe">欢迎给我星标</string>
+    <string name="authorName">ChangJiahong</string>
+    <string name="location">中国，上海</string>
+    <string name="authorGitHub">我的GitHub</string>
+    <string name="authorEmail">发封邮件</string>
+    <string name="myEmail">changjiahong@pythong.top</string>
+    <string name="authorWeb">我的网站</string>
+    <string name="authorBlog">观看我的博客</string>
+    <string name="author">作者</string>
+    <string name="shareAndSuggest"><![CDATA[分享&建议]]></string>
+    <string name="suggest">建议</string>
+    <string name="myGitHub">https://github.com/ChangJiahong</string>
+    <string name="reward">谢谢你请我吃糖果</string>
 
 </resources>

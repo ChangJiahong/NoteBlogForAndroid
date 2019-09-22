@@ -1,38 +1,25 @@
 package top.pythong.noteblog.app.main.ui
 
-import android.app.Activity
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TabHost
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
-import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.swipeRefreshLayout
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
 import top.pythong.noteblog.app.archives.ui.ArchivesFragment
-import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.home.ui.HomeFragment
-import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.app.main.service.IMainService
 import top.pythong.noteblog.app.message.ui.MessageFragment
 import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.factory.ServiceFactory
-import top.pythong.noteblog.base.viewModel.BaseViewModel
-import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.getBooleanFromSharedPreferences
-import top.pythong.noteblog.utils.getStringFromSharedPreferences
 import kotlin.reflect.KClass
 
 
@@ -49,9 +36,9 @@ class MainActivity : BaseActivity() {
 
     companion object {
 
-        const val OtherActivity = 1
+        const val OTHER_ACTIVITY = 1
 
-        const val needToRefresh = 2
+        const val NEED_TO_REFRESH = 2
 
     }
 
@@ -143,7 +130,7 @@ class MainActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == OtherActivity && resultCode == needToRefresh) {
+        if (requestCode == OTHER_ACTIVITY && resultCode == NEED_TO_REFRESH) {
             reload()
         }
     }

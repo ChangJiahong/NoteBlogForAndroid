@@ -26,7 +26,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".base.dialog.Alert"
+        <activity android:name=".app.edituserprofile.ui.EditUserProfileActivity">
+        </activity>
+        <activity
+            android:name=".app.userinfo.ui.UserProfileActivity"
+            android:theme="@style/NoActionBarTheme">
+        </activity>
+        <activity
+            android:name=".base.dialog.Alert"
             android:theme="@style/dialogStyle">
         </activity>
         <activity
@@ -57,7 +64,8 @@
             android:name=".app.article.ui.ArticleActivity"
             android:theme="@style/NoActionBarTheme">
         </activity>
-        <activity android:name=".app.main.ui.MainActivity"
+        <activity
+            android:name=".app.main.ui.MainActivity"
             android:launchMode="singleTask">
         </activity>
         <activity
@@ -81,9 +89,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                android:resource="@xml/provider_paths"/>
         </provider>
-
     </application>
 
 </manifest>

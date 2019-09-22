@@ -116,8 +116,6 @@ class HomeFragment : BaseFragment() {
                 it.text = error.msg
             }
             loadingView.showError(true)
-
-            Log.d(TAG, "erroreeee" + error.msg)
         }
     }
 

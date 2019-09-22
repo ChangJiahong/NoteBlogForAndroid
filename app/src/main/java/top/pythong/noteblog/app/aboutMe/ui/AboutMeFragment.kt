@@ -1,10 +1,7 @@
 package top.pythong.noteblog.app.aboutMe.ui
 
-import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,13 +19,13 @@ import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.util.SmartUtil.dp2px
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.startActivityForResult
 import org.jetbrains.anko.support.v4.toast
 import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
 import top.pythong.noteblog.app.login.model.LoggedInUser
-import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.app.main.ui.MainActivity
+import top.pythong.noteblog.app.userinfo.ui.UserProfileActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.utils.getStringFromSharedPreferences
@@ -41,6 +38,12 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
     private lateinit var viewModel: AboutMeViewModel
 
     private lateinit var parentActivity: MainActivity
+
+
+    companion object{
+        const val REFRESH_REQUEST = 11
+        const val NEED_TO_REFRESH = 12
+    }
 
     /**
      * 创建视图
@@ -116,7 +119,7 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fileManager -> {
-                this.activity!!.startActivityForResult<FileManagerActivity>(MainActivity.OtherActivity)
+                this.activity!!.startActivityForResult<FileManagerActivity>(MainActivity.OTHER_ACTIVITY)
             }
 
             R.id.article -> {
@@ -150,6 +153,9 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
             Glide.with(this).load(user.imgUrl).into(userIcon)
             username.text = user.username
             perStatement.text = "个人说明"
+            userIcon.setOnClickListener {
+                startActivityForResult<UserProfileActivity>(REFRESH_REQUEST, "username" to user.username)
+            }
         } else {
             username.text = "未登录,点击登录"
             username.setOnClickListener {
@@ -170,5 +176,17 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
     override fun getViewModel(): BaseViewModel {
         viewModel = ViewModelFactory.createViewModel(this, AboutMeViewModel::class)
         return viewModel
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REFRESH_REQUEST && resultCode == NEED_TO_REFRESH){
+            refresh()
+        }
+    }
+
+    fun refresh(){
+        Log.d(TAG, "刷新用户信息")
+        initData()
     }
 }

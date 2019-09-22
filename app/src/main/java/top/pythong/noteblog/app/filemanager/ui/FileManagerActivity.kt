@@ -1,8 +1,6 @@
 package top.pythong.noteblog.app.filemanager.ui
 
 import android.arch.lifecycle.Observer
-import android.content.Intent
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_file_manager.*
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.filemanager.adapter.FileManagerAdapter
@@ -14,20 +12,12 @@ import top.pythong.noteblog.base.viewModel.BaseViewModel
 import android.support.v7.widget.DividerItemDecoration
 import kotlinx.android.synthetic.main.activity_file_manager.loadingView
 import kotlinx.android.synthetic.main.activity_file_manager.refreshLayout
-import kotlinx.android.synthetic.main.archives_fragment.*
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
-import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
-import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.app.main.ui.MainActivity
 import top.pythong.noteblog.clearLoginUser
-import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
-import top.pythong.noteblog.utils.putToSharedPreferences
 
 
 class FileManagerActivity : BaseActivity() {
@@ -142,7 +132,7 @@ class FileManagerActivity : BaseActivity() {
 
     override fun reload() {
         refreshLayout.autoRefresh()
-        setResult(MainActivity.needToRefresh)
+        setResult(MainActivity.NEED_TO_REFRESH)
     }
 
 }

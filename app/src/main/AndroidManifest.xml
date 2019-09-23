@@ -102,6 +102,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+
+        <receiver android:name=".base.receiver.ShareBroadcastReceiver"/>
+        <receiver android:name=".base.receiver.CopyBroadcastReceiver"/>
     </application>
 
 </manifest>

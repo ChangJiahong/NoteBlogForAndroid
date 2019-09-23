@@ -16,7 +16,6 @@ class ContentJavaScriptInterface(private val context: Context) {
 
     @JavascriptInterface
     fun openImage(imgUrl: String) {
-        Log.d(TAG, "图片$imgUrl")
         context.startActivity<CodeOrImagePreviewActivity>(
             "mediaType" to "img",
             "imgUrl" to imgUrl

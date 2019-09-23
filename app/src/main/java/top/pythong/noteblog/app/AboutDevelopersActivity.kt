@@ -4,18 +4,17 @@ import android.content.Context
 import android.os.Bundle
 import com.danielstone.materialaboutlibrary.MaterialAboutActivity
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
-import com.danielstone.materialaboutlibrary.items.MaterialAboutItemOnClickAction
 import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
-import kotlinx.android.synthetic.main.activity_about_developers.*
 import me.imid.swipebacklayout.lib.SwipeBackLayout
 import me.imid.swipebacklayout.lib.Utils
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
 import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
+import org.jetbrains.anko.toast
 import top.pythong.noteblog.BuildConfig
 import top.pythong.noteblog.R
-import top.pythong.noteblog.utils.PayUtils
+import top.pythong.noteblog.base.utils.AppOpener
 
 class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
 
@@ -55,7 +54,8 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(getString(R.string.version))
                 .subText(BuildConfig.VERSION_NAME)
                 .setOnClickAction {
-
+                    // TODO: 检查更新
+                    toast("已经是最新版本啦")
                 }
                 .build()
         )
@@ -65,7 +65,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(getString(R.string.sourceCode))
                 .subText(getString(R.string.starToMe))
                 .setOnClickAction {
-
+                    AppOpener.openInCustomTabsOrBrowser(this, getString(R.string.myCodeRepo))
                 }
                 .build()
         )
@@ -78,7 +78,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(getString(R.string.authorName))
                 .subText(getString(R.string.location))
                 .setOnClickAction {
-
+                    toast(getString(R.string.helloWorld))
                 }
                 .build()
         )
@@ -88,7 +88,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(getString(R.string.authorGitHub))
                 .subText(getString(R.string.myGitHub))
                 .setOnClickAction {
-
+                    AppOpener.openInCustomTabsOrBrowser(this, getString(R.string.myGitHub))
                 }
                 .build()
         )
@@ -98,7 +98,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(getString(R.string.authorEmail))
                 .subText(getString(R.string.myEmail))
                 .setOnClickAction {
-
+                    AppOpener.launchEmail(this, getString(R.string.myEmail))
                 }
                 .build()
         )
@@ -107,7 +107,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .icon(R.drawable.ic_blog)
                 .text(getString(R.string.authorBlog))
                 .setOnClickAction {
-
+                    AppOpener.openInCustomTabsOrBrowser(this, getString(R.string.myWebUrl))
                 }
                 .build()
         )
@@ -118,7 +118,8 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(R.string.share)
                 .icon(R.drawable.ic_share_black_24dp)
                 .setOnClickAction {
-
+                    // TODO: app下载
+                    AppOpener.shareText(this, "下载链接")
                 }
                 .build()
         )
@@ -127,7 +128,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(R.string.suggest)
                 .icon(R.drawable.ic_msg_late_black_24dp)
                 .setOnClickAction {
-
+                    // TODO: 跳转到建业反馈页面
                 }
                 .build()
         )
@@ -136,8 +137,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
                 .text(R.string.reward)
                 .icon(R.drawable.pay)
                 .setOnClickAction {
-                    PayUtils.startAlipayClient(this, "FKX007925DBO6LPY9XRJ51")
-
+                    AppOpener.startAlipayClient(this, "FKX007925DBO6LPY9XRJ51")
                 }
                 .build()
         )

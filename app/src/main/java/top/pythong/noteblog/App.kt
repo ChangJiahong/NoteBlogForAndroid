@@ -1,11 +1,14 @@
 package top.pythong.noteblog
 
 import android.app.Application
+import android.content.ClipData
+import android.content.ClipboardManager
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import android.content.Context
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader
+import org.jetbrains.anko.toast
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.utils.putToSharedPreferences
 
@@ -40,4 +43,11 @@ fun Context.clearLoginUser(){
         put(Constant.TOKEN, "")
         put(Constant.LOGGED_IN_USER, "")
     }
+}
+
+fun Context.copyToClipboard(str: String) {
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("", str)
+    clipboard.primaryClip = clip
+    toast(getString(R.string.copyed))
 }

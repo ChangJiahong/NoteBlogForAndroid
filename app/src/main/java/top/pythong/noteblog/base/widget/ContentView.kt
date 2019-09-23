@@ -4,8 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -13,8 +11,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.webkit.*
 import org.apache.commons.lang3.StringUtils
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.utils.HtmlHelper
@@ -23,8 +19,8 @@ import top.pythong.noteblog.base.ContentJavaScriptInterface
 import top.pythong.noteblog.data.constant.Api
 import top.pythong.noteblog.app.article.ui.ArticleActivity
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
-import java.util.*
-
+import top.pythong.noteblog.base.utils.AppOpener
+import top.pythong.noteblog.copyToClipboard
 
 
 /**
@@ -94,7 +90,7 @@ class ContentView : WebView {
         setOnLongClickListener(OnLongClickListener {
             val result = hitTestResult
             if (hitLinkResult(result) && !StringUtils.isBlank(result.extra)) {
-                copyToClipboard(result.extra)
+                this.context.copyToClipboard(result.extra?:"")
                 return@OnLongClickListener true
             }
             false
@@ -104,14 +100,6 @@ class ContentView : WebView {
         // javascript 接口
         addJavascriptInterface(ContentJavaScriptInterface(this.context), "listener")
     }
-
-    private fun copyToClipboard(str: String?) {
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("", str)
-        clipboard.primaryClip = clip
-        context.toast(context.getString(R.string.copyed))
-    }
-
 
     fun setContentText(content: String) {
         if (content.isBlank()) {
@@ -147,8 +135,8 @@ class ContentView : WebView {
         loadData(html, "text/html", null)
     }
 
-    private fun loadPage(page: String) {
-        loadPageWithBaseUrl("file:///android_asset/", page)
+    private fun loadPage(sourceHtml: String) {
+        loadPageWithBaseUrl("file:///android_asset/", sourceHtml)
     }
 
     private fun loadPageWithBaseUrl(baseUrl: String, page: String) {
@@ -204,83 +192,9 @@ class ContentView : WebView {
 
     private fun startActivity(uri: Uri?) {
         if (uri == null) return
-        val url = uri.toString()
-        if (!url.startsWith(Api.article)){
-//            openInBrowser(this.context, url)
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            this.context.startActivity(intent)
-            return
-        }
+        AppOpener.launchUrl(context, uri)
 
-        val articleId = url.substringAfter(Api.article+"/")
-
-        this.context.startActivity<ArticleActivity>(ARTICLE_ID to articleId)
     }
 
-    fun openInBrowser(context: Context, url: String) {
-        val uri = Uri.parse(url)
-        var intent: Intent? = Intent(Intent.ACTION_VIEW, uri).addCategory(Intent.CATEGORY_BROWSABLE)
-        intent!!.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent = createActivityChooserIntent(context, intent, uri, VIEW_IGNORE_PACKAGE)
-        if (intent != null) {
-            context.startActivity(intent)
-        } else {
-            context.toast(context.getString(R.string.no_browser_clients))
-        }
-    }
-
-    private fun createActivityChooserIntent(
-        context: Context, intent: Intent,
-        uri: Uri, ignorPackageList: List<String>?
-    ): Intent? {
-        val pm = context.packageManager
-        val activities = pm.queryIntentActivities(
-            intent,
-            PackageManager.MATCH_DEFAULT_ONLY
-        )
-        val chooserIntents = ArrayList<Intent>()
-        val ourPackageName = context.packageName
-
-        Collections.sort(activities, ResolveInfo.DisplayNameComparator(pm))
-
-        for (resInfo in activities) {
-            val info = resInfo.activityInfo
-            if (!info.enabled || !info.exported) {
-                continue
-            }
-            if (info.packageName == ourPackageName) {
-                continue
-            }
-            if (ignorPackageList != null && ignorPackageList.contains(info.packageName)) {
-                continue
-            }
-
-            val targetIntent = Intent(intent)
-            targetIntent.setPackage(info.packageName)
-            targetIntent.setDataAndType(uri, intent.type)
-            chooserIntents.add(targetIntent)
-        }
-
-        if (chooserIntents.isEmpty()) {
-            return null
-        }
-
-        val lastIntent = chooserIntents.removeAt(chooserIntents.size - 1)
-        if (chooserIntents.isEmpty()) {
-            // there was only one, no need to showImage the chooser
-            return lastIntent
-        }
-
-        val chooserIntent = Intent.createChooser(lastIntent, null)
-        chooserIntent.putExtra(
-            Intent.EXTRA_INITIAL_INTENTS,
-            chooserIntents.toTypedArray()
-        )
-        return chooserIntent
-    }
-
-    private val VIEW_IGNORE_PACKAGE = arrayListOf(
-        "com.gh4a", "com.fastaccess", "com.taobao.taobao"
-    )
 
 }

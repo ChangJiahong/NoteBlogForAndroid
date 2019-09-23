@@ -55,5 +55,13 @@
     <string name="suggest">建议</string>
     <string name="myGitHub">https://github.com/ChangJiahong</string>
     <string name="reward">谢谢你请我吃糖果</string>
+    <string name="shareTo">分享给</string>
+    <string name="noShareClients">没有支持分享的软件</string>
+    <string name="copyUrl">复制链接</string>
+    <string name="noEmailClients">没有邮箱客户端</string>
+    <string name="sendEmail">发送邮件</string>
+    <string name="myWebUrl">www.pythong.top</string>
+    <string name="helloWorld">helloWorld</string>
+    <string name="myCodeRepo">https://github.com/ChangJiahong/NoteBlog</string>
 
 </resources>

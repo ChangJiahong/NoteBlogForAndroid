@@ -49,9 +49,9 @@ object Api {
     const val archives = "$article/u/archives"
 
     /**
-     * 个人分类归档
+     * 分类归档
      */
-    const val categoryArchives = "$article/u/category"
+    const val categoryArchives = "$article/category"
 
     /**
      * 分类文章集
@@ -59,14 +59,24 @@ object Api {
     val category: (category: String) -> String = { category -> "$categoryArchives/$category" }
 
     /**
-     * 个人标签归档
+     * 标签归档
      */
-    const val tagArchives = "$article/u/tag"
+    const val tagArchives = "$article/tag"
 
     /**
-     * 归档文章集
+     * 标签文章集
      */
     val tag: (tag: String) -> String = { tag -> "$tagArchives/$tag" }
+
+    /**
+     * 个人文章集
+     */
+    const val ulist = "$article/u/list"
+
+    /**
+     * 一般用户文章集
+     */
+    const val list = "$article/list"
 
     /**
      * 点赞

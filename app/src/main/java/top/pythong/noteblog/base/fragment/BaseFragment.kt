@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.scwang.smartrefresh.layout.api.RefreshLayout
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
@@ -120,4 +121,11 @@ abstract class BaseFragment : Fragment(), OnErrorListener {
         }
     }
 
+    open fun refresh(refreshLayout: RefreshLayout){}
+
+    open fun loadMore(refreshLayout: RefreshLayout){}
+
+    open fun refresh(){}
+
+    open fun loadMore(){}
 }

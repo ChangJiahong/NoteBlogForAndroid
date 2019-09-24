@@ -39,6 +39,14 @@ class SimpleAdapter(
         holder.itemView.setOnClickListener {
             onItemClickListener(it, p1)
         }
+
+        extendedBind(holder.itemView, p1)
+    }
+
+    private var extendedBind: (itemV: View, position: Int) -> Unit = { _, _ -> }
+
+    fun extendedBind(bind: (itemV: View, position: Int) -> Unit) {
+        this.extendedBind = bind
     }
 
     class SimpleViewHolder(v: View, private val ids: Array<Int>) : RecyclerView.ViewHolder(v) {
@@ -49,9 +57,9 @@ class SimpleAdapter(
 
     }
 
-    private var onItemClickListener: (v: View, position: Int) -> Unit = {_,_-> }
+    private var onItemClickListener: (v: View, position: Int) -> Unit = { _, _ -> }
 
-    fun setOnItemClickListener(click:(v: View, position: Int) -> Unit){
+    fun setOnItemClickListener(click: (v: View, position: Int) -> Unit) {
         onItemClickListener = click
     }
 }

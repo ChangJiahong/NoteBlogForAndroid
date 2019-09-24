@@ -1,19 +1,17 @@
-package top.pythong.noteblog.data
+package top.pythong.noteblog.utils
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.os.Environment
 import android.util.Log
 import top.pythong.noteblog.app.download.model.DownloadResource
-import top.pythong.noteblog.data.FileManager.appRoot
+import top.pythong.noteblog.utils.FileManager.appRoot
 import java.io.File
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaMetadataRetriever
 import android.support.v4.content.FileProvider
 import android.webkit.MimeTypeMap
-import top.pythong.noteblog.data.FileManager.TAG
+import top.pythong.noteblog.utils.FileManager.TAG
 
 
 

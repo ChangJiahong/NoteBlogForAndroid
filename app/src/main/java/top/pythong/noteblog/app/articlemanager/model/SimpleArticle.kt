@@ -27,5 +27,7 @@ data class SimpleArticle(
     /**
      * 创建时间
      */
-    val time: String
+    val time: String,
+
+    val status: String
 )

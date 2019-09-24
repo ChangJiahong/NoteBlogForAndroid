@@ -7,16 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import org.apache.commons.lang3.StringUtils
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
-import org.w3c.dom.Text
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.filemanager.model.FileDir
 import top.pythong.noteblog.app.filemanager.ui.FileManagerActivity
-import top.pythong.noteblog.data.getResourceFile
+import top.pythong.noteblog.utils.getResourceFile
 
 /**
  * 文件夹管理适配器

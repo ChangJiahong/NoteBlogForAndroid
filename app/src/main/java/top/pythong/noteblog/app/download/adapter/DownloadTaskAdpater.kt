@@ -15,9 +15,8 @@ import org.jetbrains.anko.find
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.download.DownloadService
 import top.pythong.noteblog.app.download.model.DownloadResource
-import top.pythong.noteblog.data.getResourceFile
-import top.pythong.noteblog.data.openFileByThirdPartyApp
-import java.io.File
+import top.pythong.noteblog.utils.getResourceFile
+import top.pythong.noteblog.utils.openFileByThirdPartyApp
 
 /**
  * 下载任务管理adapter

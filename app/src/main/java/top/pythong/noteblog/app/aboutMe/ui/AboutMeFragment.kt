@@ -184,8 +184,7 @@ class AboutMeFragment : BaseFragment(), View.OnClickListener {
         }
     }
 
-    fun refresh(){
-        Log.d(TAG, "刷新用户信息")
+    override fun refresh(){
         initData()
     }
 }

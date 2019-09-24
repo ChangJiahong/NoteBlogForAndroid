@@ -73,13 +73,12 @@ class HomeFragment : BaseFragment() {
 
         // 刷新监听
         refreshLayout.setOnRefreshListener {
-            viewModel.refresh(it)
+            viewModel.loadData(it)
         }
 
         // 加载更多
         refreshLayout.setOnLoadMoreListener {
-            viewModel.loadMore(it)
-
+            viewModel.loadData(it, true)
             //传入false表示刷新失败
         }
 
@@ -99,8 +98,10 @@ class HomeFragment : BaseFragment() {
         refresh()
         viewModel.articles.observe(this, Observer {
 
-            val articles = it ?: return@Observer
-            articleList.clear()
+            val (append,articles) = it ?: return@Observer
+            if (!append) {
+                articleList.clear()
+            }
             articleList.addAll(articles)
             adapter.notifyDataSetChanged()
 
@@ -119,7 +120,7 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    fun refresh() {
+    override fun refresh() {
         loadingView.show()
 
         // 判断是否在顶部

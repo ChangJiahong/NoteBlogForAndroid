@@ -37,6 +37,13 @@ class ArticleManagerActivity : BaseActivity() {
 
         tabs.setupWithViewPager(viewPager)
 
+        refreshLayout.setOnRefreshListener {
+            fragments[viewPager.currentItem].second.refresh(it)
+        }
+
+        refreshLayout.setOnLoadMoreListener {
+            fragments[viewPager.currentItem].second.loadMore(it)
+        }
 
     }
 

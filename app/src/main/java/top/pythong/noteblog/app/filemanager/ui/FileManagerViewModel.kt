@@ -3,12 +3,10 @@ package top.pythong.noteblog.app.filemanager.ui
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
-import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.app.download.DownloadService
@@ -20,10 +18,8 @@ import top.pythong.noteblog.app.filemanager.service.IFileManagerService
 import top.pythong.noteblog.base.factory.ServiceFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
-import top.pythong.noteblog.data.fileDirectoryPath
-import top.pythong.noteblog.data.getResourceFile
-import top.pythong.noteblog.data.openFileByThirdPartyApp
-import java.io.File
+import top.pythong.noteblog.utils.getResourceFile
+import top.pythong.noteblog.utils.openFileByThirdPartyApp
 
 class FileManagerViewModel(context: Context, private val fileManagerService: IFileManagerService) : BaseViewModel() {
 

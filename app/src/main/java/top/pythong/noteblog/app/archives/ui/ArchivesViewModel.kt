@@ -16,16 +16,21 @@ import top.pythong.noteblog.data.Result
 
 class ArchivesViewModel(private val archivesService: IArchivesService) : BaseViewModel() {
 
-    private val _archives = MutableLiveData<ArrayList<ArchiveView>>()
+    private val _archives = MutableLiveData<Pair<Boolean, ArrayList<ArchiveView>>>()
 
-    val archives: LiveData<ArrayList<ArchiveView>> = _archives
+    val archives: LiveData<Pair<Boolean, ArrayList<ArchiveView>>> = _archives
 
     private var page: Int = 1
     private val size: Int = 20
 
-    fun loadArchives(refreshLayout: RefreshLayout) = launch(Dispatchers.IO) {
-
-        val result: Result<PageInfo<Archive>> = archivesService.getArchives(1, size)
+    /**
+     * @param append 获取数据是否追加
+     */
+    fun loadData(refreshLayout: RefreshLayout, append: Boolean = false) = launch(Dispatchers.IO) {
+        if (!append) {
+            page = 1
+        }
+        val result: Result<PageInfo<Archive>> = archivesService.getArchives(page, size)
         val archiveList = ArrayList<ArchiveView>()
         if (result.isOk) {
             val pageInfo = result.viewData!!
@@ -36,37 +41,21 @@ class ArchivesViewModel(private val archivesService: IArchivesService) : BaseVie
             page = pageInfo.nextPage
 
             withContext(Dispatchers.Main) {
-                _archives.value = archiveList
-                refreshLayout.finishRefresh(1000, true, !pageInfo.hasNextPage)
+                _archives.value = Pair(append, archiveList)
+                if (append) {
+                    refreshLayout.finishLoadMore(1000, true, !pageInfo.hasNextPage)
+                } else {
+                    refreshLayout.finishRefresh(1000, true, !pageInfo.hasNextPage)
+                }
             }
         } else {
             withContext(Dispatchers.Main) {
                 _error.value = result.msgCode
-                refreshLayout.finishRefresh(1000, false, false)
-            }
-        }
-    }
-
-    fun loadMore(refreshLayout: RefreshLayout) = launch(Dispatchers.IO) {
-        val archiveList = _archives.value!!
-
-        val result = archivesService.getArchives(page, size)
-        if (result.isOk) {
-            val pageInfo = result.viewData!!
-            val newArticles = pageInfo.list!!
-            newArticles.forEach {
-                archiveList.add(ArchiveView(it))
-            }
-            page = pageInfo.nextPage
-
-            withContext(Dispatchers.Main) {
-                _archives.value = archiveList
-                refreshLayout.finishLoadMore(1000, true, !pageInfo.hasNextPage)
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
-                refreshLayout.finishLoadMore(1000, false, false)
+                if (append) {
+                    refreshLayout.finishLoadMore(1000, false, false)
+                } else {
+                    refreshLayout.finishRefresh(1000, false, false)
+                }
             }
         }
     }

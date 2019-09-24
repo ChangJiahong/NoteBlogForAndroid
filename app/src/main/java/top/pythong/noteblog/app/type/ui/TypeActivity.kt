@@ -58,13 +58,12 @@ class TypeActivity : BaseActivity() {
 
         // 刷新监听
         refreshLayout.setOnRefreshListener {
-            typeViewModel.loadTypeData(it, type, typeName)
+            typeViewModel.loadData(it, type = type, typeName = typeName)
         }
 
         // 加载更多
         refreshLayout.setOnLoadMoreListener {
-            typeViewModel.loadMore(it, type, typeName)
-
+            typeViewModel.loadData(it, true, type, typeName)
             //传入false表示刷新失败
         }
 
@@ -92,8 +91,10 @@ class TypeActivity : BaseActivity() {
 
         typeViewModel.articles.observe(this, Observer {
 
-            val articles = it ?: return@Observer
-            articleList.clear()
+            val (append,articles) = it ?: return@Observer
+            if (!append){
+                articleList.clear()
+            }
             articleList.addAll(articles)
             adapter.notifyDataSetChanged()
 

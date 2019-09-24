@@ -1,23 +1,22 @@
 package top.pythong.noteblog.app.articlemanager.fragment.article.ui
 
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.util.ArrayMap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.android.synthetic.main.articles_fragment.*
+import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.toast
 
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.article.model.ArticleView
-import top.pythong.noteblog.app.articlemanager.fragment.category.ui.CategoryFragment
-import top.pythong.noteblog.app.articlemanager.model.SimpleArticle
-import top.pythong.noteblog.app.home.model.ArticleCardItem
+import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.base.adapter.SimpleAdapter
+import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 
@@ -35,40 +34,63 @@ class ArticlesFragment : BaseFragment() {
 
     private val articles = ArrayList<Map<String, String>>()
 
-    private val keys = arrayOf("title", "info", "hits", "time")
+    private val keys = arrayOf("title", "info", "hits", "time", "status")
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.articles_fragment, container, false)
     }
 
     override fun initView() {
-        for (i in 0..20) {
-            articles.add(
-                mapOf(
-                    "id" to "$i",
-                    keys[0] to "文章$i",
-                    keys[1] to "内容",
-                    keys[2] to "10",
-                    keys[3] to "2019年11月11日"
-                )
-            )
-        }
         adapter =
             SimpleAdapter(articles, R.layout.article_item, keys, arrayOf(R.id.title, R.id.info, R.id.hits, R.id.time))
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         recyclerView.adapter = adapter
         adapter.setOnItemClickListener { v, position ->
-            toast(articles[position]["id"]?:"")
+            toast(articles[position]["id"] ?: "")
+        }
+        adapter.extendedBind { itemV, position ->
+            itemV.find<ImageView>(R.id.status).visibility = when (articles[position]["status"]) {
+                Article.DRAFT -> View.VISIBLE
+                else -> View.GONE
+            }
         }
     }
 
     override fun initData() {
+        viewModel.loadData()
 
+        viewModel.article.observe(this, Observer {
+            val (append, simples) = it ?: return@Observer
+            if (!append) {
+                articles.clear()
+            }
+            simples.forEach { sim ->
+                articles.add(
+                    mapOf(
+                        "id" to sim.id.toString(),
+                        keys[0] to sim.title,
+                        keys[1] to sim.info,
+                        keys[2] to " · 浏览 ${sim.hits}",
+                        keys[3] to sim.time,
+                        keys[4] to sim.status
+                    )
+                )
+            }
+            adapter.notifyDataSetChanged()
+        })
     }
 
     override fun getViewModel(): BaseViewModel {
-        viewModel = ViewModelProviders.of(this).get(ArticlesViewModel::class.java)
+        viewModel = ViewModelFactory.createViewModel(this, ArticlesViewModel::class)
         return viewModel
+    }
+
+    override fun refresh(refreshLayout: RefreshLayout) {
+        viewModel.loadData(refreshLayout)
+    }
+
+    override fun loadMore(refreshLayout: RefreshLayout) {
+        viewModel.loadData(refreshLayout, true)
     }
 }

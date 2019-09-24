@@ -63,12 +63,12 @@ class ArchivesFragment : BaseFragment() {
 
         // 刷新监听
         refreshLayout.setOnRefreshListener {
-            viewModel.loadArchives(it)
+            viewModel.loadData(it)
         }
 
         // 加载更多
         refreshLayout.setOnLoadMoreListener {
-            viewModel.loadMore(it)
+            viewModel.loadData(it, true)
         }
 
         adapter = ArchivesAdapter(archiveList)
@@ -90,8 +90,10 @@ class ArchivesFragment : BaseFragment() {
 
         viewModel.archives.observe(this, Observer {
 
-            val archives = it ?: return@Observer
-            archiveList.clear()
+            val (append, archives) = it ?: return@Observer
+            if (!append) {
+                archiveList.clear()
+            }
             archives.forEach { archive ->
                 archiveList.add(ArchiveHolder(ArchiveHolder.ARCHIVE, archive))
             }
@@ -146,7 +148,7 @@ class ArchivesFragment : BaseFragment() {
         }
     }
 
-    fun refresh() {
+    override fun refresh() {
         loadingView.show()
 
         // 判断是否在顶部

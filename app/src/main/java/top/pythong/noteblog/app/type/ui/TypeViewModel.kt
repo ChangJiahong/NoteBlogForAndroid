@@ -20,71 +20,57 @@ class TypeViewModel(private val typeService: ITypeService) : BaseViewModel() {
 
     private val TAG = TypeViewModel::class.java.simpleName
 
-    private val _articles = MutableLiveData<ArrayList<ArticleCardItem>>()
+    private val _articles = MutableLiveData<Pair<Boolean, ArrayList<ArticleCardItem>>>()
 
-    val articles: LiveData<ArrayList<ArticleCardItem>> = _articles
+    val articles: LiveData<Pair<Boolean, ArrayList<ArticleCardItem>>> = _articles
 
     private var page: Int = 1
     private val size: Int = 20
 
     private var isLoad = false
 
-    fun loadTypeData(refreshLayout: RefreshLayout, type: String, typeName: String) = launch(Dispatchers.IO) {
+    fun loadData(refreshLayout: RefreshLayout, append: Boolean=false, type: String, typeName: String) =
+        launch(Dispatchers.IO) {
 
-        val result = typeService.getArticlesByType(1, size, type, typeName)
-        val articleList = ArrayList<ArticleCardItem>()
-        if (result.isOk) {
-            val pageInfo = result.viewData!!
-            val newArticles = pageInfo.list!!
-            newArticles.forEach {
-                articleList.add(ArticleCardItem(it))
+            if (!append) {
+                page = 1
+                isLoad = true
             }
-            page = pageInfo.nextPage
 
-            Log.d(TAG, pageInfo.toString())
-            withContext(Dispatchers.Main) {
-                _articles.value = articleList
-                refreshLayout.finishRefresh(1000, true, !pageInfo.hasNextPage)
+            if (!isLoad) {
+                return@launch
             }
-        } else {
-            withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
-                refreshLayout.finishRefresh(1000, false, false)
+
+            val result = typeService.getArticlesByType(page, size, type, typeName)
+            val articleList = ArrayList<ArticleCardItem>()
+            if (result.isOk) {
+                val pageInfo = result.viewData!!
+                val newArticles = pageInfo.list!!
+                newArticles.forEach {
+                    articleList.add(ArticleCardItem(it))
+                }
+                page = pageInfo.nextPage
+
+                Log.d(TAG, pageInfo.toString())
+                withContext(Dispatchers.Main) {
+                    _articles.value = Pair(append, articleList)
+                    if (append) {
+                        refreshLayout.finishLoadMore(1000, true, !pageInfo.hasNextPage)
+                    } else {
+                        refreshLayout.finishRefresh(1000, true, !pageInfo.hasNextPage)
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    _error.value = result.msgCode
+                    if (append) {
+                        refreshLayout.finishLoadMore(1000, false, false)
+                    } else {
+                        refreshLayout.finishRefresh(1000, false, false)
+                    }
+                }
             }
+
         }
-
-        isLoad = true
-
-    }
-
-    fun loadMore(refreshLayout: RefreshLayout, type: String, typeName: String) = launch(Dispatchers.IO) {
-        if (!isLoad){
-            return@launch
-        }
-
-        val articleList = _articles.value!!
-
-        val result = typeService.getArticlesByType(page, size, type, typeName)
-        if (result.isOk) {
-            val pageInfo = result.viewData!!
-            val newArticles = pageInfo.list!!
-            newArticles.forEach {
-                articleList.add(ArticleCardItem(it))
-            }
-            page = pageInfo.nextPage
-
-            withContext(Dispatchers.Main) {
-                _articles.value = articleList
-                refreshLayout.finishLoadMore(1000, true, !pageInfo.hasNextPage)
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
-                refreshLayout.finishLoadMore(1000, false, false)
-            }
-        }
-
-    }
-
 
 }

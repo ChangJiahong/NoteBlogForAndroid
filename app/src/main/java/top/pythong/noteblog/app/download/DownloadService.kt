@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.util.Log
@@ -17,14 +16,10 @@ import top.pythong.noteblog.app.download.model.DownloadResource
 import top.pythong.noteblog.app.download.service.IDownloadTaskService
 import top.pythong.noteblog.app.download.ui.DownloadTaskActivity
 import top.pythong.noteblog.base.factory.ServiceFactory
-import top.pythong.noteblog.data.*
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.Constant.CHANNEL_ID_DOWNLOAD
 import top.pythong.noteblog.data.constant.MsgCode
-import top.pythong.noteblog.utils.HttpHelper
-import top.pythong.noteblog.utils.getLongFromSharedPreferences
-import top.pythong.noteblog.utils.getStringFromSharedPreferences
-import top.pythong.noteblog.utils.putToSharedPreferences
+import top.pythong.noteblog.utils.*
 import java.util.concurrent.ConcurrentHashMap
 
 

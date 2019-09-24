@@ -17,10 +17,8 @@ import kotlinx.coroutines.*
 import org.jetbrains.anko.startActivity
 import top.pythong.noteblog.R
 import top.pythong.noteblog.data.constant.Constant
-import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.app.main.ui.MainActivity
-import top.pythong.noteblog.data.FileManager
-import top.pythong.noteblog.utils.*
+import top.pythong.noteblog.utils.FileManager
 import java.util.ArrayList
 import kotlin.reflect.KClass
 

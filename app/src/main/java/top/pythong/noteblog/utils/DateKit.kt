@@ -31,4 +31,12 @@ object DateKit {
             else -> "${diff / (60 * 60 * 24 * 30 * 12)}年前"
         }
     }
+
+    fun format(dateS: String, fromFormat: String, toFormat: String): String {
+        val locale = Locale.CHINA
+        val fromSdf = SimpleDateFormat(fromFormat, locale)
+        val date = fromSdf.parse(dateS)!!
+        val toSdf = SimpleDateFormat(toFormat, locale)
+        return toSdf.format(date)
+    }
 }

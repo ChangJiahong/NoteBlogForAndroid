@@ -2,10 +2,10 @@ package top.pythong.noteblog.app.type.dao.impl
 
 import android.content.Context
 import top.pythong.noteblog.app.home.model.Article
-import top.pythong.noteblog.app.home.model.PageInfo
+import top.pythong.noteblog.app.home.model.Type
 import top.pythong.noteblog.app.type.dao.ITypeDataSource
-import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.constant.Api
+import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.utils.HttpHelper
 
 /**
@@ -21,13 +21,16 @@ class TypeDataSourceImpl(private val context: Context) : ITypeDataSource {
         type: String,
         typeName: String
     ) = HttpHelper(context).apply {
-        url = Api.article
+
+        url = when (type) {
+            Type.CATEGORY -> Api.category(typeName)
+            Type.TAG -> Api.tag(typeName)
+            else -> ""
+        }
 
         params {
-            "type" - type
-            "typeName" - typeName
-            "page" - page
-            "size" - size
+            Constant.PAGE - page
+            Constant.SIZE - size
         }
 
     }.getForRestResponsePage(Article::class)

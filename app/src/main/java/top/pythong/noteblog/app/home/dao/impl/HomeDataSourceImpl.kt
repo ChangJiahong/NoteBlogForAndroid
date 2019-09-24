@@ -6,6 +6,7 @@ import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.constant.Api
+import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.utils.HttpHelper
 
 /**
@@ -20,10 +21,10 @@ class HomeDataSourceImpl(val context: Context) : IHomeDataSource {
      */
     override fun getArticles(page: Int, size: Int): RestResponse<PageInfo<Article>> =
         HttpHelper(context).apply {
-            url = Api.article
+            url = Api.recommend
             params {
-                "page" - page.toString()
-                "size" - size.toString()
+                Constant.PAGE - page.toString()
+                Constant.SIZE - size.toString()
             }
         }.getForRestResponsePage(Article::class)
 }

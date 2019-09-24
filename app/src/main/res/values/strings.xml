@@ -63,5 +63,6 @@
     <string name="myWebUrl">www.pythong.top</string>
     <string name="helloWorld">helloWorld</string>
     <string name="myCodeRepo">https://github.com/ChangJiahong/NoteBlog</string>
+    <string name="noPaymentApplication">没有找到支付应用</string>
 
 </resources>

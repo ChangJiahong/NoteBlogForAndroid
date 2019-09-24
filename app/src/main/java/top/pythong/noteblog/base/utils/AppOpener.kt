@@ -68,9 +68,9 @@ object AppOpener {
 
     fun launchUrl(context: Context, uri: Uri) {
         val url = uri.toString()
-        if (url.startsWith(Api.article)) {
+        if (url.startsWith(Api.recommend)) {
             // 文章url
-            val articleId = url.substringAfter(Api.article + "/")
+            val articleId = url.substringAfter(Api.recommend + "/")
             context.startActivity<ArticleActivity>(Constant.ARTICLE_ID to articleId)
             return
         }
@@ -143,7 +143,10 @@ object AppOpener {
                 activity.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 e.printStackTrace()
+                activity.toast(activity.getString(R.string.noPaymentApplication))
             }
+        }else{
+            activity.toast(activity.getString(R.string.noPaymentApplication))
         }
     }
 

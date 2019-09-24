@@ -62,8 +62,16 @@ data class Article(
 ) {
     companion object {
 
+        /* 文章状态定义 */
+
         val PUBLISH = "publish"
 
         val DRAFT = "draft"
+
+        /* 文章内容格式定义 */
+
+        val HTML = "html"
+
+        val MD = "md"
     }
 }

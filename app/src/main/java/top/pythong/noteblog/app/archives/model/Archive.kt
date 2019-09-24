@@ -12,7 +12,7 @@ data class Archive(
     /**
      * 归档日期
      */
-    var date: String,
+    var name: String,
 
     /**
      * 归档数量

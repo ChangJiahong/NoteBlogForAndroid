@@ -35,8 +35,6 @@ class ArticleActivity : BaseActivity() {
 
     lateinit var articleViewModel: ArticleViewModel
 
-    lateinit var loadingProcess: ProgressBar
-
     lateinit var articleId: String
 
     override fun getViewModel(): BaseViewModel {
@@ -50,19 +48,12 @@ class ArticleActivity : BaseActivity() {
 
     override fun initView() {
 
-//        loadingView.initDefinePage {
-//            LayoutInflater.from(this).inflate(R.layout.top_loading, null)
-//        }
-//
-//        loadingProcess = loadingView.definePage!!.find(R.id.loadingProgress)
-
         toolbar.setNavigationOnClickListener {
             finish()
         }
 
 
         mContent.setOnProgressChangedListener {
-            //            loadingProcess.progress = it
             if (it == 100) {
                 loadingView.show()
             }
@@ -105,7 +96,6 @@ class ArticleActivity : BaseActivity() {
 
 
     override fun initData() {
-//        loadingView.showDefinePage(true)
 
         loadingView.showLoading(true)
         articleId = intent.getStringExtra(ARTICLE_ID)

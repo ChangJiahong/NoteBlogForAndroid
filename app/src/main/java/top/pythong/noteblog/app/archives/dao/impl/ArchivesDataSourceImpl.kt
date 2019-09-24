@@ -23,8 +23,8 @@ class ArchivesDataSourceImpl(private val context: Context) : IArchivesDataSource
             Constant.TOKEN - token
         }
         params {
-            "page" - page
-            "size" - size
+            Constant.PAGE - page
+            Constant.SIZE - size
         }
     }.getForRestResponsePage(Archive::class)
 }

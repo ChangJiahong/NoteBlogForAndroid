@@ -28,17 +28,9 @@ class ArchiveView(
      */
     var articleViews: List<Article>
 ) {
-    constructor(archive: Archive) : this (
-        date = kotlin.run {
-            val locale = Locale.CHINA
-            val sdf = SimpleDateFormat("yyyyMM", locale)
-            val date = sdf.parse(archive.date)!!
-            val sdff = SimpleDateFormat("yyyy年MM月", locale)
-            sdff.format(date)
-        },
+    constructor(archive: Archive) : this(
+        date = archive.name.substring(0, 4) + "/" + archive.name.substring(4),
         count = archive.count,
-        articleViews =
-            archive.articles
-
+        articleViews = archive.articles
     )
 }

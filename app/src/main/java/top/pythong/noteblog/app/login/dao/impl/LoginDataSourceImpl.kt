@@ -5,6 +5,7 @@ import okhttp3.*
 import top.pythong.noteblog.app.login.dao.ILoginDataSource
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.data.constant.Api
+import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.utils.HttpHelper
 
 
@@ -18,8 +19,8 @@ class LoginDataSourceImpl(val context: Context) : ILoginDataSource {
     override fun login(username: String, password: String) = HttpHelper(context).apply {
         url = Api.login
         params {
-            "name" - username
-            "password" - password
+            Constant.NAME - username
+            Constant.PASSWORD - password
         }
     }.postForEntity(LoggedInUser::class)
 

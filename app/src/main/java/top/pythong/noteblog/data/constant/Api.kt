@@ -12,7 +12,7 @@ object Api {
     /**
      * 根
      */
-    const val root = "${http}192.168.43.15" //192.168.43.15
+    const val root = "${http}172.16.112.74" //192.168.43.15
 
     /**
      * 登录
@@ -34,12 +34,44 @@ object Api {
      */
     const val user = "$root/user"
 
-    const val article = "$root/api/article"
+    private const val article = "$root/api/article"
 
     /**
-     * 归档信息
+     * 获取推荐文章
+     */
+    const val recommend = article
+
+    val browseArticle: (articleId: String) -> String = { articleId -> "$article/$articleId" }
+
+    /**
+     * 个人时间归档信息
      */
     const val archives = "$article/u/archives"
+
+    /**
+     * 个人分类归档
+     */
+    const val categoryArchives = "$article/u/category"
+
+    /**
+     * 分类文章集
+     */
+    val category: (category: String) -> String = { category -> "$categoryArchives/$category" }
+
+    /**
+     * 个人标签归档
+     */
+    const val tagArchives = "$article/u/tag"
+
+    /**
+     * 归档文章集
+     */
+    val tag: (tag: String) -> String = { tag -> "$tagArchives/$tag" }
+
+    /**
+     * 点赞
+     */
+    val like: (articleId: String) -> String = { articleId -> "$article/u/like/$articleId" }
 
     /**
      * 文件列表

@@ -182,7 +182,7 @@ class ExampleUnitTest {
      */
     @Test
     fun factory() {
-        reflex(MainViewModel::class.java).autoLogin()
+//        reflex(MainViewModel::class.java).autoLogin()
     }
 
     fun <T> reflex(modelClass: Class<T>): T {

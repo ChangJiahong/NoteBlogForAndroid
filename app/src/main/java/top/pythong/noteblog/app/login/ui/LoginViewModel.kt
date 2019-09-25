@@ -32,7 +32,7 @@ class LoginViewModel(private val loginSercice: ILoginService) : BaseViewModel() 
                 _loginResult.value = LoggedInUserView(result.viewData!!.username)
             } else {
                 // 错误回调
-                _error.value = result.msgCode
+                postError(result.msgCode)
             }
         }
     }

@@ -2,11 +2,13 @@ package top.pythong.noteblog.app.articlemanager.fragment.article.ui
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.ImageView
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.android.synthetic.main.articles_fragment.*
@@ -14,11 +16,13 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.toast
 
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.articlemanager.ui.ArticleManagerActivity
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.base.adapter.SimpleAdapter
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.data.constant.MsgCode
 
 class ArticlesFragment : BaseFragment() {
 
@@ -35,6 +39,8 @@ class ArticlesFragment : BaseFragment() {
     private val articles = ArrayList<Map<String, String>>()
 
     private val keys = arrayOf("title", "info", "hits", "time", "status")
+
+    private var parentActivity: ArticleManagerActivity? = null
 
     override fun createView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.articles_fragment, container, false)
@@ -57,8 +63,12 @@ class ArticlesFragment : BaseFragment() {
         }
     }
 
-    override fun initData() {
+    override fun onBaseStart() {
+        parentActivity = this.activity as ArticleManagerActivity?
         viewModel.loadData()
+    }
+
+    override fun initData() {
 
         viewModel.article.observe(this, Observer {
             val (append, simples) = it ?: return@Observer
@@ -92,5 +102,9 @@ class ArticlesFragment : BaseFragment() {
 
     override fun loadMore(refreshLayout: RefreshLayout) {
         viewModel.loadData(refreshLayout, true)
+    }
+
+    override fun onErrorResult(error: MsgCode) {
+        parentActivity?.onErrorResult(error)
     }
 }

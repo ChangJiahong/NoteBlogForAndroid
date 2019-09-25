@@ -23,7 +23,7 @@ class ArticleViewModel(private val articleService: IArticleService) : BaseViewMo
             if (result.isOk) {
                 _articleView.value = ArticleView(result.viewData!!)
             } else {
-                _error.value = result.msgCode
+                postError(result.msgCode)
             }
         }
 

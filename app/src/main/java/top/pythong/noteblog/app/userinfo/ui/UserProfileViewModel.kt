@@ -35,7 +35,7 @@ class UserProfileViewModel(private val userProfileService: IUserProfileService) 
             if (result.isOk) {
                 _user.value = result.viewData
             } else {
-                _error.value = result.msgCode
+                postError(result.msgCode)
             }
         }
 
@@ -63,7 +63,7 @@ class UserProfileViewModel(private val userProfileService: IUserProfileService) 
             }
         } else {
             withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
+                postError(result.msgCode)
                 refreshLayout.finishLoadMore(1000, false, false)
             }
         }

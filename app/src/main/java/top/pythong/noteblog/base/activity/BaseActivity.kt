@@ -1,12 +1,10 @@
 package top.pythong.noteblog.base.activity
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.net.*
 import android.os.Bundle
-import android.util.Log
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivityForResult
@@ -36,20 +34,13 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
 
     open fun isEnableNetworkChangeListener() = false
 
-    open fun isEnableViewModel() = true
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getContentView())
 
-        onBaseStart()
-
-        if (isEnableViewModel()) {
-            viewModel = getViewModel()
-            viewModel?.error?.observe(this, Observer {
-                onErrorResult(it ?: return@Observer)
-            })
+        viewModel = getViewModel()
+        viewModel?.handleError = {
+            onErrorResult(it)
         }
 
         initView()
@@ -61,8 +52,6 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
         }
 
     }
-
-    open fun onBaseStart() {}
 
     open fun getViewModel(): BaseViewModel? {
         return null

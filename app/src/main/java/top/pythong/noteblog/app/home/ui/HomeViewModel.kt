@@ -48,7 +48,7 @@ class HomeViewModel(private val homeService: IHomeService) : BaseViewModel() {
             }
         } else {
             withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
+                postError(result.msgCode)
                 if (append) {
                     refreshLayout.finishLoadMore(1000, false, false)
                 } else {

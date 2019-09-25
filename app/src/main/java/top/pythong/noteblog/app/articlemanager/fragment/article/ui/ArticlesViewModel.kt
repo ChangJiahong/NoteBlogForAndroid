@@ -73,7 +73,10 @@ class ArticlesViewModel(private val articlesService: IArticlesService) : BaseVie
             }
         } else {
             withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
+//                Log.d(TAG, result.msgCode.code.toString())
+                //_error.value = result.msgCode
+                postError(result.msgCode)
+
                 refreshLayout?.run {
                     if (append) {
                         finishLoadMore(1000, false, false)

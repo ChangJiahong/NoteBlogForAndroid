@@ -1,6 +1,5 @@
 package top.pythong.noteblog.base.fragment
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -8,13 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.startActivity
 import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.base.errorListener.OnErrorListener
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.clearLoginUser
 import top.pythong.noteblog.data.constant.Constant
 import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.putToSharedPreferences
@@ -54,23 +51,23 @@ abstract class BaseFragment : Fragment(), OnErrorListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        onBaseStart()
-
         if (!isLoadOver) {
 
             initView()
 
             baseViewModel = getViewModel()
-            baseViewModel.error.observe(this, Observer {
-                onErrorResult(it ?: return@Observer)
-            })
+            baseViewModel.handleError = {
+                onErrorResult(it)
+            }
 
             initData()
             isLoadOver = true
         }
+
+        onBaseStart()
     }
 
-    open fun onBaseStart(){}
+    open fun onBaseStart() {}
 
     /**
      * 创建视图
@@ -98,12 +95,11 @@ abstract class BaseFragment : Fragment(), OnErrorListener {
                 alert {
                     title = "提示"
                     message = error.msg + ",去登陆试试!!!"
-                    positiveButton("登录") { i ->
-                        putToSharedPreferences {
-                            put(Constant.TOKEN, "")
-                        }
+                    positiveButton("登录") {
+                        clearLoginUser()
                         // 启动登录
                         startActivityForResult<LoginActivity>(0)
+                        it.dismiss()
                     }
                     negativeButton("再等等") {
                         it.dismiss()
@@ -121,11 +117,11 @@ abstract class BaseFragment : Fragment(), OnErrorListener {
         }
     }
 
-    open fun refresh(refreshLayout: RefreshLayout){}
+    open fun refresh(refreshLayout: RefreshLayout) {}
 
-    open fun loadMore(refreshLayout: RefreshLayout){}
+    open fun loadMore(refreshLayout: RefreshLayout) {}
 
-    open fun refresh(){}
+    open fun refresh() {}
 
-    open fun loadMore(){}
+    open fun loadMore() {}
 }

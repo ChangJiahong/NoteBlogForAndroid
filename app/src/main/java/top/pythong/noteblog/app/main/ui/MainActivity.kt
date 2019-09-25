@@ -58,10 +58,6 @@ class MainActivity : BaseActivity() {
         return R.layout.activity_main
     }
 
-    override fun isEnableViewModel(): Boolean {
-        return false
-    }
-
     /**
      * 初始化视图
      */

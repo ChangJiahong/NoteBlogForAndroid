@@ -41,7 +41,7 @@ class FileManagerViewModel(context: Context, private val fileManagerService: IFi
                 _fileDirs.value = result.viewData
                 refreshLayout.finishRefresh(true)
             } else {
-                _error.value = result.msgCode
+                postError(result.msgCode)
                 refreshLayout.finishRefresh(false)
             }
         }

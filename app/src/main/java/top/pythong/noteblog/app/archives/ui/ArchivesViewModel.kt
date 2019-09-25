@@ -9,7 +9,6 @@ import kotlinx.coroutines.withContext
 import top.pythong.noteblog.app.archives.model.Archive
 import top.pythong.noteblog.app.archives.model.ArchiveView
 import top.pythong.noteblog.app.archives.service.IArchivesService
-import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
@@ -50,7 +49,7 @@ class ArchivesViewModel(private val archivesService: IArchivesService) : BaseVie
             }
         } else {
             withContext(Dispatchers.Main) {
-                _error.value = result.msgCode
+                postError(result.msgCode)
                 if (append) {
                     refreshLayout.finishLoadMore(1000, false, false)
                 } else {

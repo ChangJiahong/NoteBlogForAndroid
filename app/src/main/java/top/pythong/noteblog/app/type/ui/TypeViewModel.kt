@@ -62,7 +62,7 @@ class TypeViewModel(private val typeService: ITypeService) : BaseViewModel() {
                 }
             } else {
                 withContext(Dispatchers.Main) {
-                    _error.value = result.msgCode
+                    postError(result.msgCode)
                     if (append) {
                         refreshLayout.finishLoadMore(1000, false, false)
                     } else {

@@ -4,6 +4,7 @@ import android.content.Context
 import top.pythong.noteblog.app.archives.model.Archive
 import top.pythong.noteblog.app.articlemanager.fragment.category.dao.ICategoryDataSource
 import top.pythong.noteblog.app.home.model.PageInfo
+import top.pythong.noteblog.app.home.model.Type
 import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.constant.Api
 import top.pythong.noteblog.data.constant.Constant
@@ -17,9 +18,13 @@ import top.pythong.noteblog.utils.getStringFromSharedPreferences
  */
 class CategoryDataSourceImpl(private val context: Context) : ICategoryDataSource {
 
-    override fun getUCategoryArchives(page: String, size: String) = HttpHelper(context).apply {
+    override fun getUCategoryArchives(page: String, size: String, type: String) = HttpHelper(context).apply {
         val token = context.getStringFromSharedPreferences(Constant.TOKEN)
-        url = Api.uCategoryArchives
+        url = when (type) {
+            Type.CATEGORY -> Api.uCategoryArchives
+            Type.TAG -> Api.uTagArchives
+            else -> ""
+        }
         headers {
             Constant.TOKEN - token
         }

@@ -5,6 +5,6 @@ import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.data.RestResponse
 
 interface ICategoryDataSource {
-    fun getUCategoryArchives(page: String, size: String): RestResponse<PageInfo<Archive>>
+    fun getUCategoryArchives(page: String, size: String, type: String): RestResponse<PageInfo<Archive>>
 
 }

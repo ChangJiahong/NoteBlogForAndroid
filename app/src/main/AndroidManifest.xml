@@ -28,6 +28,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".app.articlemanager.ui.ArticleListShowActivity"
+            android:theme="@style/NoActionBarTheme">
+        </activity>
+        <activity
             android:name=".app.AboutDevelopersActivity"
             android:theme="@style/AboutActivity">
         </activity>

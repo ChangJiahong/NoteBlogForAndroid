@@ -6,7 +6,8 @@ import kotlinx.android.synthetic.main.activity_article_manager.toolbar
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.articlemanager.fragment.article.ui.ArticlesFragment
-import top.pythong.noteblog.app.articlemanager.fragment.category.ui.CategoryFragment
+import top.pythong.noteblog.app.articlemanager.fragment.category.ui.TypeFragment
+import top.pythong.noteblog.app.home.model.Type
 import top.pythong.noteblog.app.main.adapter.ViewPagerAdapter
 import top.pythong.noteblog.app.main.ui.MainActivity
 import top.pythong.noteblog.base.activity.BaseActivity
@@ -15,12 +16,15 @@ import top.pythong.noteblog.data.constant.MsgCode
 
 class ArticleManagerActivity : BaseActivity() {
 
+    private val TAG = ArticleManagerActivity::class.java.simpleName
+
     private lateinit var adapter: ViewPagerAdapter
 
     private val fragments by lazy {
         arrayListOf(
-            Pair("文章", ArticlesFragment.instance),
-            Pair("分类", CategoryFragment.instance)
+            Pair("文章", ArticlesFragment.instance()),
+            Pair("分类", TypeFragment.instance(Type.CATEGORY)),
+            Pair("标签", TypeFragment.instance(Type.TAG))
         )
     }
 
@@ -75,5 +79,11 @@ class ArticleManagerActivity : BaseActivity() {
         loadingView.show()
         fragments[viewPager.currentItem].second.refresh(refreshLayout)
         setResult(MainActivity.NEED_TO_REFRESH)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 销毁fragment
+        fragments.clear()
     }
 }

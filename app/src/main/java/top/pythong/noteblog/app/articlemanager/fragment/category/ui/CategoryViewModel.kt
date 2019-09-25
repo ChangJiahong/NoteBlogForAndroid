@@ -24,7 +24,7 @@ class CategoryViewModel(private val categoryService: ICategoryService) : BaseVie
 
     private var noHasMore = false
 
-    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false) = launch(Dispatchers.IO) {
+    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false, type: String) = launch(Dispatchers.IO) {
         if (!append) {
             // 是刷新,重置page为第一页
             page = 1
@@ -38,7 +38,7 @@ class CategoryViewModel(private val categoryService: ICategoryService) : BaseVie
             return@launch
         }
 
-        val result: Result<PageInfo<Archive>> = categoryService.getUCategoryArchives(page, size)
+        val result: Result<PageInfo<Archive>> = categoryService.getUCategoryArchives(page, size, type)
         if (result.isOk) {
             val pageInfo = result.viewData!!
             val newArchives = pageInfo.list!!

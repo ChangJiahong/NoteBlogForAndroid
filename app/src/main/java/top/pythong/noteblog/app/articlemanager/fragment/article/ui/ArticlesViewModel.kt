@@ -2,6 +2,7 @@ package top.pythong.noteblog.app.articlemanager.fragment.article.ui
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.*
 import top.pythong.noteblog.app.articlemanager.fragment.article.service.IArticlesService
@@ -62,6 +63,7 @@ class ArticlesViewModel(private val articlesService: IArticlesService) : BaseVie
             noHasMore = !pageInfo.hasNextPage
 
             withContext(Dispatchers.Main) {
+                Log.d(TAG, "刷新${articleList.hashCode()}")
                 _articles.value = Pair(append, articleList)
                 refreshLayout?.run {
                     if (append) {

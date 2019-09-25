@@ -14,22 +14,32 @@ import android.widget.ImageView
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.android.synthetic.main.articles_fragment.*
 import org.jetbrains.anko.find
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.toast
 
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.article.ui.ArticleActivity
+import top.pythong.noteblog.app.articlemanager.model.SimpleArticle
 import top.pythong.noteblog.app.articlemanager.ui.ArticleManagerActivity
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.base.adapter.SimpleAdapter
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 import top.pythong.noteblog.data.constant.MsgCode
 
 class ArticlesFragment : BaseFragment() {
 
     companion object {
-        val instance: ArticlesFragment by lazy {
-            ArticlesFragment()
+        fun instance(): ArticlesFragment {
+            return ArticlesFragment()
+        }
+
+        fun instance(articles: List<SimpleArticle>): ArticlesFragment {
+            return ArticlesFragment().apply {
+                initialArticles = articles
+            }
         }
     }
 
@@ -44,6 +54,8 @@ class ArticlesFragment : BaseFragment() {
     private val keys = arrayOf("title", "info", "hits", "time", "status")
 
     private var parentActivity: ArticleManagerActivity? = null
+
+    private var initialArticles: List<SimpleArticle>? = null
 
     /**
      * 初始化标志
@@ -68,8 +80,9 @@ class ArticlesFragment : BaseFragment() {
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         recyclerView.adapter = adapter
-        adapter.setOnItemClickListener { v, position ->
-            toast(articles[position]["id"] ?: "")
+        adapter.setOnItemClickListener { _, position ->
+            this.context?.startActivity<ArticleActivity>(ARTICLE_ID to articles[position]["id"])
+
         }
         adapter.extendedBind { itemV, position ->
             itemV.find<ImageView>(R.id.status).visibility = when (articles[position]["status"]) {
@@ -80,7 +93,9 @@ class ArticlesFragment : BaseFragment() {
     }
 
     override fun onBaseStart() {
-        parentActivity = this.activity as ArticleManagerActivity?
+        if (this.activity is ArticleManagerActivity) {
+            parentActivity = this.activity as ArticleManagerActivity?
+        }
     }
 
     override fun initData() {
@@ -103,7 +118,7 @@ class ArticlesFragment : BaseFragment() {
             }
             adapter.notifyDataSetChanged()
             loadingView.show()
-            toast("刷新成功")
+            toast(getString(R.string.refreshSuccessfully))
         })
 
         loadData()
@@ -123,6 +138,25 @@ class ArticlesFragment : BaseFragment() {
     }
 
     fun loadData() {
+        if (initialArticles != null) {
+
+            initialArticles!!.forEach { sim ->
+                articles.add(
+                    mapOf(
+                        "id" to sim.id.toString(),
+                        keys[0] to sim.title,
+                        keys[1] to sim.info,
+                        keys[2] to " · 浏览 ${sim.hits}",
+                        keys[3] to sim.time,
+                        keys[4] to sim.status
+                    )
+                )
+            }
+            adapter.notifyDataSetChanged()
+            loadingView.show()
+            return
+        }
+
         if (isInit && isVisible) {
             loadingView.showLoading(true)
             viewModel.loadData()

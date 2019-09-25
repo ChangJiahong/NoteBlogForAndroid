@@ -1,5 +1,7 @@
 package top.pythong.noteblog.app.home.model
 
+import java.io.Serializable
+
 data class Article(
     /**
      * 文章id
@@ -59,7 +61,7 @@ data class Article(
      */
     val content: String,
     val frontCoverImgUrl: String
-) {
+) : Serializable {
     companion object {
 
         /* 文章状态定义 */

@@ -6,6 +6,6 @@ import top.pythong.noteblog.data.Result
 
 interface ICategoryService {
 
-    fun getUCategoryArchives(page: Int, size: Int): Result<PageInfo<Archive>>
+    fun getUCategoryArchives(page: Int, size: Int, type: String): Result<PageInfo<Archive>>
 
 }

@@ -24,6 +24,7 @@
     <string name="about_me" translatable="true">我</string>
     <!--发现页有关-->
     <string name="tag" translatable="true">标签</string>
+    <string name="category" translatable="true">分类</string>
     <string name="username">用户名</string>
     <string name="comment">评论</string>
     <string name="share">分享</string>

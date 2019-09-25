@@ -8,14 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.scwang.smartrefresh.layout.api.RefreshLayout
-import kotlinx.android.synthetic.main.articles_fragment.*
-import kotlinx.android.synthetic.main.category_fragment.*
 import kotlinx.android.synthetic.main.category_fragment.loadingView
 import kotlinx.android.synthetic.main.category_fragment.recyclerView
 import org.jetbrains.anko.support.v4.toast
 
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.articlemanager.ui.ArticleListShowActivity
 import top.pythong.noteblog.app.articlemanager.ui.ArticleManagerActivity
+import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.base.adapter.SimpleAdapter
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
@@ -23,21 +23,25 @@ import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.constant.MsgCode
 
 
-class CategoryFragment : BaseFragment() {
+class TypeFragment : BaseFragment() {
+
+    private var type: String = ""
 
     companion object {
-        val instance: CategoryFragment by lazy {
-            CategoryFragment()
+        var instance: (type: String) -> TypeFragment = { it ->
+            TypeFragment().apply { this.type = it }
         }
     }
 
-    private val TAG = CategoryFragment::class.java.simpleName
+    private val TAG = TypeFragment::class.java.simpleName
 
     private lateinit var viewModel: CategoryViewModel
 
     private lateinit var adapter: SimpleAdapter
 
     private val categorys = ArrayList<Map<String, String>>()
+
+    private val articles = ArrayList<List<Article>>()
 
     private val keys = arrayOf("name", "count")
 
@@ -60,7 +64,7 @@ class CategoryFragment : BaseFragment() {
         loadingView.errorBtn {
             it.setOnClickListener {
                 loadingView.showLoading()
-                viewModel.loadData()
+                viewModel.loadData(type = type)
             }
         }
 
@@ -69,8 +73,8 @@ class CategoryFragment : BaseFragment() {
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         recyclerView.adapter = adapter
-        adapter.setOnItemClickListener { v, position ->
-            toast(categorys[position]["id"] ?: "")
+        adapter.setOnItemClickListener { _, position ->
+            ArticleListShowActivity.show(this.context, articles[position], type, categorys[position]["name"])
         }
     }
 
@@ -80,6 +84,7 @@ class CategoryFragment : BaseFragment() {
             val (append, archives) = it ?: return@Observer
             if (!append) {
                 categorys.clear()
+                articles.clear()
             }
             archives.forEach { archive ->
                 categorys.add(
@@ -88,6 +93,7 @@ class CategoryFragment : BaseFragment() {
                         keys[1] to archive.count
                     )
                 )
+                articles.add(archive.articles)
             }
 
             adapter.notifyDataSetChanged()
@@ -114,16 +120,16 @@ class CategoryFragment : BaseFragment() {
     fun loadData() {
         if (isInit && isVisible) {
             loadingView.showLoading(true)
-            viewModel.loadData()
+            viewModel.loadData(type = type)
         }
     }
 
     override fun refresh(refreshLayout: RefreshLayout) {
-        viewModel.loadData(refreshLayout)
+        viewModel.loadData(refreshLayout, type = type)
     }
 
     override fun loadMore(refreshLayout: RefreshLayout) {
-        viewModel.loadData(refreshLayout, true)
+        viewModel.loadData(refreshLayout, true, type = type)
     }
 
     override fun onErrorResult(error: MsgCode) {

@@ -16,9 +16,9 @@ import top.pythong.noteblog.data.Result
 class CategoryServiceImpl(private val context: Context, private val categoryDataSource: ICategoryDataSource) :
     ICategoryService {
 
-    override fun getUCategoryArchives(page: Int, size: Int): Result<PageInfo<Archive>> {
+    override fun getUCategoryArchives(page: Int, size: Int, type: String): Result<PageInfo<Archive>> {
         val restResponse: RestResponse<PageInfo<Archive>> =
-            categoryDataSource.getUCategoryArchives(page.toString(), size.toString())
+            categoryDataSource.getUCategoryArchives(page.toString(), size.toString(), type)
         if (restResponse.isOk()) {
             return Result.ok(restResponse)
         }

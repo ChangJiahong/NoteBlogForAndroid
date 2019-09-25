@@ -1,17 +1,17 @@
 package top.pythong.noteblog.app.articlemanager.ui
 
-import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.activity_article_manager.*
+import kotlinx.android.synthetic.main.activity_article_manager.refreshLayout
+import kotlinx.android.synthetic.main.activity_article_manager.toolbar
+import org.jetbrains.anko.toast
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.articlemanager.fragment.article.ui.ArticlesFragment
 import top.pythong.noteblog.app.articlemanager.fragment.category.ui.CategoryFragment
 import top.pythong.noteblog.app.main.adapter.ViewPagerAdapter
+import top.pythong.noteblog.app.main.ui.MainActivity
 import top.pythong.noteblog.base.activity.BaseActivity
-import top.pythong.noteblog.base.fragment.BaseFragment
+import top.pythong.noteblog.clearLoginUser
+import top.pythong.noteblog.data.constant.MsgCode
 
 class ArticleManagerActivity : BaseActivity() {
 
@@ -49,5 +49,31 @@ class ArticleManagerActivity : BaseActivity() {
 
     override fun initData() {
 
+    }
+
+    override fun onErrorResult(error: MsgCode) {
+        if (error.isLoginError()) {
+            toast(error.msg)
+            loadingView.errorBtn {
+                it.text = getString(R.string.goToLogin)
+                it.setOnClickListener {
+                    clearLoginUser()
+                    startLoginActivity()
+                }
+            }
+            loadingView.errorImg {
+                it.setImageResource(R.drawable.squint_eyed)
+            }
+            loadingView.errorMsg {
+                it.text = getString(R.string.loginToSee)
+            }
+            loadingView.showError(true)
+        }
+    }
+
+    override fun reload() {
+        loadingView.show()
+        fragments[viewPager.currentItem].second.refresh(refreshLayout)
+        setResult(MainActivity.NEED_TO_REFRESH)
     }
 }

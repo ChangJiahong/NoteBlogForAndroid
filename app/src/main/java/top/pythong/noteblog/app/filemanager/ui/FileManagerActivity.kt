@@ -107,8 +107,10 @@ class FileManagerActivity : BaseActivity() {
                 it.text = error.msg
             }
             loadingView.errorBtn {
-                loadingView.show()
-                refreshLayout.autoRefresh()
+                it.setOnClickListener {
+                    loadingView.show()
+                    refreshLayout.autoRefresh()
+                }
             }
             loadingView.showError(true)
         } else {
@@ -131,6 +133,7 @@ class FileManagerActivity : BaseActivity() {
     }
 
     override fun reload() {
+        loadingView.show()
         refreshLayout.autoRefresh()
         setResult(MainActivity.NEED_TO_REFRESH)
     }

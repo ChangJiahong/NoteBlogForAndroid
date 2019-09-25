@@ -12,7 +12,7 @@ object Api {
     /**
      * 根
      */
-    const val root = "${http}172.16.112.74" //192.168.43.15
+    const val root = "${http}172.16.112.194" //192.168.43.15
 
     /**
      * 登录
@@ -54,9 +54,19 @@ object Api {
     const val categoryArchives = "$article/category"
 
     /**
+     * 个人分类归档
+     */
+    const val uCategoryArchives = "$article/u/category"
+
+    /**
      * 分类文章集
      */
     val category: (category: String) -> String = { category -> "$categoryArchives/$category" }
+
+    /**
+     * 个人分类文章集
+     */
+    val uCategory: (category: String) -> String = { category -> "$uCategoryArchives/$category" }
 
     /**
      * 标签归档
@@ -64,9 +74,19 @@ object Api {
     const val tagArchives = "$article/tag"
 
     /**
+     * 个人标签归档
+     */
+    const val uTagArchives = "$article/tag"
+
+    /**
      * 标签文章集
      */
     val tag: (tag: String) -> String = { tag -> "$tagArchives/$tag" }
+
+    /**
+     * 个人标签文章集
+     */
+    val uTtag: (tag: String) -> String = { tag -> "$uTagArchives/$tag" }
 
     /**
      * 个人文章集

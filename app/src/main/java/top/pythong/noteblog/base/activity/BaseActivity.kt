@@ -8,6 +8,7 @@ import android.os.Bundle
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.startActivityForResult
+import top.pythong.noteblog.R
 import top.pythong.noteblog.app.login.ui.LoginActivity
 import top.pythong.noteblog.base.errorListener.OnErrorListener
 import top.pythong.noteblog.base.viewModel.BaseViewModel
@@ -98,17 +99,17 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
     override fun onErrorResult(error: MsgCode) {
         if (error.isLoginError()) {
             alert {
-                title = "提示"
-                message = error.msg + ",去登陆试试!!!"
-                positiveButton("登录") { i ->
+                title = getString(R.string.prompt)
+                message = error.msg + ",${getString(R.string.tryLogin)}!!!"
+                positiveButton(getString(R.string.login)) {
                     clearLoginUser()
                     // 启动登录
                     startLoginActivity()
                 }
-                negativeButton("再等等") {
+                negativeButton(getString(R.string.waiting)) {
                     it.dismiss()
                 }
-                neutralPressed("不要来烦我") {
+                neutralPressed(getString(R.string.notAskMe)) {
                     putToSharedPreferences {
                         // 下次是否询问登录
                         put(Constant.ASK_ABOUT_LOGIN, false)
@@ -132,6 +133,9 @@ abstract class BaseActivity : SwipeBackActivity(), OnErrorListener {
         }
     }
 
+    /**
+     * 登录成功后的重新加载接口
+     */
     open fun reload() {
 //        finish()
 //        overridePendingTransition(0, 0)

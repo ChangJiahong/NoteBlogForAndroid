@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,8 @@ class ArticlesFragment : BaseFragment() {
         }
     }
 
+    private val TAG = ArticlesFragment::class.java.simpleName
+
     private lateinit var viewModel: ArticlesViewModel
 
     private lateinit var adapter: SimpleAdapter
@@ -42,11 +45,24 @@ class ArticlesFragment : BaseFragment() {
 
     private var parentActivity: ArticleManagerActivity? = null
 
+    /**
+     * 初始化标志
+     */
+    private var isInit = false
+
     override fun createView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.articles_fragment, container, false)
     }
 
     override fun initView() {
+
+        loadingView.errorBtn {
+            it.setOnClickListener {
+                loadingView.showLoading()
+                viewModel.loadData()
+            }
+        }
+
         adapter =
             SimpleAdapter(articles, R.layout.article_item, keys, arrayOf(R.id.title, R.id.info, R.id.hits, R.id.time))
         recyclerView.layoutManager = LinearLayoutManager(this.context)
@@ -65,11 +81,9 @@ class ArticlesFragment : BaseFragment() {
 
     override fun onBaseStart() {
         parentActivity = this.activity as ArticleManagerActivity?
-        viewModel.loadData()
     }
 
     override fun initData() {
-
         viewModel.article.observe(this, Observer {
             val (append, simples) = it ?: return@Observer
             if (!append) {
@@ -88,12 +102,31 @@ class ArticlesFragment : BaseFragment() {
                 )
             }
             adapter.notifyDataSetChanged()
+            loadingView.show()
+            toast("刷新成功")
         })
+
+        loadData()
     }
 
     override fun getViewModel(): BaseViewModel {
         viewModel = ViewModelFactory.createViewModel(this, ArticlesViewModel::class)
         return viewModel
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        if (isVisibleToUser && !isInit) {
+            isInit = true
+            loadData()
+        }
+        super.setUserVisibleHint(isVisibleToUser)
+    }
+
+    fun loadData() {
+        if (isInit && isVisible) {
+            loadingView.showLoading(true)
+            viewModel.loadData()
+        }
     }
 
     override fun refresh(refreshLayout: RefreshLayout) {
@@ -105,6 +138,13 @@ class ArticlesFragment : BaseFragment() {
     }
 
     override fun onErrorResult(error: MsgCode) {
-        parentActivity?.onErrorResult(error)
+        if (!error.isLoginError()) {
+            loadingView.errorMsg {
+                it.text = error.msg
+            }
+            loadingView.showError(true)
+        } else {
+            parentActivity?.onErrorResult(error)
+        }
     }
 }

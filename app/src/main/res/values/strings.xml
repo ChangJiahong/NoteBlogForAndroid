@@ -3,7 +3,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email_or_username" translatable="true">邮箱/用户名</string>
     <string name="prompt_password" translatable="true">密码</string>
-    <string name="action_sign_in" translatable="true">登录</string>
+    <string name="login" translatable="true">登录</string>
     <string name="action_sign_in_short" translatable="false">登录</string>
     <string name="welcome" translatable="false">欢迎</string>
     <string name="invalid_username" translatable="false">用户名无效</string>
@@ -23,7 +23,7 @@
     <string name="msg" translatable="true">消息</string>
     <string name="about_me" translatable="true">我</string>
     <!--发现页有关-->
-    <string name="tag">标签</string>
+    <string name="tag" translatable="true">标签</string>
     <string name="username">用户名</string>
     <string name="comment">评论</string>
     <string name="share">分享</string>
@@ -64,5 +64,12 @@
     <string name="helloWorld">helloWorld</string>
     <string name="myCodeRepo">https://github.com/ChangJiahong/NoteBlog</string>
     <string name="noPaymentApplication">没有找到支付应用</string>
+    <string name="waiting">再等等</string>
+    <string name="notAskMe">不要来烦我</string>
+    <string name="tryLogin">去登陆试试</string>
+    <string name="prompt">提示</string>
+    <string name="loginToSee">登录才给看哟</string>
+    <string name="goToLogin">去登陆</string>
+    <string name="refreshSuccessfully">刷新成功</string>
 
 </resources>

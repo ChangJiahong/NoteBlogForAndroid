@@ -99,6 +99,11 @@
                         android:layout_below="@id/mHitsAndLike"
                         android:layout_alignParentEnd="true">
 
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/tag"
+                            android:layout_marginEnd="2dp"/>
 
                     </LinearLayout>
 
@@ -136,6 +141,11 @@
                     android:orientation="horizontal"
                     android:layout_margin="10dp"
                     android:layout_gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="所属分类："/>
 
                 </LinearLayout>
 

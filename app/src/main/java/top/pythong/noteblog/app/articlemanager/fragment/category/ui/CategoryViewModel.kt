@@ -11,6 +11,7 @@ import top.pythong.noteblog.app.articlemanager.fragment.category.service.ICatego
 import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
+import top.pythong.noteblog.utils.LoadDataHelper
 
 class CategoryViewModel(private val categoryService: ICategoryService) : BaseViewModel() {
 
@@ -18,56 +19,17 @@ class CategoryViewModel(private val categoryService: ICategoryService) : BaseVie
 
     val archives: LiveData<Pair<Boolean, List<Archive>>> = _archives
 
+    private val loadDataHelper = LoadDataHelper<Archive>()
 
-    private var page: Int = 1
-    private val size: Int = 20
-
-    private var noHasMore = false
-
-    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false, type: String) = launch(Dispatchers.IO) {
-        if (!append) {
-            // 是刷新,重置page为第一页
-            page = 1
-            noHasMore = false
+    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false, type: String) = loadDataHelper.apply {
+        result { page, size ->
+            categoryService.getUCategoryArchives(page, size, type)
         }
-
-        if (noHasMore) {
-            withContext(Dispatchers.Main) {
-                refreshLayout?.finishLoadMore(1000, true, noHasMore)
-            }
-            return@launch
-        }
-
-        val result: Result<PageInfo<Archive>> = categoryService.getUCategoryArchives(page, size, type)
-        if (result.isOk) {
-            val pageInfo = result.viewData!!
+        onSuccess { pageInfo, _ ->
             val newArchives = pageInfo.list!!
-
-            page = pageInfo.nextPage
-            noHasMore = !pageInfo.hasNextPage
-
-            withContext(Dispatchers.Main) {
-                _archives.value = Pair(append, newArchives)
-                refreshLayout?.run {
-                    if (append) {
-                        finishLoadMore(1000, true, !pageInfo.hasNextPage)
-                    } else {
-                        finishRefresh(1000, true, !pageInfo.hasNextPage)
-                    }
-                }
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                postError(result.msgCode)
-
-                refreshLayout?.run {
-                    if (append) {
-                        finishLoadMore(1000, false, false)
-                    } else {
-                        finishRefresh(1000, false, false)
-                    }
-                }
-            }
+            _archives.value = Pair(append, newArchives)
         }
-    }
+        onError(postError)
+    }.loadData(refreshLayout, append)
+
 }

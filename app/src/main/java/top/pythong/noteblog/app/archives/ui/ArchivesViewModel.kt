@@ -12,6 +12,7 @@ import top.pythong.noteblog.app.archives.service.IArchivesService
 import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
+import top.pythong.noteblog.utils.LoadDataHelper
 
 class ArchivesViewModel(private val archivesService: IArchivesService) : BaseViewModel() {
 
@@ -19,43 +20,21 @@ class ArchivesViewModel(private val archivesService: IArchivesService) : BaseVie
 
     val archives: LiveData<Pair<Boolean, ArrayList<ArchiveView>>> = _archives
 
-    private var page: Int = 1
-    private val size: Int = 20
+    private val loadDataHelper = LoadDataHelper<Archive>()
 
-    /**
-     * @param append 获取数据是否追加
-     */
-    fun loadData(refreshLayout: RefreshLayout, append: Boolean = false) = launch(Dispatchers.IO) {
-        if (!append) {
-            page = 1
+    fun loadData(refreshLayout: RefreshLayout, append: Boolean = false) = loadDataHelper.apply {
+        result { page, size ->
+            archivesService.getArchives(page, size)
         }
-        val result: Result<PageInfo<Archive>> = archivesService.getArchives(page, size)
-        val archiveList = ArrayList<ArchiveView>()
-        if (result.isOk) {
-            val pageInfo = result.viewData!!
+        onSuccess { pageInfo, _ ->
+            val archiveList = ArrayList<ArchiveView>()
             val newArchives = pageInfo.list!!
             newArchives.forEach {
                 archiveList.add(ArchiveView(it))
             }
-            page = pageInfo.nextPage
-
-            withContext(Dispatchers.Main) {
-                _archives.value = Pair(append, archiveList)
-                if (append) {
-                    refreshLayout.finishLoadMore(1000, true, !pageInfo.hasNextPage)
-                } else {
-                    refreshLayout.finishRefresh(1000, true, !pageInfo.hasNextPage)
-                }
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                postError(result.msgCode)
-                if (append) {
-                    refreshLayout.finishLoadMore(1000, false, false)
-                } else {
-                    refreshLayout.finishRefresh(1000, false, false)
-                }
-            }
+            _archives.value = Pair(append, archiveList)
         }
-    }
+        onError(postError)
+    }.loadData(refreshLayout, append)
+
 }

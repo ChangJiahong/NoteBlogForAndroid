@@ -7,9 +7,11 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.app.type.service.ITypeService
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.utils.LoadDataHelper
 
 /**
  *
@@ -24,53 +26,22 @@ class TypeViewModel(private val typeService: ITypeService) : BaseViewModel() {
 
     val articles: LiveData<Pair<Boolean, ArrayList<ArticleCardItem>>> = _articles
 
-    private var page: Int = 1
-    private val size: Int = 20
-
-    private var isLoad = false
+    private val loadDataHelper = LoadDataHelper<Article>()
 
     fun loadData(refreshLayout: RefreshLayout, append: Boolean=false, type: String, typeName: String) =
-        launch(Dispatchers.IO) {
-
-            if (!append) {
-                page = 1
-                isLoad = true
+        loadDataHelper.apply {
+            result { page, size ->
+                typeService.getArticlesByType(page, size, type, typeName)
             }
-
-            if (!isLoad) {
-                return@launch
-            }
-
-            val result = typeService.getArticlesByType(page, size, type, typeName)
+            onSuccess { pageInfo, _ ->
             val articleList = ArrayList<ArticleCardItem>()
-            if (result.isOk) {
-                val pageInfo = result.viewData!!
                 val newArticles = pageInfo.list!!
                 newArticles.forEach {
                     articleList.add(ArticleCardItem(it))
                 }
-                page = pageInfo.nextPage
-
-                Log.d(TAG, pageInfo.toString())
-                withContext(Dispatchers.Main) {
-                    _articles.value = Pair(append, articleList)
-                    if (append) {
-                        refreshLayout.finishLoadMore(1000, true, !pageInfo.hasNextPage)
-                    } else {
-                        refreshLayout.finishRefresh(1000, true, !pageInfo.hasNextPage)
-                    }
-                }
-            } else {
-                withContext(Dispatchers.Main) {
-                    postError(result.msgCode)
-                    if (append) {
-                        refreshLayout.finishLoadMore(1000, false, false)
-                    } else {
-                        refreshLayout.finishRefresh(1000, false, false)
-                    }
-                }
+                _articles.value = Pair(append, articleList)
             }
-
-        }
+            onError(postError)
+        }.loadData(refreshLayout, append)
 
 }

@@ -12,6 +12,7 @@ import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
 import top.pythong.noteblog.utils.DateKit
+import top.pythong.noteblog.utils.LoadDataHelper
 
 class ArticlesViewModel(private val articlesService: IArticlesService) : BaseViewModel() {
 
@@ -21,31 +22,14 @@ class ArticlesViewModel(private val articlesService: IArticlesService) : BaseVie
 
     val article: LiveData<Pair<Boolean, ArrayList<SimpleArticle>>> = _articles
 
+    private val loadDataHelper = LoadDataHelper<Article>()
 
-    private var page: Int = 1
-    private val size: Int = 20
-
-    private var noHasMore = false
-
-    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false) = launch(Dispatchers.IO) {
-
-        if (!append) {
-            // 是刷新,重置page为第一页
-            page = 1
-            noHasMore = false
+    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false) = loadDataHelper.apply {
+        result { page, size ->
+            articlesService.getUserArticleList(page, size)
         }
-
-        if (noHasMore){
-            withContext(Dispatchers.Main) {
-                refreshLayout?.finishLoadMore(1000, true, noHasMore)
-            }
-            return@launch
-        }
-
-        val result: Result<PageInfo<Article>> = articlesService.getUserArticleList(page, size)
-        val articleList = ArrayList<SimpleArticle>()
-        if (result.isOk) {
-            val pageInfo = result.viewData!!
+        onSuccess { pageInfo, _ ->
+            val articleList = ArrayList<SimpleArticle>()
             val newArticles = pageInfo.list!!
             newArticles.forEach {
                 articleList.add(
@@ -59,33 +43,8 @@ class ArticlesViewModel(private val articlesService: IArticlesService) : BaseVie
                     )
                 )
             }
-            page = pageInfo.nextPage
-            noHasMore = !pageInfo.hasNextPage
-
-            withContext(Dispatchers.Main) {
-                Log.d(TAG, "刷新${articleList.hashCode()}")
-                _articles.value = Pair(append, articleList)
-                refreshLayout?.run {
-                    if (append) {
-                        finishLoadMore(1000, true, !pageInfo.hasNextPage)
-                    } else {
-                        finishRefresh(1000, true, !pageInfo.hasNextPage)
-                    }
-                }
-            }
-        } else {
-            withContext(Dispatchers.Main) {
-                postError(result.msgCode)
-
-                refreshLayout?.run {
-                    if (append) {
-                        finishLoadMore(1000, false, false)
-                    } else {
-                        finishRefresh(1000, false, false)
-                    }
-                }
-            }
+            _articles.value = Pair(append, articleList)
         }
-    }
-
+        onError(postError)
+    }.loadData(refreshLayout, append)
 }

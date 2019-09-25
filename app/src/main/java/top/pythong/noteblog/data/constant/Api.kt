@@ -12,7 +12,7 @@ object Api {
     /**
      * 根
      */
-    const val root = "${http}172.16.112.194" //192.168.43.15
+    const val root = "${http}192.168.43.15" //192.168.43.15
 
     /**
      * 登录
@@ -76,7 +76,7 @@ object Api {
     /**
      * 个人标签归档
      */
-    const val uTagArchives = "$article/tag"
+    const val uTagArchives = "$article/u/tag"
 
     /**
      * 标签文章集

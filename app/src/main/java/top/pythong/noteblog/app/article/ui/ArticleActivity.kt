@@ -9,6 +9,8 @@ import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import android.graphics.Rect
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -37,6 +39,8 @@ class ArticleActivity : BaseActivity() {
 
     lateinit var articleId: String
 
+    lateinit var loadingProcess: ProgressBar
+
     override fun getViewModel(): BaseViewModel {
         articleViewModel = ViewModelFactory.createViewModel(this, ArticleViewModel::class)
         return articleViewModel
@@ -52,8 +56,14 @@ class ArticleActivity : BaseActivity() {
             finish()
         }
 
+        loadingView.initDefinePage {
+            LayoutInflater.from(this).inflate(R.layout.top_loading, null)
+        }
+
+        loadingProcess = loadingView.definePage!!.find(R.id.loadingProgress)
 
         mContent.setOnProgressChangedListener {
+            loadingProcess.progress = it
             if (it == 100) {
                 loadingView.show()
             }
@@ -61,7 +71,7 @@ class ArticleActivity : BaseActivity() {
         }
 
 
-        srcollView.setOnScrollChangeListener { nestedScrollView: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+        srcollView.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->
             val scrollRect = Rect()
             srcollView.getHitRect(scrollRect)
             if (titleV.getLocalVisibleRect(scrollRect)) {
@@ -96,8 +106,8 @@ class ArticleActivity : BaseActivity() {
 
 
     override fun initData() {
-
-        loadingView.showLoading(true)
+        loadingView.showDefinePage()
+//        loadingView.showLoading(true)
         articleId = intent.getStringExtra(ARTICLE_ID)
         articleViewModel.loadArticle(articleId)
     }
@@ -109,8 +119,8 @@ class ArticleActivity : BaseActivity() {
         }
         loadingView.errorBtn {
             it.setOnClickListener {
-                //                loadingView.showDefinePage(true)
-                loadingView.showLoading(true)
+                loadingView.showDefinePage(true)
+//                loadingView.showLoading(true)
                 articleViewModel.loadArticle(articleId)
             }
         }

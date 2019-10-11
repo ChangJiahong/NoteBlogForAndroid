@@ -308,7 +308,7 @@ class HttpHelper(val context: Context) {
                 if (response.headers["Content-Type"] == "application/json;charset=UTF-8") {
                     // restResponse
                     val json = response.body!!.string()
-                    Log.d(TAG, json)
+//                    Log.d(TAG, json)
                     val restResponse: RestResponse<*> = Gson().fromJson(json, RestResponse::class.java)
                     return restResponse as RestResponse<Any>
                 }

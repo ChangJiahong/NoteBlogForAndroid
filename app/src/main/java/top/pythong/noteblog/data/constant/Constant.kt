@@ -7,6 +7,13 @@ package top.pythong.noteblog.data.constant
  */
 object Constant {
 
+    /**
+     * web站点地址
+     */
+    val WEB_ADDRESS = "http://www.pythong.top"
+
+    val WEB_ARTICLE = "$WEB_ADDRESS/article"
+
     /** sp参数  **/
 
     const val LOGGED_IN_USER = "loggedInUser"
@@ -18,7 +25,7 @@ object Constant {
     const val ARTICLE_ID = "articleId"
 
 
-    /** http参数 **/
+    /** http请求参数 **/
 
     /**
      * 文件夹的根目录

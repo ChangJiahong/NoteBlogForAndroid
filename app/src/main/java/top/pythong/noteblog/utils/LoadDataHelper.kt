@@ -42,7 +42,7 @@ class LoadDataHelper<T> : CoroutineScope by MainScope() {
     /**
      * @param append 获取数据是否追加
      */
-    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false) = launch(Dispatchers.Main) {
+    fun loadData(refreshLayout: RefreshLayout? = null, append: Boolean = false) = launch {
 
         if (!append) {
             // 是刷新,重置page为第一页

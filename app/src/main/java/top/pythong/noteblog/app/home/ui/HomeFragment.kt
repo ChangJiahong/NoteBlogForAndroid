@@ -4,18 +4,18 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter
 import com.scwang.smartrefresh.layout.header.BezierRadarHeader
 import kotlinx.android.synthetic.main.home_fragment.*
+import org.jetbrains.anko.support.v4.startActivity
 
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.home.adapter.ArticleAdapter
 import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.app.home.utils.SmoothScrollLayoutManager
+import top.pythong.noteblog.app.search.ui.SearchActivity
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.base.factory.ViewModelFactory
@@ -58,6 +58,8 @@ class HomeFragment : BaseFragment() {
      * 加载页面
      */
     override fun initView() {
+
+        setHasOptionsMenu(true)
 
         // 初始化loadingView
         loadingView.errorBtn {
@@ -134,4 +136,15 @@ class HomeFragment : BaseFragment() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.search, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.app_bar_search) {
+            startActivity<SearchActivity>()
+        }
+        return true
+    }
 }

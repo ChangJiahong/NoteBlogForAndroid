@@ -19,7 +19,7 @@ import top.pythong.noteblog.utils.getStringFromSharedPreferences
  */
 class MainViewModel(private val mainService: IMainService) : BaseViewModel() {
 
-    fun autoLogin(mainActivity: MainActivity) = launch(Dispatchers.IO) {
+    fun autoLogin(mainActivity: MainActivity) = launch {
 
         val result = mainService.autoLogin()
         if (!result.isOk) {

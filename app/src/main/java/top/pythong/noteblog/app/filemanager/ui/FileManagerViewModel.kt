@@ -33,7 +33,7 @@ class FileManagerViewModel(context: Context, private val fileManagerService: IFi
     /**
      * 获取该目录下的文件列表
      */
-    fun loadFileList(currentPath: String, refreshLayout: RefreshLayout) = launch(Dispatchers.IO) {
+    fun loadFileList(currentPath: String, refreshLayout: RefreshLayout) = launch {
 
         val result: Result<List<FileDir>> = fileManagerService.getFiles(currentPath)
         withContext(Dispatchers.Main) {

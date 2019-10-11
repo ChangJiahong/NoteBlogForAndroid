@@ -68,9 +68,9 @@ object AppOpener {
 
     fun launchUrl(context: Context, uri: Uri) {
         val url = uri.toString()
-        if (url.startsWith(Api.recommend)) {
+        if (url.startsWith(Constant.WEB_ARTICLE)) {
             // 文章url
-            val articleId = url.substringAfter(Api.recommend + "/")
+            val articleId = url.substringAfter(Constant.WEB_ARTICLE + "/")
             context.startActivity<ArticleActivity>(Constant.ARTICLE_ID to articleId)
             return
         }

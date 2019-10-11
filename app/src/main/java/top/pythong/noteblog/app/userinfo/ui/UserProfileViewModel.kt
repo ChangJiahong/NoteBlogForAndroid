@@ -28,7 +28,7 @@ class UserProfileViewModel(private val userProfileService: IUserProfileService) 
     var page: Int = 1
     private val size: Int = 20
 
-    fun loadUser(username: String) = launch(Dispatchers.IO) {
+    fun loadUser(username: String) = launch {
         val result: Result<LoggedInUser> = userProfileService.getUser(username)
 
         withContext(Dispatchers.Main) {
@@ -41,7 +41,7 @@ class UserProfileViewModel(private val userProfileService: IUserProfileService) 
 
     }
 
-    fun loadMore(username: String, refreshLayout: RefreshLayout) = launch(Dispatchers.IO) {
+    fun loadMore(username: String, refreshLayout: RefreshLayout) = launch {
         val articleList = if (page == 1) {
             ArrayList()
         } else {

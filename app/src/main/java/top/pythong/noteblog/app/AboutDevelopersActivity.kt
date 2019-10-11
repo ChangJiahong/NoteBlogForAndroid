@@ -44,14 +44,14 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
         appBuilder.addItem(
             MaterialAboutTitleItem.Builder()
                 .icon(R.drawable.icon)
-                .text(getString(R.string.app_name))
-                .desc(getString(R.string.copyright))
+                .text(R.string.app_name)
+                .desc(R.string.copyright)
                 .build()
         )
         appBuilder.addItem(
             MaterialAboutActionItem.Builder()
                 .icon(R.drawable.ic_version_black_24dp)
-                .text(getString(R.string.version))
+                .text(R.string.version)
                 .subText(BuildConfig.VERSION_NAME)
                 .setOnClickAction {
                     // TODO: 检查更新
@@ -62,8 +62,8 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
         appBuilder.addItem(
             MaterialAboutActionItem.Builder()
                 .icon(R.drawable.ic_code_black_24dp)
-                .text(getString(R.string.sourceCode))
-                .subText(getString(R.string.starToMe))
+                .text(R.string.sourceCode)
+                .subText(R.string.starToMe)
                 .setOnClickAction {
                     AppOpener.openInCustomTabsOrBrowser(this, getString(R.string.myCodeRepo))
                 }
@@ -75,18 +75,18 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
         authorBuilder.addItem(
             MaterialAboutActionItem.Builder()
                 .icon(R.drawable.ic_person_black_24dp)
-                .text(getString(R.string.authorName))
-                .subText(getString(R.string.location))
+                .text(R.string.authorName)
+                .subText(R.string.location)
                 .setOnClickAction {
-                    toast(getString(R.string.helloWorld))
+                    toast(R.string.helloWorld)
                 }
                 .build()
         )
         authorBuilder.addItem(
             MaterialAboutActionItem.Builder()
                 .icon(R.drawable.ic_github)
-                .text(getString(R.string.authorGitHub))
-                .subText(getString(R.string.myGitHub))
+                .text(R.string.authorGitHub)
+                .subText(R.string.myGitHub)
                 .setOnClickAction {
                     AppOpener.openInCustomTabsOrBrowser(this, getString(R.string.myGitHub))
                 }
@@ -95,8 +95,8 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
         authorBuilder.addItem(
             MaterialAboutActionItem.Builder()
                 .icon(R.drawable.ic_email_black_24dp)
-                .text(getString(R.string.authorEmail))
-                .subText(getString(R.string.myEmail))
+                .text(R.string.authorEmail)
+                .subText(R.string.myEmail)
                 .setOnClickAction {
                     AppOpener.launchEmail(this, getString(R.string.myEmail))
                 }
@@ -105,7 +105,7 @@ class AboutDevelopersActivity : MaterialAboutActivity(), SwipeBackActivityBase {
         authorBuilder.addItem(
             MaterialAboutActionItem.Builder()
                 .icon(R.drawable.ic_blog)
-                .text(getString(R.string.authorBlog))
+                .text(R.string.authorBlog)
                 .setOnClickAction {
                     AppOpener.openInCustomTabsOrBrowser(this, getString(R.string.myWebUrl))
                 }

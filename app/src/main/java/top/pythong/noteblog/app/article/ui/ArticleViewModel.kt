@@ -16,7 +16,7 @@ class ArticleViewModel(private val articleService: IArticleService) : BaseViewMo
     private val _articleView = MutableLiveData<ArticleView>()
     val cardItem: LiveData<ArticleView> = _articleView
 
-    fun loadArticle(articleId: String) = launch(Dispatchers.IO) {
+    fun loadArticle(articleId: String) = launch {
         val result: Result<Article> = articleService.getArticle(articleId)
 
         withContext(Dispatchers.Main) {

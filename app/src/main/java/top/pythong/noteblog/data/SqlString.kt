@@ -5,9 +5,13 @@ package top.pythong.noteblog.data
  * @author ChangJiahong
  * @date 2019/9/10
  */
-object SqlString {
+enum class SqlString(val sql: String) {
 
-    val TasksTable = """
+    /**
+     * 下载记录表
+     */
+    TasksTable(
+        """
             CREATE TABLE
             IF
                 NOT EXISTS TasksTable (
@@ -21,4 +25,25 @@ object SqlString {
                     downloadLen INTEGER
                 )
     """.trimIndent()
+    )
+
+    ,
+
+    /**
+     * 搜索历史表
+     */
+    SearchHistory(
+        """
+            CREATE TABLE
+            IF
+                NOT EXISTS SearchHistory (
+                    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name CHAR ( 255 ) NOT NULL UNIQUE,
+                    created INTEGER NOT NULL
+                )
+    """.trimIndent()
+    )
+
+    ;
+
 }

@@ -66,17 +66,18 @@ class MyDbOpenHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null
 
     }
 
-    val TasksTable = "TasksTable"
-
     override fun onCreate(db: SQLiteDatabase?) {
 
-        Log.d(TAG, "createDB ${DB_NAME} ,loading...！")
+        Log.d(TAG, "createDB $DB_NAME ,loading...！")
+
 
         db!!.apply {
-            execSQL(SqlString.TasksTable)
+            SqlString.values().forEach {
+                execSQL(it.sql)
+            }
         }
 
-        Log.d(TAG, "createDB ${DB_NAME} successful！")
+        Log.d(TAG, "createDB $DB_NAME successful！")
 
     }
 
@@ -91,7 +92,8 @@ class MyDbOpenHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null
 
     fun cleanDataBase() {
         var db = writableDatabase
-
-        db.delete(TasksTable, null, null)
+        SqlString.values().forEach {
+            db.delete(it.name, null, null)
+        }
     }
 }

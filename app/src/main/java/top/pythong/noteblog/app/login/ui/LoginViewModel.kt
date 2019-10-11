@@ -23,7 +23,7 @@ class LoginViewModel(private val loginSercice: ILoginService) : BaseViewModel() 
     /**
      * 登录，开启协程
      */
-    fun login(username: String, password: String) = launch(Dispatchers.IO) {
+    fun login(username: String, password: String) = launch {
 
         val result = loginSercice.login(username, password)
 

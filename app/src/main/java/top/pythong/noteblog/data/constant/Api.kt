@@ -12,7 +12,7 @@ object Api {
     /**
      * 根
      */
-    const val root = "${http}192.168.43.15" //192.168.43.15
+    const val root = "${http}root.pythong.top:2580"
 
     /**
      * 登录

@@ -36,6 +36,13 @@ object ViewModelFactory {
         ).get(clazz.java)
     }
 
+    fun <T : ViewModel> createViewModelWithContext(fragment: Fragment, clazz: KClass<T>): T {
+        return ViewModelProviders.of(
+            fragment,
+            WithContextFactory(fragment.context!!)
+        ).get(clazz.java)
+    }
+
     private class SimpleFactory(val context: Context) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

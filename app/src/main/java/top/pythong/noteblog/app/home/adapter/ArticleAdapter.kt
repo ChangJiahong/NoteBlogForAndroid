@@ -13,9 +13,11 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.R
+import top.pythong.noteblog.app.article.service.IArticleService
 import top.pythong.noteblog.app.article.ui.ArticleActivity
 import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.app.userinfo.ui.UserProfileActivity
+import top.pythong.noteblog.base.factory.ServiceFactory
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 
 /**
@@ -26,6 +28,7 @@ import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 class ArticleAdapter(val articleList: List<ArticleCardItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val TAG = ArticleActivity::class.java.simpleName
+
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(p0.context).inflate(R.layout.article_item_crad, p0, false)
@@ -52,16 +55,23 @@ class ArticleAdapter(val articleList: List<ArticleCardItem>) : RecyclerView.Adap
             v.setOnClickListener {
                 it.context.startActivity<ArticleActivity>(ARTICLE_ID to item.id.toString())
             }
+            liked = item.liked
             like.setOnClickListener {
                 viewHolder.liked = !viewHolder.liked
                 viewHolder.likeIcon.setImageResource(
                     if (viewHolder.liked)
                         R.drawable.like_1 else R.drawable.like_0
                 )
-                it.context.toast("点赞")
+                onLike(item.id) {
+                    viewHolder.liked = !viewHolder.liked
+                    viewHolder.likeIcon.setImageResource(
+                        if (viewHolder.liked)
+                            R.drawable.like_1 else R.drawable.like_0
+                    )
+                }
             }
             comment.setOnClickListener {
-                it.context.toast("评论")
+                onComment(item.id)
             }
             share.setOnClickListener {
                 it.context.toast("分享")
@@ -90,4 +100,9 @@ class ArticleAdapter(val articleList: List<ArticleCardItem>) : RecyclerView.Adap
 
 
     }
+
+    var onLike: (articleId: Int, rest: () -> Unit) -> Unit = { _, _ -> }
+
+    var onComment: (articleId: Int) -> Unit = {}
+
 }

@@ -44,7 +44,8 @@ data class ArticleCardItem(
      * 创建时间
      */
     val timeAgo: String,
-    val frontCoverImgUrl: String
+    val frontCoverImgUrl: String,
+    val liked: Boolean
 ) {
     constructor(article: Article) : this(
         id = article.id,
@@ -56,6 +57,7 @@ data class ArticleCardItem(
         info = article.info,
         hits = article.hits,
         timeAgo = DateKit.timesAgo(article.created, "yyyy-MM-dd HH:mm:ss"),
-        frontCoverImgUrl = article.frontCoverImgUrl
+        frontCoverImgUrl = article.frontCoverImgUrl,
+        liked = article.liked
     )
 }

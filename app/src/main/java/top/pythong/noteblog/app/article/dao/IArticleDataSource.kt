@@ -9,4 +9,8 @@ interface IArticleDataSource {
      */
     fun getArticle(articleId: String): RestResponse<Article>
 
+    fun like(articleId: String): RestResponse<Any>
+
+    fun comment(articleId: String): RestResponse<Any>
+
 }

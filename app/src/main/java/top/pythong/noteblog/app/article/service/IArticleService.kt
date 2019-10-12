@@ -9,4 +9,8 @@ interface IArticleService {
      */
     fun getArticle(articleId: String): Result<Article>
 
+    fun like(articleId: Int): Result<Any>
+
+    fun comment(articleId: Int, comments: String): Result<Any>
+
 }

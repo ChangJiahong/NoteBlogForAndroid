@@ -46,7 +46,7 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun getViewModel(): BaseViewModel {
-        viewModel = ViewModelFactory.createViewModel(this, HomeViewModel::class)
+        viewModel = ViewModelFactory.createViewModelWithContext(this, HomeViewModel::class)
         return viewModel
     }
 
@@ -85,6 +85,12 @@ class HomeFragment : BaseFragment() {
         }
 
         adapter = ArticleAdapter(articleList)
+
+        adapter.onLike = { id, rest ->
+            viewModel.like(id, rest)
+        }
+
+
         val smoothScrollLayoutManager = SmoothScrollLayoutManager(this.context)
         smoothScrollLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.layoutManager = smoothScrollLayoutManager
@@ -100,7 +106,7 @@ class HomeFragment : BaseFragment() {
         refresh()
         viewModel.articles.observe(this, Observer {
 
-            val (append,articles) = it ?: return@Observer
+            val (append, articles) = it ?: return@Observer
             if (!append) {
                 articleList.clear()
             }

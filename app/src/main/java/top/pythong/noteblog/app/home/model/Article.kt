@@ -60,7 +60,8 @@ data class Article(
      * 文章内容
      */
     val content: String,
-    val frontCoverImgUrl: String
+    val frontCoverImgUrl: String,
+    val liked: Boolean
 ) : Serializable {
     companion object {
 

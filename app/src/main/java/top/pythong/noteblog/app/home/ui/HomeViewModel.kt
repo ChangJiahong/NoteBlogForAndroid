@@ -2,17 +2,20 @@ package top.pythong.noteblog.app.home.ui
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import top.pythong.noteblog.app.article.service.IArticleService
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.app.home.model.ArticleCardItem
 import top.pythong.noteblog.app.home.service.IHomeService
+import top.pythong.noteblog.base.factory.ServiceFactory
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.utils.LoadDataHelper
 
-class HomeViewModel(private val homeService: IHomeService) : BaseViewModel() {
+class HomeViewModel(context: Context, private val homeService: IHomeService) : BaseViewModel() {
 
     val TAG = "HomeViewModel"
 
@@ -21,6 +24,9 @@ class HomeViewModel(private val homeService: IHomeService) : BaseViewModel() {
     val articles: LiveData<Pair<Boolean, ArrayList<ArticleCardItem>>> = _articles
 
     private val loadDataHelper = LoadDataHelper<Article>()
+
+    private var articleService = ServiceFactory.getSimpleService(context, IArticleService::class)
+
 
     fun loadData(refreshLayout: RefreshLayout, append: Boolean = false) = loadDataHelper.apply {
         result { page, size ->
@@ -37,4 +43,12 @@ class HomeViewModel(private val homeService: IHomeService) : BaseViewModel() {
         onError(postError)
     }.loadData(refreshLayout, append)
 
+    fun like(articleId: Int, rest: () -> Unit) = launch {
+        val result = articleService.like(articleId)
+        if (!result.isOk) {
+            withContext(Dispatchers.Main) {
+                rest()
+            }
+        }
+    }
 }

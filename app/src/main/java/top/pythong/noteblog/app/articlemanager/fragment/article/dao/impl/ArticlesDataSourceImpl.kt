@@ -1,6 +1,7 @@
 package top.pythong.noteblog.app.articlemanager.fragment.article.dao.impl
 
 import android.content.Context
+import okhttp3.FormBody
 import top.pythong.noteblog.app.articlemanager.fragment.article.dao.IArticlesDataSource
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.app.home.model.PageInfo
@@ -29,4 +30,22 @@ class ArticlesDataSourceImpl(private val context: Context) : IArticlesDataSource
         }
     }.getForRestResponsePage(Article::class)
 
+    override fun deleteArticle(id: String) = HttpHelper(context).apply {
+        val token = context.getStringFromSharedPreferences(Constant.TOKEN)
+        url = Api.deleteArticle(id)
+        headers {
+            Constant.TOKEN - token
+        }
+    }.forRestResponse(Any::class, HttpHelper.DELETE)
+
+    override fun publishArticle(id: String) = HttpHelper(context).apply {
+        val token = context.getStringFromSharedPreferences(Constant.TOKEN)
+        url = Api.status(id)
+        headers {
+            Constant.TOKEN - token
+        }
+        requestBody {
+            FormBody.Builder().add("status", Article.PUBLISH).build()
+        }
+    }.postForRestResponse(Any::class)
 }

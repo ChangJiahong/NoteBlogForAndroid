@@ -8,4 +8,8 @@ interface IArticlesDataSource {
 
     fun getUserArticleList(page: Int, size: Int): RestResponse<PageInfo<Article>>
 
+    fun deleteArticle(id: String): RestResponse<Any>
+
+    fun publishArticle(id: String): RestResponse<Any>
+
 }

@@ -7,6 +7,7 @@ import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.data.RestResponse
 import top.pythong.noteblog.data.Result
+import top.pythong.noteblog.utils.ServiceHelper
 
 /**
  *
@@ -22,5 +23,13 @@ class ArticlesServiceImpl(private val context: Context, private val articlesData
             return Result.ok(response)
         }
         return Result.fail(response)
+    }
+
+    override fun deleteArticle(id: String): Result<Any> {
+        return ServiceHelper.getInstence().result(articlesDataSource.deleteArticle(id))
+    }
+
+    override fun publishArticle(id: String): Result<Any> {
+        return ServiceHelper.getInstence().result(articlesDataSource.publishArticle(id))
     }
 }

@@ -46,7 +46,21 @@ object Api {
      */
     const val recommend = article
 
+    /**
+     * 浏览文章
+     */
     val browseArticle: (articleId: String) -> String = { articleId -> "$article/$articleId" }
+
+    /**
+     * 删除文章
+     */
+    val deleteArticle: (articleId: String) -> String = { articleId -> "$article/u/$articleId" }
+
+    /**
+     * 文章状态改变
+     */
+    val status: (articleId: String) -> String = { articleId -> "$article/u/status/$articleId" }
+
 
     /**
      * 个人时间归档信息

@@ -17,7 +17,7 @@ import org.jetbrains.anko.find
  * @date 2019/9/22
  */
 class SimpleAdapter(
-    val data: ArrayList<Map<String, String>>, @LayoutRes val resource: Int,
+    val data: ArrayList<HashMap<String, String>>, @LayoutRes val resource: Int,
     val from: Array<String>, @IdRes val to: Array<Int>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -39,7 +39,7 @@ class SimpleAdapter(
         holder.itemView.setOnClickListener {
             onItemClickListener(it, p1)
         }
-
+        holder.itemView.isLongClickable = true
         extendedBind(holder.itemView, p1)
     }
 

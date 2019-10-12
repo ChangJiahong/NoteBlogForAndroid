@@ -2,15 +2,14 @@ package top.pythong.noteblog.app.articlemanager.fragment.article.ui
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.coroutines.*
 import top.pythong.noteblog.app.articlemanager.fragment.article.service.IArticlesService
 import top.pythong.noteblog.app.articlemanager.model.SimpleArticle
 import top.pythong.noteblog.app.home.model.Article
-import top.pythong.noteblog.app.home.model.PageInfo
 import top.pythong.noteblog.base.viewModel.BaseViewModel
 import top.pythong.noteblog.data.Result
+import top.pythong.noteblog.data.constant.MsgCode
 import top.pythong.noteblog.utils.DateKit
 import top.pythong.noteblog.utils.LoadDataHelper
 
@@ -47,4 +46,31 @@ class ArticlesViewModel(private val articlesService: IArticlesService) : BaseVie
         }
         onError(postError)
     }.loadData(refreshLayout, append)
+
+    fun deleteArticle(
+        id: String, callback: (resu: Triple<Boolean, Any?, MsgCode>) -> Unit = { }
+    ) = launch {
+        if (id.isBlank()) {
+            return@launch
+        }
+
+        val result: Result<Any> = articlesService.deleteArticle(id)
+        withContext(Dispatchers.Main) {
+            callback(Triple(result.isOk, result.viewData, result.msgCode))
+        }
+
+    }
+
+    fun publish(id: String, callback: (resu: Triple<Boolean, Any?, MsgCode>) -> Unit = { }) = launch {
+        if (id.isBlank()) {
+            return@launch
+        }
+
+        val result: Result<Any> = articlesService.publishArticle(id)
+        withContext(Dispatchers.Main) {
+            callback(Triple(result.isOk, result.viewData, result.msgCode))
+        }
+    }
+
+
 }

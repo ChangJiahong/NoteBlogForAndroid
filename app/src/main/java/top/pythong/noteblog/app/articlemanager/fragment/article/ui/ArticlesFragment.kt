@@ -2,14 +2,10 @@ package top.pythong.noteblog.app.articlemanager.fragment.article.ui
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewParent
+import android.support.v7.widget.RecyclerView
+import android.view.*
 import android.widget.ImageView
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import kotlinx.android.synthetic.main.articles_fragment.*
@@ -26,6 +22,7 @@ import top.pythong.noteblog.base.adapter.SimpleAdapter
 import top.pythong.noteblog.base.factory.ViewModelFactory
 import top.pythong.noteblog.base.fragment.BaseFragment
 import top.pythong.noteblog.base.viewModel.BaseViewModel
+import top.pythong.noteblog.base.widget.RecyclerViewWithContextMenu
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 import top.pythong.noteblog.data.constant.MsgCode
 
@@ -49,7 +46,7 @@ class ArticlesFragment : BaseFragment() {
 
     private lateinit var adapter: SimpleAdapter
 
-    private val articles = ArrayList<Map<String, String>>()
+    private val articles = ArrayList<HashMap<String, String>>()
 
     private val keys = arrayOf("title", "info", "hits", "time", "status")
 
@@ -89,7 +86,9 @@ class ArticlesFragment : BaseFragment() {
                 Article.DRAFT -> View.VISIBLE
                 else -> View.GONE
             }
+//            itemV.setOnCreateContextMenuListener(this)
         }
+        registerForContextMenu(recyclerView)
     }
 
     override fun onBaseStart() {
@@ -106,7 +105,7 @@ class ArticlesFragment : BaseFragment() {
             }
             simples.forEach { sim ->
                 articles.add(
-                    mapOf(
+                    hashMapOf(
                         "id" to sim.id.toString(),
                         keys[0] to sim.title,
                         keys[1] to sim.info,
@@ -142,7 +141,7 @@ class ArticlesFragment : BaseFragment() {
 
             initialArticles!!.forEach { sim ->
                 articles.add(
-                    mapOf(
+                    hashMapOf(
                         "id" to sim.id.toString(),
                         keys[0] to sim.title,
                         keys[1] to sim.info,
@@ -180,5 +179,44 @@ class ArticlesFragment : BaseFragment() {
         } else {
             parentActivity?.onErrorResult(error)
         }
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        parentActivity?.menuInflater?.inflate(R.menu.article_edit, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        val menuInfo = item?.menuInfo as RecyclerViewWithContextMenu.RecyclerViewContextInfo
+        val position = menuInfo.getPosition()
+        val id = articles[position]["id"] ?: ""
+        when (item.itemId) {
+            R.id.edit -> {
+                toast("编辑")
+                // 跳转编辑页面
+            }
+            R.id.publish -> {
+                viewModel.publish(id) { (isOk, data, msg) ->
+                    if (isOk) {
+                        toast("发布成功")
+                        articles[position]["status"] = Article.PUBLISH
+                        adapter.notifyItemChanged(position)
+                    } else {
+                        toast(msg.msg)
+                    }
+                }
+            }
+            R.id.del -> {
+                viewModel.deleteArticle(id) { (isOk, data, msg) ->
+                    if (isOk) {
+                        toast("删除成功")
+                        adapter.notifyItemRemoved(position)
+                    } else {
+                        toast(msg.msg)
+                    }
+                }
+            }
+        }
+        return true
     }
 }

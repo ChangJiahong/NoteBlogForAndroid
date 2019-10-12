@@ -39,7 +39,7 @@ class TypeFragment : BaseFragment() {
 
     private lateinit var adapter: SimpleAdapter
 
-    private val categorys = ArrayList<Map<String, String>>()
+    private val categorys = ArrayList<HashMap<String, String>>()
 
     private val articles = ArrayList<List<Article>>()
 
@@ -88,7 +88,7 @@ class TypeFragment : BaseFragment() {
             }
             archives.forEach { archive ->
                 categorys.add(
-                    mapOf(
+                    hashMapOf(
                         keys[0] to archive.name,
                         keys[1] to archive.count
                     )

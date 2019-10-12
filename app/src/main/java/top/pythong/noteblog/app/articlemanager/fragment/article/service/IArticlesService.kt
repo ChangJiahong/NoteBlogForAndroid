@@ -8,4 +8,8 @@ interface IArticlesService {
 
     fun getUserArticleList(page: Int, size: Int): Result<PageInfo<Article>>
 
+    fun deleteArticle(id: String): Result<Any>
+
+    fun publishArticle(id: String): Result<Any>
+
 }

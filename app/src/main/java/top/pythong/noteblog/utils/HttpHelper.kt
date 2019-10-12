@@ -28,9 +28,13 @@ class HttpHelper(val context: Context) {
 
     val TAG = "HttpHelper"
 
-    private val GET = "GET"
+    companion object {
+        const val GET = "GET"
 
-    private val POST = "POST"
+        const val POST = "POST"
+
+        const val DELETE = "DELETE"
+    }
 
     private val mOkHttpClient by lazy {
         OkHttpClient()
@@ -176,7 +180,7 @@ class HttpHelper(val context: Context) {
     /**
      * 获取Response对象
      */
-    private fun <T : Any> forRestResponse(kClass: KClass<T>, method: String): RestResponse<T> {
+    fun <T : Any> forRestResponse(kClass: KClass<T>, method: String): RestResponse<T> {
         val restEntity = forRestEntity(kClass, method)
         if (restEntity.isSuccessful) {
             return restEntity.restResponse!!
@@ -370,7 +374,7 @@ class HttpHelper(val context: Context) {
 
         when (action) {
             GET -> requestBuilder.method(action, null)
-            POST -> requestBuilder.method(action, mRequestBody)
+            else -> requestBuilder.method(action, mRequestBody)
         }
 
         val request = requestBuilder.build()

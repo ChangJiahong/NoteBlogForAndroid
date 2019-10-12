@@ -20,6 +20,7 @@ import org.jetbrains.anko.*
 import org.w3c.dom.Text
 import top.pythong.noteblog.app.home.model.Type
 import top.pythong.noteblog.app.type.ui.TypeActivity
+import top.pythong.noteblog.app.userinfo.ui.UserProfileActivity
 import top.pythong.noteblog.base.ContentJavaScriptInterface
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 import top.pythong.noteblog.data.constant.MsgCode
@@ -87,6 +88,12 @@ class ArticleActivity : BaseActivity() {
             val article = it ?: return@Observer
             Glide.with(this).load(article.authorImgUrl).into(uIconbar)
             Glide.with(this).load(article.authorImgUrl).into(uIcon)
+            uIcon.setOnClickListener {
+                UserProfileActivity.start(this, article.author)
+            }
+            uIconbar.setOnClickListener {
+                UserProfileActivity.start(this, article.author)
+            }
             uNameBar.text = article.author
             uName.text = article.author
             mHitsAndLike.text = "0 赞 · ${article.hits} 浏览"

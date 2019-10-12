@@ -1,6 +1,7 @@
 package top.pythong.noteblog.app.userinfo.ui
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.content.Intent
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_user_info.*
@@ -16,6 +17,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_user_info.recyclerView
 import kotlinx.android.synthetic.main.activity_user_info.refreshLayout
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
 import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
 import top.pythong.noteblog.app.edituserprofile.ui.EditUserProfileActivity
@@ -74,6 +76,9 @@ class UserProfileActivity : BaseActivity() {
         adapter = ArticleAdapter(articleList)
         recyclerView.adapter = adapter
 
+        /**
+         * 用户信息
+         */
         userProfileViewModel.user.observe(this, Observer {
             val mUser = it ?: return@Observer
             Glide.with(this).load(mUser.imgUrl).into(userIcon)
@@ -121,6 +126,12 @@ class UserProfileActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AboutMeFragment.REFRESH_REQUEST && resultCode == AboutMeFragment.NEED_TO_REFRESH) {
             setResult(AboutMeFragment.NEED_TO_REFRESH)
+        }
+    }
+
+    companion object {
+        fun start(context: Context, username: String) {
+            context.startActivity<UserProfileActivity>("username" to username)
         }
     }
 }

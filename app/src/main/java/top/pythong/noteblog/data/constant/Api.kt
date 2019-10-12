@@ -34,6 +34,11 @@ object Api {
      */
     const val user = "$root/user"
 
+    /**
+     * 获取普通用户信息
+     */
+    val userInfo: (username: String) -> String = { username -> "$user/$username" }
+
     private const val article = "$root/api/article"
 
     /**

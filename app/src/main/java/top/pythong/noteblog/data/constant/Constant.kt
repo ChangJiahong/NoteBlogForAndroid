@@ -47,6 +47,8 @@ object Constant {
      */
     const val NAME = "name"
 
+    const val USERNAME = "username"
+
     /**
      * 登录密码
      */

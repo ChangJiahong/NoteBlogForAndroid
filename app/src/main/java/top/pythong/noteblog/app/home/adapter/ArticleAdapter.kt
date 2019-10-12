@@ -15,6 +15,7 @@ import org.jetbrains.anko.toast
 import top.pythong.noteblog.R
 import top.pythong.noteblog.app.article.ui.ArticleActivity
 import top.pythong.noteblog.app.home.model.ArticleCardItem
+import top.pythong.noteblog.app.userinfo.ui.UserProfileActivity
 import top.pythong.noteblog.data.constant.Constant.ARTICLE_ID
 
 /**
@@ -43,6 +44,9 @@ class ArticleAdapter(val articleList: List<ArticleCardItem>) : RecyclerView.Adap
             tags.text = item.tags
             title.text = item.title
             info.text = item.info
+            authorIcon.setOnClickListener {
+                UserProfileActivity.start(it.context, item.author)
+            }
             Glide.with(v.context).load(item.authorImgUrl).into(authorIcon)
             Glide.with(v.context).load(item.frontCoverImgUrl).into(articleIcon)
             v.setOnClickListener {

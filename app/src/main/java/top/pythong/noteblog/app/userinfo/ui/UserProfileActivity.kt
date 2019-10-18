@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_user_info.recyclerView
 import kotlinx.android.synthetic.main.activity_user_info.refreshLayout
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
+import top.pythong.noteblog.app.aboutme.ui.AboutMeFragment
 import top.pythong.noteblog.app.edituserprofile.ui.EditUserProfileActivity
 import top.pythong.noteblog.app.home.adapter.ArticleAdapter
 import top.pythong.noteblog.app.home.model.ArticleCardItem

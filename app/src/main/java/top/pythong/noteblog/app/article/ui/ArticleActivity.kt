@@ -1,6 +1,7 @@
 package top.pythong.noteblog.app.article.ui
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.support.v4.widget.NestedScrollView
 import android.view.View
 import kotlinx.android.synthetic.main.activity_article.*
@@ -155,6 +156,15 @@ class ArticleActivity : BaseActivity() {
                 }
             }
             vg.addView(text)
+        }
+    }
+
+    companion object {
+        fun start(context: Context, id: String) {
+            if (id.isBlank()) {
+                return
+            }
+            context.startActivity<ArticleActivity>(ARTICLE_ID to id)
         }
     }
 }

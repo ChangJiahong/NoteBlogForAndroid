@@ -1,8 +1,5 @@
 package top.pythong.noteblog.utils
 
-import android.support.annotation.NonNull
-import org.apache.commons.lang3.StringUtils
-
 /**
  *
  * @author ChangJiahong
@@ -10,14 +7,14 @@ import org.apache.commons.lang3.StringUtils
  */
 object HtmlHelper {
 
-    fun generateArticleContentHtml(mdSource: String): String {
+    fun generateArticleContentHtml(htmlSource: String): String {
 
         val skin = "markdown_.css"
 
-        return generateArticleContentHtml(mdSource, skin)
+        return generateArticleContentHtml(htmlSource, skin)
     }
 
-    private fun generateArticleContentHtml(mdSource: String, skin: String) = run {
+    private fun generateArticleContentHtml(htmlSource: String, skin: String) = run {
         """
             <html>
                 <head>
@@ -32,7 +29,7 @@ object HtmlHelper {
 
                 </head>
                 <body class="markdown-body">
-                    $mdSource
+                    $htmlSource
                 </body>
                 <script type="text/javascript">
 
@@ -109,7 +106,48 @@ object HtmlHelper {
     }
 
 
-//    <link rel="stylesheet" href="./styles/default.css">
+    fun generateMdContentHtml(mdSource: String): String {
+
+        val skin = "markdown_.css"
+
+        return generateMdContentHtml(mdSource, skin)
+    }
+
+
+    /**
+     * markdown格式
+     */
+    private fun generateMdContentHtml(mdSource: String, skin: String) = run {
+        """
+            <html>
+                <head>
+                    <meta charset="utf-8" />
+                    <title>MD View</title>
+                    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+                    <link rel="stylesheet" type="text/css" href="./css/$skin"/>
+
+                    <link rel="stylesheet" href="./styles/default.css">
+                    <script src="./js/marked.js"></script>
+                    <script src="./js/highlight.pack.js"></script>
+                    <script>hljs.initHighlightingOnLoad();</script>
+
+                </head>
+                <body class="markdown-body">
+                    <div id="content">$mdSource</div>
+                </body>
+                <script type="text/javascript">
+
+                    var body = document.getElementById("content");
+                    var mdSource = body.innerHTML;
+                    var htm = marked(mdSource);
+                    body.innerHTML = htm;
+
+                </script>
+            </html>
+        """.trimIndent()
+    }
+
+    //    <link rel="stylesheet" href="./styles/default.css">
 //    <script src="./js/highlight.pack.js"></script>
 //    <script>hljs.initHighlightingOnLoad();</script>
 }

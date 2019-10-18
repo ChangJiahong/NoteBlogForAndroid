@@ -10,7 +10,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
+import top.pythong.noteblog.app.aboutme.ui.AboutMeFragment
 import top.pythong.noteblog.app.archives.ui.ArchivesFragment
 import top.pythong.noteblog.app.home.ui.HomeFragment
 import top.pythong.noteblog.app.main.service.IMainService

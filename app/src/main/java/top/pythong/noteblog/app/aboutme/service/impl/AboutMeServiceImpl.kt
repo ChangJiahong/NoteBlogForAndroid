@@ -1,8 +1,8 @@
-package top.pythong.noteblog.app.aboutMe.service.impl
+package top.pythong.noteblog.app.aboutme.service.impl
 
 import android.content.Context
-import top.pythong.noteblog.app.aboutMe.dao.IAboutMeDataSource
-import top.pythong.noteblog.app.aboutMe.service.IAboutMeService
+import top.pythong.noteblog.app.aboutme.dao.IAboutMeDataSource
+import top.pythong.noteblog.app.aboutme.service.IAboutMeService
 
 /**
  *

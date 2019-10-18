@@ -1,7 +1,7 @@
-package top.pythong.noteblog.app.aboutMe.dao.impl
+package top.pythong.noteblog.app.aboutme.dao.impl
 
 import android.content.Context
-import top.pythong.noteblog.app.aboutMe.dao.IAboutMeDataSource
+import top.pythong.noteblog.app.aboutme.dao.IAboutMeDataSource
 
 /**
  *

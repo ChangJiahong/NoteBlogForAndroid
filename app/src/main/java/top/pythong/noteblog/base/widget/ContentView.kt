@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.webkit.*
 import org.apache.commons.lang3.StringUtils
@@ -90,7 +91,7 @@ class ContentView : WebView {
         setOnLongClickListener(OnLongClickListener {
             val result = hitTestResult
             if (hitLinkResult(result) && !StringUtils.isBlank(result.extra)) {
-                this.context.copyToClipboard(result.extra?:"")
+                this.context.copyToClipboard(result.extra ?: "")
                 return@OnLongClickListener true
             }
             false
@@ -106,6 +107,15 @@ class ContentView : WebView {
             return
         }
         val html = HtmlHelper.generateArticleContentHtml(content)
+        loadPage(html)
+    }
+
+    fun setMdText(mdSource: String) {
+        if (mdSource.isBlank()) {
+            return
+        }
+
+        val html = HtmlHelper.generateMdContentHtml(mdSource)
         loadPage(html)
     }
 
@@ -150,6 +160,11 @@ class ContentView : WebView {
                 onProgressChanged!!(progress)
 
         }
+
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+            Log.d(TAG, "Console MSG: ${consoleMessage!!.message()}")
+            return super.onConsoleMessage(consoleMessage)
+        }
     }
 
     private fun hitLinkResult(result: WebView.HitTestResult): Boolean {
@@ -163,6 +178,7 @@ class ContentView : WebView {
             startActivity(request.url)
             return true
         }
+
 
     }
 
@@ -182,10 +198,11 @@ class ContentView : WebView {
         return color
     }
 
-    fun setContentViewBackgroundColor(color: Int){
+    fun setContentViewBackgroundColor(color: Int) {
         mBackgroundColor = color
 
     }
+
     private fun getCodeBackgroundColor(): String {
         return "#" + Integer.toHexString(this.mBackgroundColor!!).substring(2).toUpperCase()
     }

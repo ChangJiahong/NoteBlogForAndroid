@@ -17,6 +17,7 @@ import top.pythong.noteblog.R
 import top.pythong.noteblog.app.article.ui.ArticleActivity
 import top.pythong.noteblog.app.articlemanager.model.SimpleArticle
 import top.pythong.noteblog.app.articlemanager.ui.ArticleManagerActivity
+import top.pythong.noteblog.app.editarticle.ui.EditArticleActivity
 import top.pythong.noteblog.app.home.model.Article
 import top.pythong.noteblog.base.adapter.SimpleAdapter
 import top.pythong.noteblog.base.factory.ViewModelFactory
@@ -78,15 +79,18 @@ class ArticlesFragment : BaseFragment() {
         recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         recyclerView.adapter = adapter
         adapter.setOnItemClickListener { _, position ->
-            this.context?.startActivity<ArticleActivity>(ARTICLE_ID to articles[position]["id"])
-
+            val id = articles[position]["id"] ?: ""
+            if (articles[position]["status"] == Article.DRAFT) {
+                EditArticleActivity.start(this.requireContext(), id)
+            } else {
+                ArticleActivity.start(this.requireContext(), id)
+            }
         }
         adapter.extendedBind { itemV, position ->
             itemV.find<ImageView>(R.id.status).visibility = when (articles[position]["status"]) {
                 Article.DRAFT -> View.VISIBLE
                 else -> View.GONE
             }
-//            itemV.setOnCreateContextMenuListener(this)
         }
         registerForContextMenu(recyclerView)
     }
@@ -192,8 +196,7 @@ class ArticlesFragment : BaseFragment() {
         val id = articles[position]["id"] ?: ""
         when (item.itemId) {
             R.id.edit -> {
-                toast("编辑")
-                // 跳转编辑页面
+                EditArticleActivity.start(this@ArticlesFragment.requireContext(), id)
             }
             R.id.publish -> {
                 viewModel.publish(id) { (isOk, data, msg) ->

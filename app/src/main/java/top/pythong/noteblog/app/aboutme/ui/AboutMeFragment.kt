@@ -1,4 +1,4 @@
-package top.pythong.noteblog.app.aboutMe.ui
+package top.pythong.noteblog.app.aboutme.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,6 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import kotlinx.android.synthetic.main.about_me_fragment.*
 import android.support.v4.widget.NestedScrollView
-import android.util.Log
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.util.SmartUtil.dp2px

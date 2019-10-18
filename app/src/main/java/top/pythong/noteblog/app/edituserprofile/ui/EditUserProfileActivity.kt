@@ -1,13 +1,12 @@
 package top.pythong.noteblog.app.edituserprofile.ui
 
-import android.os.Bundle
 import android.view.View
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_edit_user_profile.*
 import org.jetbrains.anko.toast
 import top.pythong.noteblog.R
-import top.pythong.noteblog.app.aboutMe.ui.AboutMeFragment
+import top.pythong.noteblog.app.aboutme.ui.AboutMeFragment
 import top.pythong.noteblog.app.login.model.LoggedInUser
 import top.pythong.noteblog.base.activity.BaseActivity
 import top.pythong.noteblog.data.constant.Constant
